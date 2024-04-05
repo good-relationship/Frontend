@@ -1,11 +1,6 @@
 {
 	"parser": "@typescript-eslint/parser",
-	"extends": [
-		"eslint:recommended",
-		"next/core-web-vitals",
-		"plugin:@typescript-eslint/recommended",
-		"eslint-config-prettier"
-	],
+	"extends": ["eslint:recommended", "next/core-web-vitals"],
 	"plugins": ["import"],
 	"rules": {
 		"import/extensions": ["error", "ignorePackages"],
