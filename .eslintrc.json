@@ -1,0 +1,40 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": ["eslint:recommended", "next/core-web-vitals"],
+	"plugins": ["import"],
+	"rules": {
+		"import/extensions": ["error", "ignorePackages"],
+		"sort-imports": [
+			"error",
+			{
+				"ignoreCase": true,
+				"ignoreDeclarationSort": true,
+				"ignoreMemberSort": false,
+				"allowSeparatedGroups": true
+			}
+		],
+		"import/order": [
+			"error",
+			{
+				"groups": [
+					"builtin",
+					"external",
+					"internal",
+					["parent", "sibling"],
+					"index",
+					"object",
+					"type",
+					"unknown"
+				],
+				"newlines-between": "always",
+				"alphabetize": {
+					"order": "asc",
+					"caseInsensitive": true
+				}
+			}
+		],
+		"import/no-unresolved": "off",
+		"import/export": "off",
+		"import/named": 0
+	}
+}
