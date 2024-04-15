@@ -1,11 +1,10 @@
-import { Inter } from 'next/font/google';
 import React from 'react';
 
 import './globals.css';
 
-import type { Metadata } from 'next';
+import { pretendard } from '@/utils/fonts';
 
-const inter = Inter({ subsets: ['latin'] });
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: 'Create Next App',
@@ -19,7 +18,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={inter.className}>{children}</body>
+			<body className={`${pretendard.variable} font-pretendard`}>{children}</body>
 		</html>
 	);
 }
