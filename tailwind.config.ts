@@ -2,7 +2,7 @@ import plugin from 'tailwindcss/plugin';
 import tailwindAnimate from 'tailwindcss-animate';
 
 import { colors } from './constants/colors';
-import { fonts } from './constants/fonts';
+import { typos } from './constants/typos';
 
 import type { Config } from 'tailwindcss';
 
@@ -34,11 +34,14 @@ const config = {
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
 			colors: colors,
+			fontFamily: {
+				pretendard: ['var(--font-pretendard)'],
+			},
 		},
 	},
 	plugins: [
 		plugin(({ addComponents }) => {
-			addComponents(fonts);
+			addComponents(typos);
 		}),
 		tailwindAnimate,
 	],
