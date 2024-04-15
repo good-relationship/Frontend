@@ -1,4 +1,8 @@
+import plugin from 'tailwindcss/plugin';
+import tailwindAnimate from 'tailwindcss-animate';
+
 import { colors } from './constants/colors';
+import { fonts } from './constants/fonts';
 
 import type { Config } from 'tailwindcss';
 
@@ -32,7 +36,12 @@ const config = {
 			colors: colors,
 		},
 	},
-	plugins: [require('tailwindcss-animate')],
+	plugins: [
+		plugin(({ addComponents }) => {
+			addComponents(fonts);
+		}),
+		tailwindAnimate,
+	],
 } satisfies Config;
 
 export default config;
