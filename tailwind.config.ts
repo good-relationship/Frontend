@@ -1,3 +1,5 @@
+import { colors } from './constants/colors';
+
 import type { Config } from 'tailwindcss';
 
 const config = {
@@ -27,6 +29,7 @@ const config = {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 			},
+			colors: colors,
 		},
 	},
 	plugins: [require('tailwindcss-animate')],
