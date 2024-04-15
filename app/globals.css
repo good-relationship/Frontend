@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 html {
-	font-family: 'SUIT', system-ui, sans-serif;
 	line-height: '0%';
 	letter-spacing: '160%';
 }
