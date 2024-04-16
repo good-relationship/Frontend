@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 	title: '캡스톤 디자인 맞춤 서비스 | 조은사이',
 	description: '캡스톤 디자인 프로젝트를 진행하기 위한 기능들을 통합 제공하는 서비스입니다',
 	icons: {
-		icon: '/kan.svg',
+		icon: '/kan_circle.svg',
 	},
 };
 
