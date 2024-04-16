@@ -12,8 +12,8 @@ interface RoundedButtonProps extends VariantProps<typeof buttonVariants> {
 const buttonVariants = cva('rounded-[100px] h-fit w-fit', {
 	variants: {
 		size: {
-			Small: 'gap-[10px] px-6 py-2 !typo-Body4',
-			Medium: 'gap-2 px-6 py-4 !typo-Body2',
+			Small: 'gap-[10px] px-6 py-2 !typo-Body3',
+			Medium: 'gap-2 px-6 py-4 !typo-Body1',
 			Large: 'gap-[10px] px-8 py-3 !typo-SubHeader2',
 		},
 		variant: {
