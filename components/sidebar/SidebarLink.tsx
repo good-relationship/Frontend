@@ -20,13 +20,6 @@ const SidebarLink = ({ label, path, icon, isActive }: SidebarLinkProps) => {
 				'!text-Purple-500 bg-Purple-100': isActive,
 			})}
 		>
-			{/* <Image
-				src={icon}
-				alt={label}
-				width={20}
-				height={20}
-				className={`${isActive ? 'fill-Purple-500' : 'fill-Gray-400'}`}
-			/> */}
 			<Icon id={icon} color={isActive ? colors['Purple-500'] : colors['Gray-400']} size={20} />
 			<span>{label}</span>
 		</Link>

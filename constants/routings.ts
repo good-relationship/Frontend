@@ -1,4 +1,12 @@
-export const sidebarRoutings = [
+import { IconId } from '@/types/icons';
+
+type SidebarRoutingType = {
+	label: string;
+	path: string;
+	icon: IconId;
+};
+
+export const sidebarRoutings: SidebarRoutingType[] = [
 	{
 		label: '회의하기',
 		path: '/meeting',
