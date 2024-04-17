@@ -23,9 +23,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center`}>
+			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center min-h-screen`}>
 				<Header variant="user-info" />
-				<div className="w-full max-w-[1440px] min-h-[calc(100vh-60px)] top-[60px] absolute">{children}</div>
+				<div className="w-full max-w-[1440px] flex-1 h-screen pt-[60px]">{children}</div>
 				<Toaster />
 			</body>
 		</html>

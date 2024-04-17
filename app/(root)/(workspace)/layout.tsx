@@ -8,7 +8,7 @@ const WorkspaceLayout = ({
 	children: ReactNode;
 }>) => {
 	return (
-		<div className="flex">
+		<div className="flex h-full">
 			<Sidebar />
 			<section className="p-[72px]">{children}</section>
 		</div>
