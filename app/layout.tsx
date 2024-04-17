@@ -3,6 +3,7 @@ import React from 'react';
 import './globals.css';
 
 import Header from '@/components/header/Header';
+import { Toaster } from '@/components/ui/toaster';
 import { pretendard } from '@/utils/fonts';
 
 import type { Metadata } from 'next';
@@ -24,7 +25,8 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center`}>
 				<Header variant="user-info" />
-				<div className="w-full max-w-[1440px] min-h-[calc(screen - 60px)] top-[60px] absolute">{children}</div>
+				<div className="w-full max-w-[1440px] min-h-[calc(100vh-60px)] top-[60px] absolute">{children}</div>
+				<Toaster />
 			</body>
 		</html>
 	);
