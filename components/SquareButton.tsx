@@ -1,10 +1,10 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface SquareButtonProps extends VariantProps<typeof buttonVariants> {
+interface SquareButtonProps extends VariantProps<typeof buttonVariants>, ButtonHTMLAttributes<HTMLButtonElement> {
 	className?: string;
 	children?: ReactNode;
 }
@@ -31,7 +31,11 @@ const buttonVariants = cva('rounded-3 h-fit w-fit', {
 	},
 });
 
-const SquareButton = ({ size, variant, className, children }: SquareButtonProps) => {
-	return <Button className={cn(buttonVariants({ variant, size, className }), 'typo-bo')}>{children}</Button>;
+const SquareButton = ({ size, variant, className, children, ...props }: SquareButtonProps) => {
+	return (
+		<Button className={cn(buttonVariants({ variant, size, className }))} {...props}>
+			{children}
+		</Button>
+	);
 };
 export default SquareButton;

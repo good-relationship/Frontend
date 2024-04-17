@@ -1,10 +1,10 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { ReactNode } from 'react';
+import { ButtonHTMLAttributes, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface RoundedButtonProps extends VariantProps<typeof buttonVariants> {
+interface RoundedButtonProps extends VariantProps<typeof buttonVariants>, ButtonHTMLAttributes<HTMLButtonElement> {
 	className?: string;
 	children?: ReactNode;
 }
@@ -28,8 +28,12 @@ const buttonVariants = cva('rounded-[100px] h-fit w-fit', {
 	},
 });
 
-const RoundedButton = ({ size, variant, className, children }: RoundedButtonProps) => {
-	return <Button className={cn(buttonVariants({ variant, size, className }))}>{children}</Button>;
+const RoundedButton = ({ size, variant, className, children, ...props }: RoundedButtonProps) => {
+	return (
+		<Button className={cn(buttonVariants({ variant, size, className }))} {...props}>
+			{children}
+		</Button>
+	);
 };
 
 export default RoundedButton;
