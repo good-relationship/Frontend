@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+	.flex-col-template {
+		@apply flex flex-col items-center h-full justify-between py-[50px];
+	}
+}
+
 html {
 	line-height: '0%';
 	letter-spacing: '160%';
