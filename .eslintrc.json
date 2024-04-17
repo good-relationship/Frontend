@@ -35,6 +35,7 @@
 		"import/no-unresolved": "off",
 		"import/export": "off",
 		"import/named": 0,
-		"import/extensions": "off"
+		"import/extensions": "off",
+		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"]
 	}
 }
