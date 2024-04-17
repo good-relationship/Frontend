@@ -10,7 +10,7 @@ const NoWorkspace = () => {
 	};
 
 	return (
-		<div className="flex flex-col items-center">
+		<div className="flex-col-template">
 			<Nav title={navInfo.title} description={navInfo.description} />
 			<Image src="/images/space.png" alt="space" width={210} height={210} />
 			<SquareButton variant="Black" size="Small">

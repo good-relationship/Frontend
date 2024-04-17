@@ -2,7 +2,7 @@ import CreateProgressNav from '@/components/onboarding/create/CreateProgressNav'
 
 const EnterWorkspaceNameTemplate = () => {
 	return (
-		<main>
+		<main className="flex-col-template">
 			<CreateProgressNav />
 			workspace 정하기
 		</main>

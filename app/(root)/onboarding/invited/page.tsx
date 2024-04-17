@@ -6,7 +6,7 @@ const InvitedWorkspace = () => {
 	const title = `${workspaceName}에\n 초대되셨습니다.`;
 
 	return (
-		<div>
+		<div className="flex-col-template">
 			<Nav title={title} />
 		</div>
 	);

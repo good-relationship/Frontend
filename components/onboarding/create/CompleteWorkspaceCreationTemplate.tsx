@@ -14,7 +14,7 @@ const CompleteWorkspaceCreationTemplate = () => {
 	const buttonContent = `${workspaceName}(으)로 이동하기`;
 
 	return (
-		<main className="flex flex-col items-center h-full justify-between py-[50px]">
+		<main className="flex-col-template">
 			<Nav title={navInfo.title} description={navInfo.description} />
 			<Image src="/images/search_user.png" alt="space" width={210} height={210} />
 			<SquareButton variant="Black" size="Small">

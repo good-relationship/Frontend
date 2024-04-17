@@ -24,7 +24,7 @@ const CreateWorkspace = () => {
 		return <SearchScoolTemplate />;
 	};
 
-	return <div>{renderTemplateBySearchParams()}</div>;
+	return <div className="h-full">{renderTemplateBySearchParams()}</div>;
 };
 
 export default CreateWorkspace;
