@@ -2,6 +2,7 @@ import plugin from 'tailwindcss/plugin';
 import tailwindAnimate from 'tailwindcss-animate';
 
 import { colors } from './constants/colors';
+import { customDropShadow } from './constants/styles';
 import { typos } from './constants/typos';
 
 import type { Config } from 'tailwindcss';
@@ -42,6 +43,7 @@ const config = {
 	plugins: [
 		plugin(({ addComponents }) => {
 			addComponents(typos);
+			addComponents(customDropShadow);
 		}),
 		tailwindAnimate,
 	],
