@@ -17,7 +17,7 @@ const WorkspaceOverflow = () => {
 	return (
 		<div className="flex flex-col items-center">
 			<Nav title={navInfo.title} description={navInfo.description} />
-			<Image src="/images/search_user.png" alt="space" width={280} height={280} />
+			<Image src="/images/search_user.png" alt="space" width={210} height={210} />
 			<SquareButton variant="Black" size="Small">
 				{buttonContent}
 			</SquareButton>

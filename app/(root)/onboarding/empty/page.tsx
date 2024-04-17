@@ -12,7 +12,7 @@ const NoWorkspace = () => {
 	return (
 		<div className="flex flex-col items-center">
 			<Nav title={navInfo.title} description={navInfo.description} />
-			<Image src="/images/space.png" alt="space" width={280} height={280} />
+			<Image src="/images/space.png" alt="space" width={210} height={210} />
 			<SquareButton variant="Black" size="Small">
 				워크스페이스 생성하기
 			</SquareButton>
