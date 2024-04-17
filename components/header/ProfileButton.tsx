@@ -1,5 +1,6 @@
+import LogoutButton from '@/components/header/LogoutButton';
 import ProfileImage from '@/components/ProfileImage';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover, PopoverTrigger } from '@/components/ui/popover';
 
 const ProfileButton = () => {
 	return (
@@ -7,7 +8,7 @@ const ProfileButton = () => {
 			<PopoverTrigger>
 				<ProfileImage />
 			</PopoverTrigger>
-			<PopoverContent>로그아웃</PopoverContent>
+			<LogoutButton />
 		</Popover>
 	);
 };
