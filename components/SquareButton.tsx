@@ -18,7 +18,7 @@ const buttonVariants = cva('rounded-3 h-fit w-fit', {
 			Large: 'w-[600px] h-[56px] !typo-Body2',
 		},
 		variant: {
-			Black: 'bg-black text-white hover:text-Purple-300 disabled:bg-Gray-100 disabled:text-Gray-300',
+			Black: 'bg-black text-white hover:text-Purple-300 disabled:bg-Gray-200 disabled:text-Gray-300',
 			Purple: 'bg-Purple-300 text-black hover:bg-Purple-300 disabled:bg-Purple-100 disabled:text-Purple-400',
 			Outline: 'border border-Gray-400 text-Gray-400 bg-white hover:bg-white disabled:text-Gray-300',
 			Gray1: 'bg-Gray-200 text-Gray-400 hover:bg-Gray-400 active:bg-Gray-400 disabled:bg-Gray-200 disabled:text-Gray-300',
