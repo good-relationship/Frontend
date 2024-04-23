@@ -11,7 +11,7 @@ export type IconProps = {
 const svgFile = '/icons/icons.svg';
 
 const Icon = ({ id, color = 'none', size, width, height }: IconProps) => (
-	<svg fill={color} width={size || width} height={size || height}>
+	<svg stroke={color} fill={color} width={size || width} height={size || height}>
 		<use href={`${svgFile}#${id}`} />
 	</svg>
 );
