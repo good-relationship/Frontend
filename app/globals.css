@@ -4,7 +4,7 @@
 
 @layer utilities {
 	.flex-col-template {
-		@apply flex flex-col items-center h-full justify-between py-4 max-w-[910px] w-full;
+		@apply flex flex-col items-center h-full justify-center max-w-[910px] w-full gap-[50px] py-[50px];
 	}
 }
 
