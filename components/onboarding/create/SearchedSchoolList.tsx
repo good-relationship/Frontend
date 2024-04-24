@@ -9,14 +9,14 @@ const SearchedSchoolList = () => {
 	const { schools, count } = schoolList;
 
 	return (
-		<div className="w-full flex flex-col items-center">
-			<div className="w-full h-[calc(100%-92px)] overflow-auto">
+		<>
+			<div className="w-full overflow-auto h-[calc(100vh-280px-60px-72px-40px-40px-20px-10px)]">
 				{schools.map((school) => {
 					return <CustomedCheckbox key={school} label={school} />;
 				})}
 			</div>
 			<SearchedSchoolListCount count={count} />
-		</div>
+		</>
 	);
 };
 
