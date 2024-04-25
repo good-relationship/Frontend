@@ -10,5 +10,13 @@ export const useCompleteOnboarding = () => {
 		console.log(`Completing onboarding for ${schoolName} - ${workspaceName}`);
 	};
 
-	return { requestCompleteOnboarding };
+	const getSchoolName = () => {
+		return searchParams.get('school');
+	};
+
+	const getWorkspaceName = () => {
+		return searchParams.get('workspace');
+	};
+
+	return { requestCompleteOnboarding, getSchoolName, getWorkspaceName };
 };
