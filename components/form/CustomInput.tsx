@@ -30,14 +30,14 @@ const CustomInput = ({ countLimit, variant, placeholder, className, name, ...pro
 	const { register, formState } = useFormContext();
 	const { errors } = formState;
 	const [value, setValue] = useState('');
+	const isErrorExist = !!errors[name]?.message;
 
 	const handleInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setValue(e.target.value);
-		console.log(errors);
 	};
 
 	return (
-		<div className={cn(inputVariants({ variant }), className, !!errors[name]?.message && 'border-Red')} {...props}>
+		<div className={cn(inputVariants({ variant }), className, isErrorExist && 'border-Red')} {...props}>
 			<Input
 				value={value}
 				placeholder={placeholder}
