@@ -12,13 +12,13 @@ interface SquareButtonProps extends VariantProps<typeof buttonVariants>, ButtonH
 const buttonVariants = cva('rounded-3 h-fit w-fit', {
 	variants: {
 		size: {
-			Small: 'w-[100px] h-10 !typo-Body2',
+			Small: 'min-w-[100px] h-10 !typo-Body2',
 			Medium1: 'h-10 text-center !typo-Body2',
-			Medium2: 'h-[52px] w-[268px] !typo-Body2',
+			Medium2: 'h-[52px] min-w-[268px] !typo-Body2',
 			Large: 'w-[600px] h-[56px] !typo-Body2',
 		},
 		variant: {
-			Black: 'bg-black text-white hover:text-Purple-300 disabled:bg-Gray-100 disabled:text-Gray-300',
+			Black: 'bg-black text-white hover:text-Purple-300 disabled:bg-Gray-200 disabled:text-Gray-300',
 			Purple: 'bg-Purple-300 text-black hover:bg-Purple-300 disabled:bg-Purple-100 disabled:text-Purple-400',
 			Outline: 'border border-Gray-400 text-Gray-400 bg-white hover:bg-white disabled:text-Gray-300',
 			Gray1: 'bg-Gray-200 text-Gray-400 hover:bg-Gray-400 active:bg-Gray-400 disabled:bg-Gray-200 disabled:text-Gray-300',

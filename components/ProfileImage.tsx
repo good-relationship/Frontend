@@ -1,16 +1,15 @@
 'use client';
 
-import Image from 'next/image';
+import Image, { ImageProps } from 'next/image';
 import { useState } from 'react';
 
-type ProfileImageProps = {
+interface ProfileImageProps extends Omit<ImageProps, 'alt'> {
 	size?: number;
-	src?: string;
-};
+}
 
 const defaultProfileImage = '/icons/kan_circle.svg';
 
-const ProfileImage = ({ size = 32, src }: ProfileImageProps) => {
+const ProfileImage = ({ size = 32, src, ...props }: ProfileImageProps) => {
 	const [imagePath, setImagePath] = useState(src);
 
 	return (
@@ -18,9 +17,10 @@ const ProfileImage = ({ size = 32, src }: ProfileImageProps) => {
 			src={imagePath ? imagePath : defaultProfileImage}
 			width={size}
 			height={size}
-			alt="Profile Image"
 			onError={() => setImagePath(defaultProfileImage)}
 			className="rounded-full"
+			alt="Profile Image"
+			{...props}
 		/>
 	);
 };

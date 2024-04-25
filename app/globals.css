@@ -2,7 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+	.flex-col-template {
+		@apply flex flex-col items-center h-full justify-center max-w-[910px] w-full gap-[50px] py-[50px];
+	}
+}
+
 html {
 	line-height: '0%';
 	letter-spacing: '160%';
+}
+
+body {
+	overflow-y: overlay;
+}
+
+::-webkit-scrollbar {
+	width: 14px;
+}
+
+::-webkit-scrollbar-thumb {
+	outline: none;
+	border-radius: 10px;
+	border: 4px solid transparent;
+	box-shadow: inset 6px 6px 0 rgba(30, 30, 30, 1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	border: 4px solid transparent;
+	box-shadow: inset 6px 6px 0 rgba(30, 30, 30, 1);
+}
+
+::-webkit-scrollbar-track {
+	box-shadow: none;
+	background-color: transparent;
 }

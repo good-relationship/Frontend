@@ -2,11 +2,12 @@ import React from 'react';
 
 import './globals.css';
 
+import type { Metadata } from 'next';
+
 import Header from '@/components/header/Header';
 import { Toaster } from '@/components/ui/toaster';
+import RecoilRootProvider from '@/lib/recoil/RecoilRootProvider';
 import { pretendard } from '@/utils/fonts';
-
-import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
 	title: '캡스톤 디자인 맞춤 서비스 | 조은사이',
@@ -24,9 +25,13 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center min-h-screen`}>
-				<Header variant="user-info" />
-				<div className="w-full max-w-[1440px] flex-1 h-screen pt-[60px]">{children}</div>
-				<Toaster />
+				<RecoilRootProvider>
+					<Header variant="user-info" />
+					<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
+						{children}
+					</div>
+					<Toaster />
+				</RecoilRootProvider>
 			</body>
 		</html>
 	);
