@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import React, { ReactNode } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
+import Button from '@/components/form/Button';
 import CustomInput from '@/components/form/CustomInput';
 import Helpertext from '@/components/form/Helpertext';
 import Label from '@/components/form/Label';
@@ -33,5 +34,6 @@ const Form = ({ children, schema, onSubmit, ...props }: FormProps) => {
 Form.Label = Label;
 Form.HelperText = Helpertext;
 Form.Input = CustomInput;
+Form.Button = Button;
 
 export default Form;
