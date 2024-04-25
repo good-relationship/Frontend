@@ -23,7 +23,7 @@ const SearchScoolTemplate = () => {
 	const router = useRouter();
 
 	const handleClickNext = () => {
-		router.push(`/onboarding/create?school=${selectedSchoolName}`);
+		router.push(`${window.location}?school=${selectedSchoolName}`);
 	};
 
 	const renderSchoolList = () => {
