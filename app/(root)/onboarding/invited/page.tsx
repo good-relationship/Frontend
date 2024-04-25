@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import Nav from '@/components/onboarding/Nav';
 import SquareButton from '@/components/SquareButton';
@@ -6,11 +9,18 @@ import UserListItem from '@/components/UserListItem';
 import { mockGetUserWorkspaceInfoData } from '@/mocks/onboarding';
 
 const InvitedWorkspace = () => {
+	const route = useRouter();
+
 	// TODO: 워크스페이스 이름 받아오기
 	const workspaceName = '조은 사이 워크스페이스';
 	const title = `${workspaceName}에\n 초대되셨습니다.`;
 
 	const userList = mockGetUserWorkspaceInfoData.users;
+
+	const handleClickJoinWorkspace = () => {
+		// TODO: 참여 수락 API 연결
+		route.push('/document');
+	};
 
 	return (
 		<div className="flex-col-template">
@@ -26,7 +36,9 @@ const InvitedWorkspace = () => {
 					<Link href="/onboarding/create">
 						<span className="typo-Body1 text-Gray-400">새 워크스페이스 생성하기</span>
 					</Link>
-					<SquareButton size="Small">워크스페이스 참여하기</SquareButton>
+					<SquareButton size="Small" onClick={handleClickJoinWorkspace}>
+						워크스페이스 참여하기
+					</SquareButton>
 				</div>
 			</div>
 		</div>
