@@ -3,38 +3,14 @@ import Link from 'next/link';
 import Nav from '@/components/onboarding/Nav';
 import SquareButton from '@/components/SquareButton';
 import UserListItem from '@/components/UserListItem';
+import { mockGetUserWorkspaceInfoData } from '@/mocks/onboarding';
 
 const InvitedWorkspace = () => {
 	// TODO: 워크스페이스 이름 받아오기
 	const workspaceName = '조은 사이 워크스페이스';
 	const title = `${workspaceName}에\n 초대되셨습니다.`;
 
-	const userList = [
-		{
-			id: 1,
-			nickname: '김코딩',
-			email: 'xxx@naver.com',
-			profileImage: 'https://via.placeholder.com/45',
-		},
-		{
-			id: 2,
-			nickname: '김디자인',
-			email: 'sdfsf@naver.com',
-			profileImage: 'https://via.placeholder.com/45',
-		},
-		{
-			id: 1,
-			nickname: '김코딩',
-			email: 'xxx@naver.com',
-			profileImage: 'https://via.placeholder.com/45',
-		},
-		{
-			id: 2,
-			nickname: '김디자인',
-			email: 'sdfsf@naver.com',
-			profileImage: 'https://via.placeholder.com/45',
-		},
-	];
+	const userList = mockGetUserWorkspaceInfoData.users;
 
 	return (
 		<div className="flex-col-template">
