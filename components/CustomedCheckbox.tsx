@@ -1,16 +1,17 @@
 'use client';
 
 import { cx } from 'class-variance-authority';
-import { useState } from 'react';
 
 import Icon from '@/components/Icon';
 import { colors } from '@/constants/colors';
 
 type CustomedCheckboxProps = {
 	label: string;
+	isChecked: boolean;
+	handleClick: (schoolName: string) => void;
 };
 
-const CustomedCheckbox = ({ label }: CustomedCheckboxProps) => {
+const CustomedCheckbox = ({ label, isChecked, handleClick }: CustomedCheckboxProps) => {
 	const colorMatching = {
 		checked: {
 			circle: 'bg-Gray-500',
@@ -22,10 +23,10 @@ const CustomedCheckbox = ({ label }: CustomedCheckboxProps) => {
 		},
 	};
 
-	const [isChecked, setIsChecked] = useState(false);
 	const toggleCheck = () => {
-		setIsChecked((prev) => !prev);
+		handleClick(label);
 	};
+
 	const getKeyByIsChecked = () => {
 		return isChecked ? 'checked' : 'unchecked';
 	};
