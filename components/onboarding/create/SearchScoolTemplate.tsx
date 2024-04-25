@@ -1,17 +1,24 @@
 'use client';
 
+import { useRecoilState } from 'recoil';
+
 import CreateProgressNav from '@/components/onboarding/create/CreateProgressNav';
 import SearchedSchoolList from '@/components/onboarding/create/SearchedSchoolList';
+import SearchSchoolGuide from '@/components/onboarding/create/SearchSchoolGuide';
 import SearchInput from '@/components/SearchInput';
 import SquareButton from '@/components/SquareButton';
+import { useSearchSchoolName } from '@/hooks/search';
+import { searchSchoolNameState } from '@/stores/atoms/searchSchoolName';
 
 const SearchScoolTemplate = () => {
-	// const [isSearched, setIsSearched] = useState(false);
+	const [searchSchoolName] = useRecoilState(searchSchoolNameState);
+	const { isSearched } = searchSchoolName;
+	const { searchSchoolNameAndGetResults } = useSearchSchoolName();
 
 	const renderSchoolList = () => {
-		// if (!isSearched) {
-		// 	return <SearchSchoolGuide />;
-		// }
+		if (!isSearched) {
+			return <SearchSchoolGuide />;
+		}
 
 		return <SearchedSchoolList />;
 	};
@@ -20,7 +27,7 @@ const SearchScoolTemplate = () => {
 		<main className="flex-col-template">
 			<CreateProgressNav />
 			<div className="w-full flex flex-col gap-5 h-full">
-				<SearchInput placeholder="학교 이름을 입력하세요" />
+				<SearchInput placeholder="학교 이름을 입력하세요" searchHandler={searchSchoolNameAndGetResults} />
 				<div className="w-full flex flex-col items-center h-full">{renderSchoolList()}</div>
 				<div className="flex justify-end w-full relative bottom-0">
 					<SquareButton variant="Black" size="Small" disabled>

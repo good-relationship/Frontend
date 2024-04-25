@@ -6,9 +6,11 @@ import { ChangeEvent, InputHTMLAttributes, KeyboardEvent, useState } from 'react
 import SquareButton from '@/components/SquareButton';
 import { Input } from '@/components/ui/input';
 
-interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {}
+interface SearchInputProps extends InputHTMLAttributes<HTMLInputElement> {
+	searchHandler: (value: string) => void;
+}
 
-const SearchInput = ({ placeholder }: SearchInputProps) => {
+const SearchInput = ({ placeholder, searchHandler }: SearchInputProps) => {
 	const [value, setValue] = useState('');
 	const handleInputValueChange = (e: ChangeEvent<HTMLInputElement>) => {
 		setValue(e.target.value);
@@ -16,7 +18,7 @@ const SearchInput = ({ placeholder }: SearchInputProps) => {
 	// TODO: 검색 기능과 event 핸들러 연결
 	const handleOnKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
 		if (e.key === 'Enter') {
-			console.log('Enter key pressed');
+			searchHandler(value);
 		}
 	};
 
@@ -34,7 +36,7 @@ const SearchInput = ({ placeholder }: SearchInputProps) => {
 					onKeyDown={handleOnKeyDown}
 				/>
 			</div>
-			<SquareButton size="Small" disabled={isInputEmpty}>
+			<SquareButton size="Small" disabled={isInputEmpty} onClick={() => searchHandler(value)}>
 				검색
 			</SquareButton>
 		</div>
