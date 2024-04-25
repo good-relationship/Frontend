@@ -13,6 +13,7 @@ export const colors = {
 	'Gray-300': '#BBBBBB',
 	'Gray-400': '#787878',
 	'Gray-500': '#1E1E1E',
+	Red: '#FF4A4A',
 };
 
 export type Color = keyof typeof colors;
