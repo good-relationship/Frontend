@@ -2,11 +2,11 @@
 	"parser": "@typescript-eslint/parser",
 	"extends": [
 		"eslint:recommended",
-		"plugin:@typescript-eslint/eslint-recommended",
 		"plugin:@typescript-eslint/recommended",
-		"next/core-web-vitals"
+		"plugin:import/typescript",
+		"plugin:import/recommended"
 	],
-	"plugins": ["import"],
+	"plugins": ["@typescript-eslint", "import"],
 	"rules": {
 		"sort-imports": [
 			"error",
@@ -42,5 +42,10 @@
 		"import/named": 0,
 		"import/extensions": "off",
 		"no-mixed-spaces-and-tabs": ["warn", "smart-tabs"]
+	},
+	"settings": {
+		"import/parsers": {
+			"@typescript-eslint/parser": [".ts", ".tsx"]
+		}
 	}
 }
