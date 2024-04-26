@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 export default function Page() {
 	type inputMessages = {
-		length: any;
+		length: unknown;
 		inputMessage: string;
 	};
 
