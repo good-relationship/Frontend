@@ -161,7 +161,7 @@ export default function Page() {
 							value={inputMessage.inputMessage}
 						/>
 						<button type="button" onClick={() => sendMessage()}>
-							<Image src="/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
+							<Image src="../../icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
 						</button>
 					</div>
 				</div>

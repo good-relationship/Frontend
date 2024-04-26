@@ -4,7 +4,9 @@ import { ButtonHTMLAttributes, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface SquareButtonProps extends VariantProps<typeof buttonVariants>, ButtonHTMLAttributes<HTMLButtonElement> {
+export interface SquareButtonProps
+	extends VariantProps<typeof buttonVariants>,
+		ButtonHTMLAttributes<HTMLButtonElement> {
 	className?: string;
 	children?: ReactNode;
 }
