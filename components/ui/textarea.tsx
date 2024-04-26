@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-	// eslint-disable-next-line no-unused-vars
+	// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
 	({ className, style, ...props }, ref) => {
 		return (
 			<TextareaAutosize
