@@ -5,8 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
-import ReceiveChat from '@/components/chatting/ReceiveChat';
-import SendChat from '@/components/chatting/SendChat';
+import ChatContainer from '@/components/chatting/ChatContainer';
 
 export default function Page() {
 	type inputMessages = {
@@ -35,13 +34,18 @@ export default function Page() {
 
 	const SENDER_ID = 'jieun';
 
+	// const headers = {
+	// 	'Authorization' : "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNzE0NDcxNDY3fQ.totzNZbsQlEbASuDhoz5Jv6X43E0csS4dBhQXf3ko14"
+	// }
+
 	const initialClient = () => {
 		const newClient = new Client({
 			webSocketFactory: () => new SockJS('/ws-chat'),
 			reconnectDelay: 5000,
 			debug: (str) => console.log(str),
-
-			onConnect: () => {
+			onConnect: (frame) => {
+				console.log('Connected: ' + frame);
+	
 				newClient.subscribe('/topic/message', (message: { body: string }) => {
 					const messageObj = JSON.parse(message.body);
 					addMessageToList(
@@ -53,13 +57,14 @@ export default function Page() {
 						messageObj.messageID,
 					);
 				});
+			// }, headers);
 			},
 			onStompError: (frame) => {
 				console.error(frame);
 			},
 		});
 		return newClient;
-	};
+	}; 
 
 	// 첫 마운트 시에 소켓 연결 초기화
 	useEffect(() => {
@@ -130,20 +135,22 @@ export default function Page() {
 					<div className="h-full overflow-y-auto mb-2 mt-2">
 						{messages.map((message, index) =>
 							message.sender.senderId == SENDER_ID ? (
-								<SendChat
+								<ChatContainer
 									key={index}
 									text={message.content}
 									sender={message.sender.senderId}
 									date={message.date}
 									senderImg={message.sender.senderImage}
+									type='send'
 								/>
 							) : (
-								<ReceiveChat
+								<ChatContainer
 									key={index}
 									text={message.content}
 									sender={message.sender.senderId}
 									date={message.date}
 									senderImg={message.sender.senderImage}
+									type='receive'
 								/>
 							),
 						)}
