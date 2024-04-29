@@ -52,7 +52,6 @@ export default function Page() {
 						messageObj.time.slice(11, 16),
 						messageObj.messageID,
 					);
-					console.log(messageObj);
 				});
 			},
 			onStompError: (frame) => {
@@ -65,11 +64,9 @@ export default function Page() {
 	// 첫 마운트 시에 소켓 연결 초기화
 	useEffect(() => {
 		if (!client.current) {
-			console.log('연결 안됨');
 			client.current = initialClient();
 			client.current.activate();
 		}
-		console.log('연결됨');
 	}, []);
 
 	const addMessageToList = (
@@ -99,7 +96,6 @@ export default function Page() {
 		const messageContent = inputMessage.inputMessage;
 
 		if (messageContent && client.current) {
-			console.log(messageContent);
 			client.current.publish({
 				destination: '/app/message',
 				body: JSON.stringify({
