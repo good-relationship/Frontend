@@ -1,17 +1,16 @@
-/* eslint-disable import/extensions */
 'use client';
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
-import ReceiveChat from '@/components/ui/chatting/ReceiveChat';
-import SendChat from '@/components/ui/chatting/SendChat';
-import { Textarea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/AutoSizeTextarea';
+import ReceiveChat from '@/components/chatting/ReceiveChat';
+import SendChat from '@/components/chatting/SendChat';
 
 export default function Page() {
 	type inputMessages = {
-		length: unknown;
+		length: number;
 		inputMessage: string;
 	};
 
@@ -28,7 +27,7 @@ export default function Page() {
 
 	const [inputMessage, setInputMessage] = useState<inputMessages>({
 		inputMessage: '',
-		length: undefined,
+		length: 0,
 	});
 
 	const client = useRef<Client | null>(null);
@@ -46,6 +45,7 @@ export default function Page() {
 				newClient.subscribe('/topic/message', (message: { body: string }) => {
 					const messageObj = JSON.parse(message.body);
 					addMessageToList(
+						messageObj.sender.senderName,
 						messageObj.content,
 						messageObj.sender.senderId,
 						messageObj.sender.senderImage,
@@ -73,6 +73,7 @@ export default function Page() {
 	}, []);
 
 	const addMessageToList = (
+		senderName: string,
 		content: string,
 		senderId: string,
 		senderImage: string,
@@ -83,7 +84,7 @@ export default function Page() {
 			...prevMessages,
 			{
 				sender: {
-					senderName: senderId,
+					senderName: senderName,
 					senderImage: senderImage,
 					senderId: senderId,
 				},
@@ -104,12 +105,12 @@ export default function Page() {
 				body: JSON.stringify({
 					content: messageContent,
 					senderId: SENDER_ID,
-					roomId: 'Room1',
+					roomId: 'WorkspaceId',
 				}),
 			});
 			setInputMessage({
 				inputMessage: '',
-				length: undefined,
+				length: 0,
 			});
 		}
 	};
@@ -117,22 +118,20 @@ export default function Page() {
 		client.current?.deactivate();
 	};
 
-	// eslint-disable-next-line no-undef
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage({ ...inputMessage, inputMessage: e.target.value });
 	};
 
 	return (
 		<div className="h-[670px]">
-			<div className="border-solid border-2 border-black w-[360px] h-[670px] rounded-lg  pl-[26px] pr-[26px]">
-				<div className="h-12 text-lg grid place-items-center font-Pretendard font-bold mt-2">채팅</div>
-				<div className="h-12 text-sm grid place-items-center font-Pretendard font-bold">
+			<div className="border-solid border-2 border-black w-[360px] h-[670px] rounded-lg  px-[26px]">
+				<div className="h-12 grid place-items-center typo-SubHeader3 mt-2">채팅</div>
+				<div className="h-12 grid place-items-center typo-Caption1">
 					팀원들과 자유롭게 이야기를 나눠봐요.
 				</div>
 
 				<div className="h-[560px] flex flex-col">
 					<div className="h-full overflow-y-auto mb-2 mt-2">
-						{/* <div className="border-2 grow"> */}
 						{messages.map((message, index) =>
 							message.sender.senderId == SENDER_ID ? (
 								<SendChat
@@ -161,13 +160,12 @@ export default function Page() {
 							value={inputMessage.inputMessage}
 						/>
 						<button type="button" onClick={() => sendMessage()}>
-							<Image src="../../icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
+							<Image src="/icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
 						</button>
 					</div>
 				</div>
 			</div>
-			{/* <button id="connect" className='border-2 border-black p-[20px] m-[20px]' onClick={connect}>연결</button> */}
-			<button id="disconnect" className="border-2 border-black p-[20px] m-[20px]" onClick={disconnect}>
+			<button id="disconnect" className="border-2 border-black p-5 m-[20px]" onClick={disconnect}>
 				해제
 			</button>
 		</div>
