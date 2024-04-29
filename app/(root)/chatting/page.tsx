@@ -134,26 +134,16 @@ export default function Page() {
 				<div className="h-[560px] flex flex-col">
 					<div className="h-full overflow-y-auto mb-2 mt-2">
 						{messages.map((message, index) =>
-							message.sender.senderId == SENDER_ID ? (
 								<ChatContainer
 									key={index}
 									text={message.content}
 									sender={message.sender.senderId}
 									date={message.date}
 									senderImg={message.sender.senderImage}
-									type='send'
+									type={message.sender.senderId == SENDER_ID ? 'send' :'receive'}
 								/>
-							) : (
-								<ChatContainer
-									key={index}
-									text={message.content}
-									sender={message.sender.senderId}
-									date={message.date}
-									senderImg={message.sender.senderImage}
-									type='receive'
-								/>
-							),
-						)}
+							)
+						}
 					</div>
 					<div className="flex flex-row gap-[5px] justify-center items-center py-4">
 						<AutoSizeTextarea
@@ -162,6 +152,7 @@ export default function Page() {
 							className="w-full border-black border-[3px]"
 							placeholder='채팅을 입력해주세요.'
 							value={inputMessage.inputMessage}
+							// onKeyDown={}
 						/>
 						<button type="button" onClick={() => sendMessage()}>
 							<Image src="/icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
