@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
-import { Textarea } from '@/components/AutoSizeTextarea';
+import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ReceiveChat from '@/components/chatting/ReceiveChat';
 import SendChat from '@/components/chatting/SendChat';
 
@@ -153,10 +153,11 @@ export default function Page() {
 						)}
 					</div>
 					<div className="flex flex-row gap-[5px] justify-center items-center py-4">
-						<Textarea
+						<AutoSizeTextarea
 							id="messageID"
 							onChange={handleText}
 							className="w-full border-black border-[3px]"
+							placeholder='채팅을 입력해주세요.'
 							value={inputMessage.inputMessage}
 						/>
 						<button type="button" onClick={() => sendMessage()}>
