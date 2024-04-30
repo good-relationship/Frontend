@@ -1,18 +1,13 @@
 'use client';
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
 
 export default function Page() {
-	type inputMessages = {
-		length: number;
-		inputMessage: string;
-	};
-
 	type publishMessage = {
 		sender: {
 			senderName: string;
@@ -24,10 +19,7 @@ export default function Page() {
 		content: string;
 	};
 
-	const [inputMessage, setInputMessage] = useState<inputMessages>({
-		inputMessage: '',
-		length: 0,
-	});
+	const [inputMessage, setInputMessage] = useState('');
 
 	const client = useRef<Client | null>(null);
 	const [messages, setMessages] = useState<publishMessage[]>([]);
@@ -97,8 +89,19 @@ export default function Page() {
 		]);
 	};
 
+	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setInputMessage(e.target.value);
+	};
+
+	const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+		if (e.key === 'Enter' && inputMessage.trim() != '' && !e.shiftKey && e.nativeEvent.isComposing == false) {
+			e.preventDefault();
+			sendMessage();
+        }
+	};
+
 	const sendMessage = () => {
-		const messageContent = inputMessage.inputMessage;
+		const messageContent = inputMessage;
 
 		if (messageContent && client.current) {
 			client.current.publish({
@@ -109,50 +112,47 @@ export default function Page() {
 					roomId: 'WorkspaceId',
 				}),
 			});
-			setInputMessage({
-				inputMessage: '',
-				length: 0,
-			});
+			setInputMessage('');
 		}
 	};
+
+
+
 	const disconnect = () => {
 		client.current?.deactivate();
 	};
 
-	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setInputMessage({ ...inputMessage, inputMessage: e.target.value });
-	};
 
 	return (
 		<div className="h-[670px]">
-			<div className="border-solid border-2 border-black w-[360px] h-[670px] rounded-lg  px-[26px]">
+			<div className="border-solid border-2 border-black w-[360px] h-[670px] rounded-lg px-[26px]">
 				<div className="h-12 grid place-items-center typo-SubHeader3 mt-2">채팅</div>
 				<div className="h-12 grid place-items-center typo-Caption1">
 					팀원들과 자유롭게 이야기를 나눠봐요.
 				</div>
 
 				<div className="h-[560px] flex flex-col">
-					<div className="h-full overflow-y-auto mb-2 mt-2">
-						{messages.map((message, index) =>
-								<ChatContainer
-									key={index}
-									text={message.content}
-									sender={message.sender.senderId}
-									date={message.date}
-									senderImg={message.sender.senderImage}
-									type={message.sender.senderId == SENDER_ID ? 'send' :'receive'}
-								/>
-							)
-						}
-					</div>
+						<div className="h-full overflow-y-auto mb-2 mt-2">
+							{messages.map((message, index) =>
+									<ChatContainer
+										key={index}
+										text={message.content}
+										sender={message.sender.senderId}
+										date={message.date}
+										senderImg={message.sender.senderImage}
+										type={message.sender.senderId == SENDER_ID ? 'send' :'receive'}
+									/>
+								)
+							}
+						</div>
 					<div className="flex flex-row gap-[5px] justify-center items-center py-4">
 						<AutoSizeTextarea
 							id="messageID"
 							onChange={handleText}
 							className="w-full border-black border-[3px]"
 							placeholder='채팅을 입력해주세요.'
-							value={inputMessage.inputMessage}
-							// onKeyDown={}
+							value={inputMessage}
+							onKeyDown={handleKeyDown}
 						/>
 						<button type="button" onClick={() => sendMessage()}>
 							<Image src="/icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
