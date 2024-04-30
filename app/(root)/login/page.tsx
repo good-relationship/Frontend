@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 const Login = () => {
 	const searchParams = useSearchParams();
 	const inviteCode = searchParams.get('inviteCode');
-	console.log(inviteCode);
 
 	const handleKakaoLogin = () => {
 		const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_LOGIN_REDIRECT_URI}&response_type=code&state=${inviteCode}`;
@@ -13,7 +12,7 @@ const Login = () => {
 	};
 
 	const handleNaverLogin = () => {
-		console.log('네이버 로그인');
+		//TODO: 네이버 로그인 구현
 	};
 
 	return (
