@@ -2,7 +2,7 @@ import { env } from 'process';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	reactStrictMode: true,
+	reactStrictMode: false,
 	swcMinify: true,
 	rewrites: async () => {
 		return env.NODE_ENV === 'development'
