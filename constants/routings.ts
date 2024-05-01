@@ -28,3 +28,19 @@ export const sidebarRoutings: SidebarRoutingType[] = [
 		icon: 'setting',
 	},
 ];
+
+export const URLS = Object.freeze({
+	WORKSPACE_MEETING: '/meeting',
+	WORKSPACE_DOCUMENT: '/document',
+	WORKSPACE_SCHEDULE: '/schedule',
+	WORKSPACE_SETTING: '/setting',
+	WORKSPACE_DOCUMENT_FILE: (fileId: string) => `/document-file/${fileId}`,
+	WORKSPACE_MEETING_ROOM: (meetingId: string) => `/meeting-room/${meetingId}`,
+	WORKSPACE_WHITEBOARD_FILE: (fileId: string) => `/whiteboard-file/${fileId}`,
+	ONBOARDING_CREATE: '/onboarding/create',
+	ONBOARDING_EMPTY: '/onboarding/empty',
+	ONBOARDING_INVITED: '/onboarding/invited',
+	ONBOARDING_OVERFLOW: '/onboarding/overflow',
+	LOGIN: '/login',
+	LOGIN_KAKAO: '/login/kakao',
+});
