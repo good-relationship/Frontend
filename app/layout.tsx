@@ -1,6 +1,6 @@
-import React from 'react';
-
 import './globals.css';
+
+import { CookiesProvider } from 'next-client-cookies/server';
 
 import type { Metadata } from 'next';
 
@@ -25,13 +25,15 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center min-h-screen`}>
-				<RecoilRootProvider>
-					<Header variant="user-info" />
-					<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
-						{children}
-					</div>
-					<Toaster />
-				</RecoilRootProvider>
+				<CookiesProvider>
+					<RecoilRootProvider>
+						<Header variant="user-info" />
+						<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
+							{children}
+						</div>
+						<Toaster />
+					</RecoilRootProvider>
+				</CookiesProvider>
 			</body>
 		</html>
 	);
