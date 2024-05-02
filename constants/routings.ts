@@ -30,6 +30,7 @@ export const sidebarRoutings: SidebarRoutingType[] = [
 ];
 
 export const URLS = Object.freeze({
+	WORKSPACE: '/',
 	WORKSPACE_MEETING: '/meeting',
 	WORKSPACE_DOCUMENT: '/document',
 	WORKSPACE_SCHEDULE: '/schedule',
@@ -48,4 +49,12 @@ export const URLS = Object.freeze({
 export const API_URLS = Object.freeze({
 	SEARCH_SCHOOL: (schoolName: string) => `/workspace/school?name=${schoolName}`,
 	CREATE_WORKSPACE: '/workspace/create',
+	GET_WORKSPACE_INFO: '/workspace/info',
 });
+
+export type UrlKeyType = keyof typeof URLS;
+export type UrlType = (typeof URLS)[UrlKeyType];
+export type ApiUrlKeyType = keyof typeof API_URLS;
+export type ApiUrlType = (typeof API_URLS)[ApiUrlKeyType];
+export type RoutingKeyType = UrlKeyType | ApiUrlKeyType;
+export type RoutingType = UrlType | ApiUrlType;
