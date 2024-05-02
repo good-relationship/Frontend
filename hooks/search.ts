@@ -1,5 +1,6 @@
 import { useRecoilState } from 'recoil';
 
+import { searchSchoolName } from '@/apis/search';
 import { useSelectedSchoolName } from '@/hooks/schoolName';
 import { searchSchoolNameState } from '@/stores/atoms/searchSchoolName';
 
@@ -9,7 +10,7 @@ export const useSearchSchoolName = () => {
 
 	const searchSchoolNameAndGetResults = async (value: string) => {
 		removeSelectedSchoolName();
-		const searchResult = await fetch(`/workspace/school?name=${value}`).then((res) => res.json());
+		const searchResult = await searchSchoolName(value);
 
 		setSearchSchoolName({
 			results: searchResult,

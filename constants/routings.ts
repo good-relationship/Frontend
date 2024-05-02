@@ -44,3 +44,7 @@ export const URLS = Object.freeze({
 	LOGIN: '/login',
 	LOGIN_KAKAO: '/login/kakao',
 });
+
+export const API_URLS = Object.freeze({
+	SEARCH_SCHOOL: (schoolName: string) => `/workspace/school?name=${schoolName}`,
+});
