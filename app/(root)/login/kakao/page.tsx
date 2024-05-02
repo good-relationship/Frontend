@@ -22,7 +22,6 @@ const KakaoLogin = () => {
 	};
 
 	useEffect(() => {
-		router.prefetch('/document');
 		loginHandler();
 	}, []);
 
