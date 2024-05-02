@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
-import { getWorkspaceInfo } from '@/apis/workspace';
 import { useAuth } from '@/hooks/auth';
 import { useGetAfterLoginPathByWorkspaceState } from '@/hooks/onboarding';
 
@@ -15,9 +14,12 @@ const KakaoLogin = () => {
 	const { useLogin } = useAuth();
 
 	const loginHandler = async () => {
-		await useLogin({ loginProvider: 'kakao', inviteCode: inviteCode || '', code: code || '' });
-		const workspaceInfo = await getWorkspaceInfo();
-		const redirectUrl = useGetAfterLoginPathByWorkspaceState(workspaceInfo.spaceState);
+		const { spaceState } = await useLogin({
+			loginProvider: 'kakao',
+			inviteCode: inviteCode || '',
+			code: code || '',
+		});
+		const redirectUrl = useGetAfterLoginPathByWorkspaceState(spaceState || 'noSpace');
 		router.push(redirectUrl);
 	};
 
