@@ -47,12 +47,8 @@ export const URLS = Object.freeze({
 	LOGIN_NAVER: '/login/naver',
 });
 
-export const getWorkspaceDocumentFileUrl = (fileId: string) => `${URLS.WORKSPACE_DOCUMENT_FILE}/${fileId}`;
-export const getWorkspaceMeetingRoomUrl = (meetingId: string) => `${URLS.WORKSPACE_MEETING_ROOM}/${meetingId}`;
-export const getWorkspaceWhiteboardFileUrl = (fileId: string) => `${URLS.WORKSPACE_WHITEBOARD_FILE}/${fileId}`;
-
 export const API_URLS = Object.freeze({
-	SEARCH_SCHOOL: (schoolName: string) => `/workspace/school?name=${schoolName}`,
+	SEARCH_SCHOOL: '/workspace/school',
 	CREATE_WORKSPACE: '/workspace/create',
 	GET_WORKSPACE_INFO: '/workspace/info',
 });
