@@ -18,7 +18,7 @@ const WorkspaceOverflow = () => {
 		<div className="flex-col-template">
 			<Nav title={navInfo.title} description={navInfo.description} />
 			<Image src="/images/search_user.png" alt="space" width={210} height={210} />
-			<SquareButton variant="Black" size="Small">
+			<SquareButton variant="Black" size="Medium1">
 				{buttonContent}
 			</SquareButton>
 		</div>
