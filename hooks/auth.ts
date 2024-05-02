@@ -30,5 +30,9 @@ export const useAuth = () => {
 		return cookies.get(REFRESH_TOKEN);
 	};
 
-	return { useLogin, useLogout, useGetAccessToken, useGetRefreshToken };
+	const useIsLoggedIn = () => {
+		return !!useGetAccessToken();
+	};
+
+	return { useLogin, useLogout, useGetAccessToken, useGetRefreshToken, useIsLoggedIn };
 };
