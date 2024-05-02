@@ -25,7 +25,7 @@ const SearchInput = ({ placeholder, searchHandler }: SearchInputProps) => {
 	const isInputEmpty = value === '';
 
 	return (
-		<div className="flex bg-Gray-100 px-5 h-[72px] items-center rounded-xl w-full">
+		<div className="flex bg-Gray-100 px-5 py-4 items-center rounded-xl w-full">
 			<div className="flex gap-5 flex-1">
 				<Image src="/icons/search.svg" width={36} height={36} alt="search icon" />
 				<Input
