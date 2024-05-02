@@ -25,3 +25,24 @@ export const createWorkspace = async ({ workspaceName, schoolName }: WorkspaceIn
 		throw new Error('workspace 생성 오류');
 	}
 };
+
+export const getWorkspaceInfo = async () => {
+	const { GET_WORKSPACE_INFO } = API_URLS;
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(`${process.env.URL}${GET_WORKSPACE_INFO}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: workspace 정보 조회 오류 처리
+		throw new Error('workspace 정보 조회 오류');
+	}
+
+	return response.json();
+};
