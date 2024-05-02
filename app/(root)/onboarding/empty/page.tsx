@@ -18,7 +18,7 @@ const NoWorkspace = () => {
 			<Nav title={navInfo.title} description={navInfo.description} />
 			<Image src="/images/space.png" alt="space" width={210} height={210} />
 			<Link href={ONBOARDING_CREATE}>
-				<SquareButton variant="Black" size="Small">
+				<SquareButton variant="Black" size="Medium1">
 					워크스페이스 생성하기
 				</SquareButton>
 			</Link>
