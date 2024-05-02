@@ -11,5 +11,9 @@ export const useSelectedSchoolName = () => {
 
 	const isSelected = (schoolName: string) => selectedSchoolName === schoolName;
 
-	return { setSchoolName, isSelected };
+	const removeSelectedSchoolName = () => {
+		setSelectedSchoolName('');
+	};
+
+	return { setSchoolName, isSelected, removeSelectedSchoolName };
 };

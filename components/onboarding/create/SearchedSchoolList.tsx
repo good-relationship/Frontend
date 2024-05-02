@@ -1,13 +1,14 @@
 import React from 'react';
+import { useRecoilState } from 'recoil';
 
 import CustomedCheckbox from '@/components/CustomedCheckbox';
 import SearchedSchoolListCount from '@/components/onboarding/create/SearchedSchoolListCount';
 import { useSelectedSchoolName } from '@/hooks/schoolName';
-import { mockSearchSchoolNameData } from '@/mocks/search';
+import { searchSchoolNameState } from '@/stores/atoms/searchSchoolName';
 
 const SearchedSchoolList = () => {
-	const schoolList = mockSearchSchoolNameData;
-	const { schools, count } = schoolList;
+	const [searchSchoolName] = useRecoilState(searchSchoolNameState);
+	const { schools, count } = searchSchoolName.results;
 
 	const { isSelected, setSchoolName } = useSelectedSchoolName();
 
