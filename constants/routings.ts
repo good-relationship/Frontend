@@ -35,16 +35,21 @@ export const URLS = Object.freeze({
 	WORKSPACE_DOCUMENT: '/document',
 	WORKSPACE_SCHEDULE: '/schedule',
 	WORKSPACE_SETTING: '/setting',
-	WORKSPACE_DOCUMENT_FILE: (fileId: string) => `/document-file/${fileId}`,
-	WORKSPACE_MEETING_ROOM: (meetingId: string) => `/meeting-room/${meetingId}`,
-	WORKSPACE_WHITEBOARD_FILE: (fileId: string) => `/whiteboard-file/${fileId}`,
+	WORKSPACE_DOCUMENT_FILE: '/document-file',
+	WORKSPACE_MEETING_ROOM: '/meeting-room',
+	WORKSPACE_WHITEBOARD_FILE: '/whiteboard-file',
 	ONBOARDING_CREATE: '/onboarding/create',
 	ONBOARDING_EMPTY: '/onboarding/empty',
 	ONBOARDING_INVITED: '/onboarding/invited',
 	ONBOARDING_OVERFLOW: '/onboarding/overflow',
 	LOGIN: '/login',
 	LOGIN_KAKAO: '/login/kakao',
+	LOGIN_NAVER: '/login/naver',
 });
+
+export const getWorkspaceDocumentFileUrl = (fileId: string) => `${URLS.WORKSPACE_DOCUMENT_FILE}/${fileId}`;
+export const getWorkspaceMeetingRoomUrl = (meetingId: string) => `${URLS.WORKSPACE_MEETING_ROOM}/${meetingId}`;
+export const getWorkspaceWhiteboardFileUrl = (fileId: string) => `${URLS.WORKSPACE_WHITEBOARD_FILE}/${fileId}`;
 
 export const API_URLS = Object.freeze({
 	SEARCH_SCHOOL: (schoolName: string) => `/workspace/school?name=${schoolName}`,
