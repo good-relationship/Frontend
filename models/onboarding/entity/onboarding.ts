@@ -9,3 +9,5 @@ export type WorkspaceUserInfo = {
 	email: string;
 	profileImage: string;
 };
+
+export type WorkspaceState = 'hasWorkSpace' | 'noSpace' | 'invited' | 'overflow';
