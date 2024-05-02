@@ -47,4 +47,5 @@ export const URLS = Object.freeze({
 
 export const API_URLS = Object.freeze({
 	SEARCH_SCHOOL: (schoolName: string) => `/workspace/school?name=${schoolName}`,
+	CREATE_WORKSPACE: '/workspace/create',
 });

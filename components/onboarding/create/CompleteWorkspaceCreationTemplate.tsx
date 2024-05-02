@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 
 import Nav from '@/components/onboarding/Nav';
 import SquareButton from '@/components/SquareButton';
-import { useCompleteOnboarding } from '@/hooks/onboarding';
+import { useGetOnboardingInfoFromSearchParams } from '@/hooks/onboarding';
 
 const CompleteWorkspaceCreationTemplate = () => {
-	const { getWorkspaceName } = useCompleteOnboarding();
+	const { getWorkspaceName } = useGetOnboardingInfoFromSearchParams();
 	const workspaceName = getWorkspaceName();
 	const route = useRouter();
 
