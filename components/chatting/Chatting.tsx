@@ -60,8 +60,16 @@ export default function Page() {
 						messageObj.time.slice(11, 16),
 						messageObj.messageId,
 					);
-				});
-			// }, headers);
+				}, headers);
+
+				newClient.subscribe(`/user/topic/history`, (history: { body: string }) => {
+					const messageObj = JSON.parse(history.body).body;
+					console.log(messageObj.messages);
+
+					addMessageBeforeToList(messageObj.messages);
+
+					setMessageHistory({end: messageObj.end, lastMsgId : messageObj.lastMsgId});
+				}, headers);
 			},
             connectHeaders : headers,
 			onStompError: (frame) => {
@@ -90,26 +98,50 @@ export default function Page() {
         }
 	};
 
+	const scrollToBottom = () => {
+		const chatContainer = document.getElementById('chatContainer');
+		if (chatContainer) {
+			chatContainer.scrollTop = chatContainer.scrollHeight;
+		}
+	};
+	
 	const sendMessage = () => {
 		const messageContent = inputMessage;
 
 		if (messageContent && client.current) {
 			client.current.publish({
-				destination: '/app/message',
+				destination: `/app/message/${workspaceId}`,
 				body: JSON.stringify({
 					content: messageContent,
-					senderId: SENDER_ID,
-					roomId: 'WorkspaceId',
 				}),
 			});
 			setInputMessage('');
 		}
 	};
 
-	// const disconnect = () => {
-	// 	client.current?.deactivate();
-	// };
+	useEffect(() => {
+        scrollToBottom();
+    }, [sendMessage]);
+	
+	const getHistoryMessage = (msgId : number) => {
+		if (client.current && messageHistory.end == false) {
+			client.current.publish({
+				destination: `/app/history`,
+				body: JSON.stringify({
+						lastMsgId : msgId
+				}),
+			});
+		}		
+	}
 
+	useEffect(() => {
+        return () => {
+            // 컴포넌트가 사라질 때 WebSocket 연결 해제
+            if (client.current) {
+                client.current.deactivate();
+            }
+        };
+    }, []);
 
 	return (
 		<div>
@@ -122,7 +154,7 @@ export default function Page() {
 					</div>
 
 					<div className="h-[58vh] flex flex-col">
-                        <div className="h-full overflow-y-auto mb-2 mt-2">
+                        <div id = 'chatContainer' className="h-full overflow-y-auto mb-2 mt-2">
                             {messages.map((message, index) =>
                                     <ChatContainer
                                         key={index}
@@ -150,9 +182,9 @@ export default function Page() {
 						</div>
 					</div>
 				</div>
-				{/* <button id="disconnect" className="border-2 border-black p-5 m-[20px]" onClick={disconnect}>
-					해제
-				</button> */}
+				<button id="getHistory" className="border-2 border-black p-5 m-[20px]" onClick={()=>getHistoryMessage(messageHistory.lastMsgId)}>
+					과거기록
+				</button>
 			</div>
 			<div className="fixed bottom-0 right-10 p-4">
 			</div>
