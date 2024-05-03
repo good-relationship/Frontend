@@ -13,7 +13,7 @@ const InviteButton = () => {
 			</DialogTrigger>
 			<DialogContent className=" max-w-[700px] items-center flex flex-col gap-[48px]">
 				<InviteUser />
-				<DialogClose>
+				<DialogClose asChild>
 					<CopyLinkButton />
 				</DialogClose>
 			</DialogContent>
