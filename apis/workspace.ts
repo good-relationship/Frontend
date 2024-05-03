@@ -1,49 +1,135 @@
-export const getWorkspaceInfo = async (token: string | undefined) => {
-    const url = '/workspace/info';
-    const accessToken = token
+'use server';
 
-    const workspaceConfig = {
-        method : "GET",
-        headers : {
-            'Content-Type' : 'application/json',
-            'Authorization' : `Bearer ${accessToken}`,
-        }
-    }
+import { cookies } from 'next/headers';
 
-    const response = await fetch(url, workspaceConfig);
+import { API_URLS } from '@/constants/routings';
+import { ACCESS_TOKEN } from '@/constants/storage';
+import { useGetUrl } from '@/hooks/url';
+import { WorkspaceInfo } from '@/models/onboarding/entity/onboarding';
+import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
 
-    if (response.ok) {
-        const data = await response.json();
-        console.log(data)
-        return data;
-    } else {
-        throw new Error('워크스페이스 정보 가져오기 에러');
-    }
-}
+export const createWorkspace = async ({ workspaceName, schoolName }: WorkspaceInfo) => {
+	const { CREATE_WORKSPACE } = API_URLS;
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 
-export const createWorkspace = async (token: string | undefined) => {
-    const url = '/workspace/create';
-    const accessToken = token
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${CREATE_WORKSPACE}`, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+		body: JSON.stringify({ workspaceName, schoolName }),
+	});
 
-    const workspaceConfig = {
-        method : "POST",
-        headers : {
-            'Content-Type' : 'application/json',
-            'Authorization' : `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({
-            "workspaceName": "조은사이",
-            "schoolName": "서울대학교"       
-        })
-    }
+	if (!response.ok) {
+		// TODO: workspace 생성 오류 처리
+		throw new Error('workspace 생성 오류');
+	}
+};
 
-    const response = await fetch(url, workspaceConfig);
+export const getWorkspaceInfo = async () => {
+	const { GET_WORKSPACE_INFO } = API_URLS;
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 
-    if (response.ok) {
-        const data = await response.json();
-        console.log(data)
-        return data;
-    } else {
-        throw new Error('워크스페이스 정보 가져오기 에러');
-    }
-}
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${GET_WORKSPACE_INFO}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: workspace 정보 조회 오류 처리
+		throw new Error('workspace 정보 조회 오류');
+	}
+
+	return response.json();
+};
+
+export const invitedToWorkspace = async (inviteCode: string) => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(
+		`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.INVITED_TO_WORKSPACE}?inviteCode=${inviteCode}`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+		},
+	);
+
+	if (!response.ok) {
+		// TODO: 초대받기 오류 처리
+		throw new Error('초대받기 오류');
+	}
+
+	return response.json();
+};
+
+export const getWorkspaceInviteCode = async () => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.GET_WORKSPACE_INVITE_CODE}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: 초대 코드 조회 오류 처리
+		console.log(response);
+		throw new Error('초대 코드 조회 오류');
+	}
+
+	return response.json();
+};
+
+export const getWorkspaceMembers: () => Promise<GetUserWorkspaceInfoResponseDTO> = async () => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.GET_WORKSPACE_MEMBERS}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: 워크스페이스 멤버 조회 오류 처리
+		throw new Error('워크스페이스 멤버 조회 오류');
+	}
+
+	return response.json();
+};
+
+export const joinWorkspace = async (inviteCode: string) => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const { getJoinWorkspaceUrl } = useGetUrl();
+
+	const response = await fetch(getJoinWorkspaceUrl(inviteCode), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: 워크스페이스 참여 오류 처리
+		throw new Error('워크스페이스 참여 오류');
+	}
+
+	return response.json();
+};

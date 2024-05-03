@@ -12,7 +12,8 @@ const Login = () => {
 	};
 
 	const handleNaverLogin = () => {
-		//TODO: 네이버 로그인 구현
+		const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_NAVER_LOGIN_REDIRECT_URI}&response_type=code&state=${inviteCode}`;
+		window.location.href = naverLoginUrl;
 	};
 
 	return (

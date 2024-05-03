@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { useAuth } from '@/hooks/auth';
 import { useGetAfterLoginPathByWorkspaceState } from '@/hooks/onboarding';
 
-const KakaoLogin = () => {
+const NaverLogin = () => {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 	const inviteCode = searchParams.get('state');
@@ -15,7 +15,7 @@ const KakaoLogin = () => {
 
 	const loginHandler = async () => {
 		const { spaceState } = await useLogin({
-			loginProvider: 'kakao',
+			loginProvider: 'naver',
 			inviteCode: inviteCode || '',
 			code: code || '',
 		});
@@ -34,4 +34,4 @@ const KakaoLogin = () => {
 	);
 };
 
-export default KakaoLogin;
+export default NaverLogin;

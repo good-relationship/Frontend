@@ -32,7 +32,7 @@ export default function Page() {
 
 	// workspaceId 가져오기
 	const getInfoOfWorkspace = async () => {	
-		const data = await getWorkspaceInfo(accessToken);
+		const data = await getWorkspaceInfo();
 		setGetWorkspaceId(data.workspaceId);
 		return data.workspaceId;
 	}

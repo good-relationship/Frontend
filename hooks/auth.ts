@@ -13,6 +13,8 @@ export const useAuth = () => {
 			cookies.set(ACCESS_TOKEN, loginData.accessToken);
 			cookies.set(REFRESH_TOKEN, loginData.refreshToken);
 		}
+
+		return loginData;
 	};
 
 	const useLogout = () => {
@@ -28,5 +30,9 @@ export const useAuth = () => {
 		return cookies.get(REFRESH_TOKEN);
 	};
 
-	return { useLogin, useLogout, useGetAccessToken, useGetRefreshToken };
+	const useIsLoggedIn = () => {
+		return !!useGetAccessToken();
+	};
+
+	return { useLogin, useLogout, useGetAccessToken, useGetRefreshToken, useIsLoggedIn };
 };

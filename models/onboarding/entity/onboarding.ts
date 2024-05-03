@@ -1,16 +1,13 @@
 export type WorkspaceInfo = {
-	spaceState: string;
-	workspaceId : string;
+	schoolName: string;
 	workspaceName: string;
 };
 
 export type WorkspaceUserInfo = {
-	id: number;
-	nickname: string;
-	profileImage: string;
+	userId: number;
+	userName: string;
 	email: string;
+	userImage: string;
 };
 
-export type InviteCode = {
-	inviteCode: string;
-}
+export type WorkspaceState = 'hasWorkSpace' | 'noSpace' | 'invited' | 'overflow';

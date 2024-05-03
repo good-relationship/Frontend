@@ -28,7 +28,7 @@ export default function RootLayout({
 			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center min-h-screen`}>
 				<CookiesProvider>
 					<RecoilRootProvider>
-						<Header variant="user-info" />
+						<Header />
 						<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
 							{children}
 						</div>
