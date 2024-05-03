@@ -4,10 +4,10 @@ export type WorkspaceInfo = {
 };
 
 export type WorkspaceUserInfo = {
-	id: number;
-	nickname: string;
+	userId: number;
+	userName: string;
 	email: string;
-	profileImage: string;
+	userImage: string;
 };
 
 export type WorkspaceState = 'hasWorkSpace' | 'noSpace' | 'invited' | 'overflow';
