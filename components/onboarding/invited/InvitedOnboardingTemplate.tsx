@@ -14,6 +14,7 @@ type InvitedOnboardingTemplateProps = {
 
 const InvitedOnboardingTemplate = ({ userList }: InvitedOnboardingTemplateProps) => {
 	const [isMemberOverflowDialogOpen, setIsMemberOverflowDialogOpen] = useState(false);
+
 	return (
 		<>
 			<MemberOverflowDialog open={isMemberOverflowDialogOpen} onOpenChange={setIsMemberOverflowDialogOpen} />
