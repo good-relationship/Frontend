@@ -17,9 +17,8 @@ export default function Page() {
 	const client = useRef<Client | null>(null);
 	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({end: false, lastMsgId : 0});
 	const [inputMessage, setInputMessage] = useState('');
-	const [workspaceId, setWorkspaceId] = useState('');
-	
-	
+	const [getWorkspaceId, setGetWorkspaceId] = useState('');
+
 	// 유저 id 가져오기
 	const SENDER_ID = '1';
 
@@ -34,14 +33,19 @@ export default function Page() {
 	// workspaceId 가져오기
 	const getInfoOfWorkspace = async () => {	
 		const data = await getWorkspaceInfo(accessToken);
-		setWorkspaceId(data.workspaceId);
+		setGetWorkspaceId(data.workspaceId);
+		return data.workspaceId;
 	}
+		
+	// 첫 마운트 시 workspaceId 가져오기
 	useEffect(() => {
-        getInfoOfWorkspace();
-    }, []);
+		getInfoOfWorkspace().then(workspaceId => {
+			client.current = initialClient(workspaceId);
+			client.current.activate();
+		});
+	}, []);
 
-
-	const initialClient = () => {
+	const initialClient = (workspaceId:string) => {
 		const newClient = new Client({
 			webSocketFactory: () => new SockJS('/ws-chat'),
 			reconnectDelay: 5000,
@@ -49,7 +53,7 @@ export default function Page() {
 			onConnect: (frame) => {
 				console.log('Connected: ' + frame);
 				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
-				
+				console.log(workspaceId)
 				newClient.subscribe(`/topic/message/${workspaceId}`, (message: { body: string }) => {
 					const messageObj = JSON.parse(message.body).body;
 					addMessageToList(
@@ -60,11 +64,11 @@ export default function Page() {
 						messageObj.time.slice(11, 16),
 						messageObj.messageId,
 					);
+
 				}, headers);
 
 				newClient.subscribe(`/user/topic/history`, (history: { body: string }) => {
 					const messageObj = JSON.parse(history.body).body;
-					console.log(messageObj.messages);
 
 					addMessageBeforeToList(messageObj.messages);
 
@@ -78,14 +82,6 @@ export default function Page() {
 		});
 		return newClient;
 	}; 
-
-	// 첫 마운트 시에 소켓 연결 초기화
-	useEffect(() => {
-		if (!client.current) {
-			client.current = initialClient();
-			client.current.activate();
-		}
-	}, []);
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage(e.target.value);
@@ -110,7 +106,7 @@ export default function Page() {
 
 		if (messageContent && client.current) {
 			client.current.publish({
-				destination: `/app/message/${workspaceId}`,
+				destination: `/app/message/${getWorkspaceId}`,
 				body: JSON.stringify({
 					content: messageContent,
 				}),
