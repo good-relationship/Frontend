@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
+import { getWorkspaceInviteCode, joinWorkspace } from '@/apis/workspace';
 import SquareButton from '@/components/SquareButton';
 import { MAX_WORKSPACE_MEMBER_COUNT } from '@/constants/workspaces';
 import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
@@ -15,12 +16,14 @@ const JoinWorkspaceButton = ({ userList, setIsMemberOverflowDialogOpen }: JoinWo
 	const isAcceptInvitePossible = userList.length < MAX_WORKSPACE_MEMBER_COUNT;
 	const route = useRouter();
 
-	const handleClickJoinWorkspace = () => {
+	const handleClickJoinWorkspace = async () => {
 		if (!isAcceptInvitePossible) {
 			setIsMemberOverflowDialogOpen(true);
 			return;
 		}
-		// TODO: 참여 수락 API 연결
+
+		const inviteCode = await getWorkspaceInviteCode();
+		await joinWorkspace(inviteCode);
 		route.push('/document');
 	};
 

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 
 import { API_URLS } from '@/constants/routings';
 import { ACCESS_TOKEN } from '@/constants/storage';
+import { useGetUrl } from '@/hooks/url';
 import { WorkspaceInfo } from '@/models/onboarding/entity/onboarding';
 import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
 
@@ -107,6 +108,27 @@ export const getWorkspaceMembers: () => Promise<GetUserWorkspaceInfoResponseDTO>
 	if (!response.ok) {
 		// TODO: 워크스페이스 멤버 조회 오류 처리
 		throw new Error('워크스페이스 멤버 조회 오류');
+	}
+
+	return response.json();
+};
+
+export const joinWorkspace = async (inviteCode: string) => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const { getJoinWorkspaceUrl } = useGetUrl();
+
+	const response = await fetch(getJoinWorkspaceUrl(inviteCode), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: 워크스페이스 참여 오류 처리
+		throw new Error('워크스페이스 참여 오류');
 	}
 
 	return response.json();

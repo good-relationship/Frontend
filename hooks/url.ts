@@ -8,6 +8,8 @@ export const useGetUrl = () => {
 	const getSearchSchoolUrl = (schoolName: string) => `${API_URLS.SEARCH_SCHOOL}?name=${schoolName}`;
 	const getInvitedUrl = (inviteCode: string) =>
 		`${process.env.NEXT_PUBLIC_URL}${URLS.INVITED}?inviteCode=${inviteCode}`;
+	const getJoinWorkspaceUrl = (inviteCode: string) =>
+		`${process.env.NEXT_PUBLIC_URL}${URLS.INVITED}?inviteCode=${inviteCode}`;
 
 	const workspaceUrls: UrlType[] = [
 		URLS.WORKSPACE,
@@ -33,6 +35,7 @@ export const useGetUrl = () => {
 		getWorkspaceWhiteboardFileUrl,
 		getSearchSchoolUrl,
 		getInvitedUrl,
+		getJoinWorkspaceUrl,
 		isWorkspaceUrl,
 		isOnboardingUrl,
 	};
