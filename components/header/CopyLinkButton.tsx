@@ -1,13 +1,21 @@
 'use client';
 
+import { getWorkspaceInviteCode } from '@/apis/workspace';
 import SquareButton from '@/components/SquareButton';
 import { useToast } from '@/components/ui/use-toast';
+import { useGetUrl } from '@/hooks/url';
 
 const CopyLinkButton = () => {
 	const { toast } = useToast();
-	const copyLink = () => {
-		toast({
-			title: '링크가 복사되었습니다!',
+	const { getInvitedUrl } = useGetUrl();
+
+	const copyLink = async () => {
+		const inviteCode = await getWorkspaceInviteCode();
+		const copyText = getInvitedUrl(inviteCode.inviteCode);
+		navigator.clipboard.writeText(copyText).then(() => {
+			toast({
+				title: '링크가 복사되었습니다!',
+			});
 		});
 	};
 

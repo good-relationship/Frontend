@@ -11,7 +11,7 @@ export const createWorkspace = async ({ workspaceName, schoolName }: WorkspaceIn
 	const cookieStore = cookies();
 	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 
-	const response = await fetch(`${process.env.URL}${CREATE_WORKSPACE}`, {
+	const response = await fetch(`${process.env.NEXT_PUBLIC_URL}${CREATE_WORKSPACE}`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export const getWorkspaceInfo = async () => {
 	const cookieStore = cookies();
 	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 
-	const response = await fetch(`${process.env.URL}${GET_WORKSPACE_INFO}`, {
+	const response = await fetch(`${process.env.NEXT_PUBLIC_URL}${GET_WORKSPACE_INFO}`, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -42,6 +42,50 @@ export const getWorkspaceInfo = async () => {
 	if (!response.ok) {
 		// TODO: workspace 정보 조회 오류 처리
 		throw new Error('workspace 정보 조회 오류');
+	}
+
+	return response.json();
+};
+
+export const invitedToWorkspace = async (inviteCode: string) => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(
+		`${process.env.NEXT_PUBLIC_URL}${API_URLS.INVITED_TO_WORKSPACE}?inviteCode=${inviteCode}`,
+		{
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+			},
+		},
+	);
+
+	if (!response.ok) {
+		// TODO: 초대받기 오류 처리
+		throw new Error('초대받기 오류');
+	}
+
+	return response.json();
+};
+
+export const getWorkspaceInviteCode = async () => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	const response = await fetch(`${process.env.NEXT_PUBLIC_URL}${API_URLS.GET_WORKSPACE_INVITE_CODE}`, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+		},
+	});
+
+	if (!response.ok) {
+		// TODO: 초대 코드 조회 오류 처리
+		console.log(response);
+		throw new Error('초대 코드 조회 오류');
 	}
 
 	return response.json();
