@@ -46,7 +46,7 @@ const InvitedWorkspace = () => {
 					<Link href="/onboarding/create">
 						<span className="typo-Body1 text-Gray-400">새 워크스페이스 생성하기</span>
 					</Link>
-					<SquareButton size="Small" onClick={handleClickJoinWorkspace}>
+					<SquareButton size="Medium1" onClick={handleClickJoinWorkspace}>
 						워크스페이스 참여하기
 					</SquareButton>
 				</div>
