@@ -4,31 +4,21 @@ import Image from 'next/image';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
+import { getWorkspaceInfo } from "@/apis/workspace";
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
+import { addMessage } from '@/hooks/addMessage';
+import { useAuth } from '@/hooks/auth';
+import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
 export default function Page() {
-	type publishMessage = {
-		sender: {
-			senderName: string;
-			senderImage: string;
-			senderId: string;
-		};
-		date: string;
-		messageId: string;
-		content: string;
-	};
-
-	const [inputMessage, setInputMessage] = useState('');
-
+	const {addMessageToList, addMessageBeforeToList, messages} = addMessage();
+	
 	const client = useRef<Client | null>(null);
 	const [messages, setMessages] = useState<publishMessage[]>([]);
 
 	const SENDER_ID = 'jieun';
 
-	// const headers = {
-	// 	'Authorization' : "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOiJVU0VSIiwiZXhwIjoxNzE0NDcxNDY3fQ.totzNZbsQlEbASuDhoz5Jv6X43E0csS4dBhQXf3ko14"
-	// }
 
 	const initialClient = () => {
 		const newClient = new Client({
@@ -65,29 +55,6 @@ export default function Page() {
 			client.current.activate();
 		}
 	}, []);
-
-	const addMessageToList = (
-		senderName: string,
-		content: string,
-		senderId: string,
-		senderImage: string,
-		date: string,
-		messageId: string,
-	) => {
-		setMessages((prevMessages) => [
-			...prevMessages,
-			{
-				sender: {
-					senderName: senderName,
-					senderImage: senderImage,
-					senderId: senderId,
-				},
-				date: date,
-				messageId: messageId,
-				content: content,
-			},
-		]);
-	};
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage(e.target.value);
