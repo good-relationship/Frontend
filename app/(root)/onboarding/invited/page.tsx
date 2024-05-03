@@ -37,7 +37,7 @@ const InvitedWorkspace = () => {
 			<Nav title={title} />
 			<div className="w-full flex flex-col gap-[15px] px-[15px] custom-shadow-large">
 				{userList.map((user) => (
-					<UserListItem key={user.id} user={user} />
+					<UserListItem key={user.userId} user={user} />
 				))}
 			</div>
 			<div className="flex flex-col gap-3 items-center">
