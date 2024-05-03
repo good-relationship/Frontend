@@ -15,9 +15,30 @@ export default function Page() {
 	const {addMessageToList, addMessageBeforeToList, messages} = addMessage();
 	
 	const client = useRef<Client | null>(null);
-	const [messages, setMessages] = useState<publishMessage[]>([]);
+	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({end: false, lastMsgId : 0});
+	const [inputMessage, setInputMessage] = useState('');
+	const [workspaceId, setWorkspaceId] = useState('');
+	
+	
+	// 유저 id 가져오기
+	const SENDER_ID = '1';
 
-	const SENDER_ID = 'jieun';
+	// token 가져오기
+	const { useGetAccessToken } = useAuth();
+	const accessToken = useGetAccessToken();
+
+	const headers = {
+		'Authorization' : `${accessToken}`
+	}
+
+	// workspaceId 가져오기
+	const getInfoOfWorkspace = async () => {	
+		const data = await getWorkspaceInfo(accessToken);
+		setWorkspaceId(data.workspaceId);
+	}
+	useEffect(() => {
+        getInfoOfWorkspace();
+    }, []);
 
 
 	const initialClient = () => {
@@ -27,20 +48,22 @@ export default function Page() {
 			debug: (str) => console.log(str),
 			onConnect: (frame) => {
 				console.log('Connected: ' + frame);
-	
-				newClient.subscribe('/topic/message', (message: { body: string }) => {
-					const messageObj = JSON.parse(message.body);
+				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
+				
+				newClient.subscribe(`/topic/message/${workspaceId}`, (message: { body: string }) => {
+					const messageObj = JSON.parse(message.body).body;
 					addMessageToList(
 						messageObj.sender.senderName,
 						messageObj.content,
 						messageObj.sender.senderId,
 						messageObj.sender.senderImage,
 						messageObj.time.slice(11, 16),
-						messageObj.messageID,
+						messageObj.messageId,
 					);
 				});
 			// }, headers);
 			},
+            connectHeaders : headers,
 			onStompError: (frame) => {
 				console.error(frame);
 			},
