@@ -54,6 +54,7 @@ export const API_URLS = Object.freeze({
 	GET_WORKSPACE_INFO: '/workspace/info',
 	INVITED_TO_WORKSPACE: '/workspace/invited',
 	GET_WORKSPACE_INVITE_CODE: '/workspace/inviteCode',
+	GET_WORKSPACE_MEMBERS: '/workspace/member',
 });
 
 export type UrlKeyType = keyof typeof URLS;

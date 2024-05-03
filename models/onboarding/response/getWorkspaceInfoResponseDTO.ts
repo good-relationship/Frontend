@@ -1,6 +1,6 @@
 import { WorkspaceState } from '@/models/onboarding/entity/onboarding';
 
-export type GetUserWorkspaceInfoResponseDTO = {
+export type GetWorkspaceInfoResponseDTO = {
 	spaceState: WorkspaceState;
 	workspaceId: string;
 	workspaceName: string;
