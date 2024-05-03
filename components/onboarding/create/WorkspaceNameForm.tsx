@@ -2,15 +2,22 @@
 
 import { useRouter } from 'next/navigation';
 
+import { createWorkspace } from '@/apis/workspace';
 import Form from '@/components/form/Form';
 import { workspaceNameSchema } from '@/constants/form';
+import { useGetOnboardingInfoFromSearchParams } from '@/hooks/onboarding';
 import { FormType } from '@/types/form';
 
 const WorkspaceNameForm = () => {
 	const router = useRouter();
+	const { getSchoolName } = useGetOnboardingInfoFromSearchParams();
 
-	const onSubmit = (data: FormType) => {
-		router.push(`${window.location}&workspace=${data.workspaceName}`);
+	const onSubmit = async (data: FormType) => {
+		const workspaceName = data.workspaceName;
+		const schoolName = getSchoolName();
+
+		await createWorkspace({ schoolName, workspaceName });
+		router.push(`${window.location}&workspace=${workspaceName}`);
 	};
 
 	return (

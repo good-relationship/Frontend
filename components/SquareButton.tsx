@@ -14,7 +14,7 @@ export interface SquareButtonProps
 const buttonVariants = cva('rounded-3 h-fit w-fit', {
 	variants: {
 		size: {
-			Small: 'min-w-[100px] h-10 !typo-Body2',
+			Small: 'w-[98px] h-10 !typo-Body2',
 			Medium1: 'h-10 text-center !typo-Body2',
 			Medium2: 'h-[52px] min-w-[268px] !typo-Body2',
 			Large: 'w-[600px] h-[56px] !typo-Body2',

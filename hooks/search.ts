@@ -1,16 +1,19 @@
 import { useRecoilState } from 'recoil';
 
-import { mockSearchSchoolNameData } from '@/mocks/search';
+import { searchSchoolName } from '@/apis/search';
+import { useSelectedSchoolName } from '@/hooks/schoolName';
 import { searchSchoolNameState } from '@/stores/atoms/searchSchoolName';
 
 export const useSearchSchoolName = () => {
 	const [, setSearchSchoolName] = useRecoilState(searchSchoolNameState);
+	const { removeSelectedSchoolName } = useSelectedSchoolName();
 
-	const searchSchoolNameAndGetResults = (value: string) => {
-		// TODO: 검색 API 호출 및 결과 저장 변경
-		console.log(value);
+	const searchSchoolNameAndGetResults = async (value: string) => {
+		removeSelectedSchoolName();
+		const searchResult = await searchSchoolName(value);
+
 		setSearchSchoolName({
-			results: mockSearchSchoolNameData,
+			results: searchResult,
 			isSearched: true,
 		});
 	};

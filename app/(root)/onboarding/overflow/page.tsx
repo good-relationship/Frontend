@@ -1,13 +1,9 @@
 import Image from 'next/image';
 
 import Nav from '@/components/onboarding/Nav';
-import SquareButton from '@/components/SquareButton';
+import NavigationButton from '@/components/onboarding/overflow/NavigationButton';
 
 const WorkspaceOverflow = () => {
-	// TODO: 기존 워크스페이스 이름 받아오기
-	const workspaceName = '조은 사이 워크스페이스';
-	const buttonContent = `${workspaceName}(으)로 이동하기`;
-
 	const navInfo = {
 		title: '참여중인 워크스페이스가 있습니다.',
 		description:
@@ -18,9 +14,7 @@ const WorkspaceOverflow = () => {
 		<div className="flex-col-template">
 			<Nav title={navInfo.title} description={navInfo.description} />
 			<Image src="/images/search_user.png" alt="space" width={210} height={210} />
-			<SquareButton variant="Black" size="Small">
-				{buttonContent}
-			</SquareButton>
+			<NavigationButton />
 		</div>
 	);
 };

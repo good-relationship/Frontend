@@ -5,10 +5,10 @@ import { useRouter } from 'next/navigation';
 
 import Nav from '@/components/onboarding/Nav';
 import SquareButton from '@/components/SquareButton';
-import { useCompleteOnboarding } from '@/hooks/onboarding';
+import { useGetOnboardingInfoFromSearchParams } from '@/hooks/onboarding';
 
 const CompleteWorkspaceCreationTemplate = () => {
-	const { getWorkspaceName } = useCompleteOnboarding();
+	const { getWorkspaceName } = useGetOnboardingInfoFromSearchParams();
 	const workspaceName = getWorkspaceName();
 	const route = useRouter();
 
@@ -26,8 +26,8 @@ const CompleteWorkspaceCreationTemplate = () => {
 	return (
 		<main className="flex-col-template">
 			<Nav title={navInfo.title} description={navInfo.description} />
-			<Image src="/images/search_user.png" alt="space" width={210} height={210} />
-			<SquareButton variant="Black" size="Small" onClick={handleClickNavigate}>
+			<Image src="/images/space.png" alt="space" width={210} height={210} />
+			<SquareButton variant="Black" size="Medium1" onClick={handleClickNavigate}>
 				{buttonContent}
 			</SquareButton>
 		</main>
