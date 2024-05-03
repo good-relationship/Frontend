@@ -45,12 +45,15 @@ export const URLS = Object.freeze({
 	LOGIN: '/login',
 	LOGIN_KAKAO: '/login/kakao',
 	LOGIN_NAVER: '/login/naver',
+	INVITED: '/invite',
 });
 
 export const API_URLS = Object.freeze({
 	SEARCH_SCHOOL: '/workspace/school',
 	CREATE_WORKSPACE: '/workspace/create',
 	GET_WORKSPACE_INFO: '/workspace/info',
+	INVITED_TO_WORKSPACE: '/workspace/invited',
+	GET_WORKSPACE_INVITE_CODE: '/workspace/inviteCode',
 });
 
 export type UrlKeyType = keyof typeof URLS;

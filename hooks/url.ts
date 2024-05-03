@@ -6,6 +6,8 @@ export const useGetUrl = () => {
 	const getWorkspaceWhiteboardFileUrl = (fileId: string) => `${URLS.WORKSPACE_WHITEBOARD_FILE}/${fileId}`;
 
 	const getSearchSchoolUrl = (schoolName: string) => `${API_URLS.SEARCH_SCHOOL}?name=${schoolName}`;
+	const getInvitedUrl = (inviteCode: string) =>
+		`${process.env.NEXT_PUBLIC_URL}${URLS.INVITED}?inviteCode=${inviteCode}`;
 
 	const workspaceUrls: UrlType[] = [
 		URLS.WORKSPACE,
@@ -30,6 +32,7 @@ export const useGetUrl = () => {
 		getWorkspaceMeetingRoomUrl,
 		getWorkspaceWhiteboardFileUrl,
 		getSearchSchoolUrl,
+		getInvitedUrl,
 		isWorkspaceUrl,
 		isOnboardingUrl,
 	};
