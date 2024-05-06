@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import SockJS from 'sockjs-client';
 
-import { getWorkspaceInfo } from "@/apis/workspace";
+import { getWorkspaceInfo, getWorkspaceMembers } from "@/apis/workspace";
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
 import { addMessage } from '@/hooks/addMessage';
@@ -17,15 +17,19 @@ export default function Page() {
 	const client = useRef<Client | null>(null);
 	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({end: false, lastMsgId : 0});
 	const [inputMessage, setInputMessage] = useState('');
+	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
 
 	// 유저 id 가져오기
-	const SENDER_ID = '1';
+	const getUserId = async () => {
+		const data = await getWorkspaceMembers();
+		setUserId(data[0].userId);
+	}
+
 
 	// token 가져오기
 	const { useGetAccessToken } = useAuth();
 	const accessToken = useGetAccessToken();
-
 	const headers = {
 		'Authorization' : `${accessToken}`
 	}
@@ -39,10 +43,17 @@ export default function Page() {
 		
 	// 첫 마운트 시 workspaceId 가져오기
 	useEffect(() => {
+		getUserId();
 		getInfoOfWorkspace().then(workspaceId => {
 			client.current = initialClient(workspaceId);
 			client.current.activate();
 		});
+
+		return () => {
+            if (client.current) {
+                client.current.deactivate();
+            }
+        };
 	}, []);
 
 	const initialClient = (workspaceId:string) => {
@@ -53,7 +64,6 @@ export default function Page() {
 			onConnect: (frame) => {
 				console.log('Connected: ' + frame);
 				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
-				console.log(workspaceId)
 				newClient.subscribe(`/topic/message/${workspaceId}`, (message: { body: string }) => {
 					const messageObj = JSON.parse(message.body).body;
 					addMessageToList(
@@ -69,6 +79,7 @@ export default function Page() {
 
 				newClient.subscribe(`/user/topic/history`, (history: { body: string }) => {
 					const messageObj = JSON.parse(history.body).body;
+					console.log(messageObj);
 
 					addMessageBeforeToList(messageObj.messages);
 
@@ -130,15 +141,6 @@ export default function Page() {
 		}		
 	}
 
-	useEffect(() => {
-        return () => {
-            // 컴포넌트가 사라질 때 WebSocket 연결 해제
-            if (client.current) {
-                client.current.deactivate();
-            }
-        };
-    }, []);
-
 	return (
 		<div>
 			<div className="h-full">
@@ -155,10 +157,10 @@ export default function Page() {
                                     <ChatContainer
                                         key={index}
                                         text={message.content}
-                                        sender={message.sender.senderId}
+                                        sender={message.sender.senderName}
                                         date={message.date}
                                         senderImg={message.sender.senderImage}
-                                        type={message.sender.senderId == SENDER_ID ? 'send' :'receive'}
+                                        type={message.sender.senderId == userId ? 'send' :'receive'}
                                     />
                                 )
                             }

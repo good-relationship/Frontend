@@ -1,7 +1,7 @@
 export type SenderInfo = {
     senderName: string;
     senderImage: string;
-    senderId: string;    
+    senderId: number;    
 }
 
 export type DateTime = string;

@@ -8,7 +8,7 @@ export const addMessage = () => {
     const addMessageToList = (
         senderName: string,
         content: string,
-        senderId: string,
+        senderId: number,
         senderImage: string,
         date: string,
         messageId: string,
