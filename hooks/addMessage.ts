@@ -28,14 +28,15 @@ export const addMessage = () => {
         ]);
     };
 
-    const addMessageBeforeToList = (
-        newMessage : GetMessageContentDTO[]
-    ) => {
-        setMessages((prevMessages) => [
-            ...newMessage,
-            ...prevMessages,
-        ]);
+    const addMessageBeforeToList = (newMessage: GetMessageContentDTO[] | null) => {
+        if (newMessage !== null) {
+            setMessages((prevMessages) => [
+                ...newMessage,
+                ...prevMessages,
+            ]);
+        }
     };
+    
 
     return {addMessageToList, addMessageBeforeToList, setMessages, messages}
 }
