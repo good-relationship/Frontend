@@ -20,7 +20,6 @@ export async function GET(request: NextRequest) {
 	const response = await fetch(url, loginConfig);
 
 	if (!response.ok) {
-		console.log(await response.text());
 		// TODO: 로그인 에러처리
 		throw new Error('로그인 에러');
 	}
@@ -33,6 +32,7 @@ export async function GET(request: NextRequest) {
 		cookieStore.set(REFRESH_TOKEN, refreshToken);
 	}
 	const redirectUrl = useGetAfterLoginPathByWorkspaceState(hasWorkSpace || 'noSpace');
+
 	return new Response(null, {
 		status: 302,
 		headers: {
