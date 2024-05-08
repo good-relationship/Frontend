@@ -10,7 +10,7 @@ export const addMessage = () => {
         content: string,
         senderId: number,
         senderImage: string,
-        date: string,
+        time: string,
         messageId: string,
     ) => {
         setMessages((prevMessages) => [
@@ -21,7 +21,7 @@ export const addMessage = () => {
                     senderImage: senderImage,
                     senderId: senderId,
                 },
-                date: date,
+                time: time,
                 messageId: messageId,
                 content: content,
             },
