@@ -18,10 +18,10 @@ export const useGetOnboardingInfoFromSearchParams = () => {
 };
 
 const afterLoginPathMatchingByWorkspaceState = {
-	hasWorkSpace: URLS.WORKSPACE,
-	noSpace: URLS.ONBOARDING_EMPTY,
-	invited: URLS.ONBOARDING_INVITED,
-	overflow: URLS.ONBOARDING_OVERFLOW,
+	HAS_WORKSPACE: URLS.WORKSPACE,
+	NO_SPACE: URLS.ONBOARDING_EMPTY,
+	INVITED: URLS.ONBOARDING_INVITED,
+	OVERFLOW: URLS.ONBOARDING_OVERFLOW,
 };
 
 export const useGetAfterLoginPathByWorkspaceState = (workspaceState: WorkspaceState) => {
