@@ -1,8 +1,8 @@
 'use client';
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
-import { KeyboardEvent, useEffect, useRef, useState } from 'react';
-import SockJS from 'sockjs-client';
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import {useInView} from 'react-intersection-observer';
 
 import { getWorkspaceInfo, getWorkspaceMembers } from "@/apis/workspace";
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
@@ -11,21 +11,25 @@ import { addMessage } from '@/hooks/addMessage';
 import { useAuth } from '@/hooks/auth';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
+
 export default function Page() {
 	const {addMessageToList, addMessageBeforeToList, messages} = addMessage();
 	
 	const client = useRef<Client | null>(null);
-	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({end: false, lastMsgId : 0});
+	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({start:true, end: false, lastMsgId : 0});
 	const [inputMessage, setInputMessage] = useState('');
 	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
+	const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0);
+
+	const [ref, inView] = useInView();
+	const scrollBarRef = useRef<HTMLDivElement>(null);
 
 	// 유저 id 가져오기
 	const getUserId = async () => {
 		const data = await getWorkspaceMembers();
 		setUserId(data[0].userId);
 	}
-
 
 	// token 가져오기
 	const { useGetAccessToken } = useAuth();
@@ -47,7 +51,7 @@ export default function Page() {
 		getInfoOfWorkspace().then(workspaceId => {
 			client.current = initialClient(workspaceId);
 			client.current.activate();
-		});
+		})
 
 		return () => {
             if (client.current) {
@@ -56,43 +60,52 @@ export default function Page() {
         };
 	}, []);
 
-	const initialClient = (workspaceId:string) => {
+	const subscribeToMessageTopic = (newClient: Client, workspaceId: string) => {
+		newClient.subscribe(`/topic/message/${workspaceId}`, (message) => {
+			const messageObj = JSON.parse(message.body).body;
+			addMessageToList(
+				messageObj.sender.senderName,
+				messageObj.content,
+				messageObj.sender.senderId,
+				messageObj.sender.senderImage,
+				messageObj.time,
+				messageObj.messageId,
+			);
+		}, headers);
+	};
+	
+	const subscribeToHistoryTopic = (newClient: Client) => {
+		newClient.subscribe(`/user/topic/history`, (history) => {
+			console.log('subscribe to history topic');
+			const messageObj = JSON.parse(history.body).body;
+			console.log(messageObj);
+			addMessageBeforeToList(messageObj.messages);
+			setMessageHistory({
+				start: messageObj.start,
+				end: messageObj.end,
+				lastMsgId: messageObj.lastMsgId
+			});
+		}, headers);
+	};
+	
+	const initialClient = (workspaceId : string) => {
 		const newClient = new Client({
-			webSocketFactory: () => new SockJS('/ws-chat'),
+			brokerURL: 'ws://localhost:8080/ws-chat',
 			reconnectDelay: 5000,
 			debug: (str) => console.log(str),
 			onConnect: (frame) => {
 				console.log('Connected: ' + frame);
 				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
-				newClient.subscribe(`/topic/message/${workspaceId}`, (message: { body: string }) => {
-					const messageObj = JSON.parse(message.body).body;
-					addMessageToList(
-						messageObj.sender.senderName,
-						messageObj.content,
-						messageObj.sender.senderId,
-						messageObj.sender.senderImage,
-						messageObj.time.slice(11, 16),
-						messageObj.messageId,
-					);
-
-				}, headers);
-
-				newClient.subscribe(`/user/topic/history`, (history: { body: string }) => {
-					const messageObj = JSON.parse(history.body).body;
-					console.log(messageObj);
-
-					addMessageBeforeToList(messageObj.messages);
-
-					setMessageHistory({end: messageObj.end, lastMsgId : messageObj.lastMsgId});
-				}, headers);
+				subscribeToMessageTopic(newClient, workspaceId);
+				subscribeToHistoryTopic(newClient);
 			},
-            connectHeaders : headers,
+			connectHeaders: headers,
 			onStompError: (frame) => {
 				console.error(frame);
 			},
 		});
 		return newClient;
-	}; 
+	};
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage(e.target.value);
@@ -111,10 +124,16 @@ export default function Page() {
 			chatContainer.scrollTop = chatContainer.scrollHeight;
 		}
 	};
-	
+
+	const scrollFixPosition = () => {
+		if (scrollBarRef.current) {
+			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight - prevScrollHeight;
+			console.log(scrollBarRef.current.scrollTop);
+		}
+	};
+
 	const sendMessage = () => {
 		const messageContent = inputMessage;
-
 		if (messageContent && client.current) {
 			client.current.publish({
 				destination: `/app/message/${getWorkspaceId}`,
@@ -126,9 +145,11 @@ export default function Page() {
 		}
 	};
 
-	useEffect(() => {
-        scrollToBottom();
-    }, [sendMessage]);
+	const savePrevScrollHeight = useCallback(() => {
+		if (scrollBarRef.current) {
+			setPrevScrollHeight(scrollBarRef.current?.scrollHeight);
+		}
+		}, [messageHistory.lastMsgId]);
 	
 	const getHistoryMessage = (msgId : number) => {
 		if (client.current && messageHistory.end == false) {
@@ -138,27 +159,64 @@ export default function Page() {
 						lastMsgId : msgId
 				}),
 			});
-		}		
+			savePrevScrollHeight();
+		}
 	}
+
+	useEffect(()=>{
+		if (!messageHistory.end && inView) {
+			getHistoryMessage(messageHistory.lastMsgId);
+			scrollFixPosition();
+		}
+
+		console.log(inView);
+		console.log(prevScrollHeight);
+		console.log(scrollBarRef.current?.scrollTop);
+		console.log(scrollBarRef.current?.scrollHeight);
+		console.log(scrollBarRef.current?.clientHeight);
+
+	},[inView])
+
+	// useEffect(() => {
+	// 	if (!messageHistory.end && inView) {
+	// 		getHistoryMessage(messageHistory.lastMsgId);
+	// 		// if (scrollPosition == 0) {
+	// 		// 	console.log('here')
+	// 		// 	scrollToBottom();
+	// 		// } else {
+	// 		// 	scrollFixPosition();
+	// 		// }
+	// 		scrollFixPosition();
+	// 		console.log(scrollBarRef.current?.scrollTop)
+	// 		console.log(scrollBarRef.current?.scrollHeight);
+	// 		console.log(scrollBarRef.current?.clientHeight);
+	// 	}
+	// 	// return () => {
+	// 	// 	if (!messageHistory.end && inView) {
+	// 	// 		handleFetchMessageMore();
+	// 	// 	}
+	// 	// }
+	// }, [inView])
+
 
 	return (
 		<div>
 			<div className="h-full">
 				<div className="h-full rounded-lg px-[26px]">
-				{/* <div className="border-solid border-2 border-black w-[360px] h-full rounded-lg px-[26px]"> */}
 					<div className="grid place-items-center typo-SubHeader3 pt-4">채팅</div>
 					<div className="h-10 grid place-items-center typo-Caption1">
 						팀원들과 자유롭게 이야기를 나눠봐요.
 					</div>
 
 					<div className="h-[58vh] flex flex-col">
-                        <div id = 'chatContainer' className="h-full overflow-y-auto mb-2 mt-2">
+                        <div id = 'chatContainer' ref={scrollBarRef} className="h-full overflow-y-auto mb-2 mt-2">
+							<div ref={ref} />
                             {messages.map((message, index) =>
                                     <ChatContainer
                                         key={index}
                                         text={message.content}
                                         sender={message.sender.senderName}
-                                        date={message.date}
+                                        date={message.time.slice(11, 16)}
                                         senderImg={message.sender.senderImage}
                                         type={message.sender.senderId == userId ? 'send' :'receive'}
                                     />
@@ -180,9 +238,7 @@ export default function Page() {
 						</div>
 					</div>
 				</div>
-				<button id="getHistory" className="border-2 border-black p-5 m-[20px]" onClick={()=>getHistoryMessage(messageHistory.lastMsgId)}>
-					과거기록
-				</button>
+				{/* <button onClick={() => getHistoryMessage(messageHistory.lastMsgId)}>과거기록</button> */}
 			</div>
 			<div className="fixed bottom-0 right-10 p-4">
 			</div>
