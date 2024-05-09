@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import { getWorkspaceInviteCode, joinWorkspace } from '@/apis/workspace';
+import { joinWorkspace } from '@/apis/workspace';
 import SquareButton from '@/components/SquareButton';
 import { MAX_WORKSPACE_MEMBER_COUNT } from '@/constants/workspaces';
 import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
@@ -22,8 +22,7 @@ const JoinWorkspaceButton = ({ userList, setIsMemberOverflowDialogOpen }: JoinWo
 			return;
 		}
 
-		const inviteCode = await getWorkspaceInviteCode();
-		await joinWorkspace(inviteCode);
+		await joinWorkspace();
 		route.push('/');
 	};
 

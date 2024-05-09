@@ -112,12 +112,12 @@ export const getWorkspaceMembers: () => Promise<GetUserWorkspaceInfoResponseDTO>
 	return response.json();
 };
 
-export const joinWorkspace = async (inviteCode: string) => {
+export const joinWorkspace = async () => {
 	const cookieStore = cookies();
 	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 	const { getJoinWorkspaceUrl } = useGetUrl();
 
-	const response = await fetch(getJoinWorkspaceUrl(inviteCode), {
+	const response = await fetch(getJoinWorkspaceUrl(), {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
