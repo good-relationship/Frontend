@@ -13,7 +13,11 @@ const NaverLoginButton = ({ inviteCode }: NaverLoginButtonProps) => {
 	};
 
 	return (
-		<RoundedButton className="bg-Naver" onClick={handleNaverLogin} size="Large">
+		<RoundedButton
+			className="bg-Naver active:bg-Naver hover:bg-Naver active:brightness-90 hover:brightness-90"
+			onClick={handleNaverLogin}
+			size="Large"
+		>
 			<Image src="/icons/naver.svg" width={28} height={28} alt="naver icon" />
 			<h6 className="typo-SubHeader3 text-White">네이버로 시작하기</h6>
 		</RoundedButton>

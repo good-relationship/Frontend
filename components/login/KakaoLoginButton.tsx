@@ -15,7 +15,11 @@ const KakaoLoginButton = ({ inviteCode }: KakaoLoginButtonProps) => {
 	};
 
 	return (
-		<RoundedButton className="bg-Kakao" onClick={handleKakaoLogin} size="Large">
+		<RoundedButton
+			className="bg-Kakao active:bg-Kakao hover:bg-Kakao active:brightness-90 hover:brightness-90"
+			onClick={handleKakaoLogin}
+			size="Large"
+		>
 			<Image src="/icons/kakao.svg" width={28} height={28} alt="kakao icon" />
 			<h6 className="typo-SubHeader3 text-black">카카오로 시작하기</h6>
 		</RoundedButton>
