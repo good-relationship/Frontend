@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
 	const cookieStore = cookies();
 
-	const { spaceState, accessToken, refreshToken } = (await response.json()) || 'NO_SPACE';
+	const { spaceState, accessToken, refreshToken } = await response.json();
 	if (accessToken) {
 		cookieStore.set(ACCESS_TOKEN, accessToken);
 		cookieStore.set(REFRESH_TOKEN, refreshToken);
