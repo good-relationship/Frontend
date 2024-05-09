@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 	const inviteCode = searchParams.get('state');
 	const code = searchParams.get('code');
 
-	const url = `${process.env.NEXT_PUBLIC_URL}/login/oauth2/naver?code=${code}&invitedCode=${inviteCode}`;
+	const url = `${process.env.NEXT_PUBLIC_URL}/login/oauth2/naver?code=${code}&inviteCode=${inviteCode}`;
 	const loginConfig = {
 		method: 'POST',
 		headers: {
@@ -26,12 +26,12 @@ export async function GET(request: NextRequest) {
 
 	const cookieStore = cookies();
 
-	const { hasWorkSpace, accessToken, refreshToken } = (await response.json()) || 'NO_SPACE';
+	const { spaceState, accessToken, refreshToken } = (await response.json()) || 'NO_SPACE';
 	if (accessToken) {
 		cookieStore.set(ACCESS_TOKEN, accessToken);
 		cookieStore.set(REFRESH_TOKEN, refreshToken);
 	}
-	const redirectUrl = useGetAfterLoginPathByWorkspaceState(hasWorkSpace || 'NO_SPACE');
+	const redirectUrl = useGetAfterLoginPathByWorkspaceState(spaceState || 'NO_SPACE');
 
 	return new Response(null, {
 		status: 302,

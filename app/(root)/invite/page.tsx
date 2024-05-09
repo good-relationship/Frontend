@@ -15,7 +15,8 @@ const InvitePage = () => {
 
 	const inviteUserAndNavigate = async () => {
 		const { spaceState } = await invitedToWorkspace(inviteCode);
-		const redirectUrl = useGetAfterLoginPathByWorkspaceState(spaceState || 'noSpace');
+		const redirectUrl = useGetAfterLoginPathByWorkspaceState(spaceState || 'NO_SPACE');
+
 		router.push(redirectUrl);
 	};
 
