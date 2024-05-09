@@ -14,6 +14,8 @@ export const colors = {
 	'Gray-400': '#787878',
 	'Gray-500': '#1E1E1E',
 	Red: '#FF4A4A',
+	Kakao: '#FBE300',
+	Naver: '#03C75A',
 };
 
 export type Color = keyof typeof colors;
