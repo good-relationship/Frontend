@@ -24,7 +24,7 @@ const JoinWorkspaceButton = ({ userList, setIsMemberOverflowDialogOpen }: JoinWo
 
 		const inviteCode = await getWorkspaceInviteCode();
 		await joinWorkspace(inviteCode);
-		route.push('/document');
+		route.push('/');
 	};
 
 	return (
