@@ -86,7 +86,6 @@ export const getWorkspaceInviteCode = async () => {
 
 	if (!response.ok) {
 		// TODO: 초대 코드 조회 오류 처리
-		console.log(response);
 		throw new Error('초대 코드 조회 오류');
 	}
 
