@@ -1,17 +1,14 @@
 'use server';
 
-import { cookies } from 'next/headers';
-
 import { API_URLS } from '@/constants/routings';
-import { ACCESS_TOKEN } from '@/constants/storage';
+import { useGetAccessToken } from '@/hooks/auth';
 import { useGetUrl } from '@/hooks/url';
 import { WorkspaceInfo } from '@/models/onboarding/entity/onboarding';
 import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
 
 export const createWorkspace = async ({ workspaceName, schoolName }: WorkspaceInfo) => {
 	const { CREATE_WORKSPACE } = API_URLS;
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 
 	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${CREATE_WORKSPACE}`, {
 		method: 'POST',
@@ -30,8 +27,7 @@ export const createWorkspace = async ({ workspaceName, schoolName }: WorkspaceIn
 
 export const getWorkspaceInfo = async () => {
 	const { GET_WORKSPACE_INFO } = API_URLS;
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 
 	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${GET_WORKSPACE_INFO}`, {
 		method: 'GET',
@@ -50,8 +46,7 @@ export const getWorkspaceInfo = async () => {
 };
 
 export const invitedToWorkspace = async (inviteCode: string) => {
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 
 	const response = await fetch(
 		`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.INVITED_TO_WORKSPACE}?inviteCode=${inviteCode}`,
@@ -73,8 +68,7 @@ export const invitedToWorkspace = async (inviteCode: string) => {
 };
 
 export const getWorkspaceInviteCode = async () => {
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 
 	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.GET_WORKSPACE_INVITE_CODE}`, {
 		method: 'GET',
@@ -93,8 +87,7 @@ export const getWorkspaceInviteCode = async () => {
 };
 
 export const getWorkspaceMembers: () => Promise<GetUserWorkspaceInfoResponseDTO> = async () => {
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 
 	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.GET_WORKSPACE_MEMBERS}`, {
 		method: 'GET',
@@ -113,8 +106,7 @@ export const getWorkspaceMembers: () => Promise<GetUserWorkspaceInfoResponseDTO>
 };
 
 export const joinWorkspace = async () => {
-	const cookieStore = cookies();
-	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	const accessToken = await useGetAccessToken();
 	const { getJoinWorkspaceUrl } = useGetUrl();
 
 	const response = await fetch(getJoinWorkspaceUrl(), {
