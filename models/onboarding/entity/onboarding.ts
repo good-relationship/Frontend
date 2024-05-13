@@ -10,4 +10,4 @@ export type WorkspaceUserInfo = {
 	userImage: string;
 };
 
-export type WorkspaceState = 'hasWorkSpace' | 'noSpace' | 'invited' | 'overflow';
+export type WorkspaceState = 'HAS_WORKSPACE' | 'NO_SPACE' | 'INVITED' | 'OVERFLOW';

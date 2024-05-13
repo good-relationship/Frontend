@@ -6,6 +6,7 @@ import { useGetUrl } from '@/hooks/url';
 
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
+
 	const { isOnboardingUrl, isWorkspaceUrl } = useGetUrl();
 	const isProtectedUrl = isWorkspaceUrl(pathname as UrlType) || isOnboardingUrl(pathname as UrlType);
 
