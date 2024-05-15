@@ -4,16 +4,18 @@ import Image from 'next/image';
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {useInView} from 'react-intersection-observer';
 
+import { getHistoryMessageApi, sendMessageApi} from '@/apis/chatting';
 import { getWorkspaceInfo, getWorkspaceMembers } from "@/apis/workspace";
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
-import { addMessage } from '@/hooks/addMessage';
-import { useAuth } from '@/hooks/auth';
+import { useAddMessage } from '@/hooks/addMessage';
+import { useGetAccessToken } from '@/hooks/auth';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
+// import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
 
 export default function Page() {
-	const {addMessageToList, addMessageBeforeToList, messages} = addMessage();
+	const {messages, useAddMessageBeforeToList, useAddMessageToList} = useAddMessage();
 	
 	const client = useRef<Client | null>(null);
 	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({start:true, end: false, lastMsgId : 0});
@@ -21,6 +23,7 @@ export default function Page() {
 	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
 	const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0);
+	const [isGetHistory, setIsGetHistory] = useState<boolean>(false);
 
 	const [ref, inView] = useInView();
 	const scrollBarRef = useRef<HTMLDivElement>(null);
@@ -32,10 +35,9 @@ export default function Page() {
 	}
 
 	// token 가져오기
-	const { useGetAccessToken } = useAuth();
-	const accessToken = useGetAccessToken();
-	const headers = {
-		'Authorization' : `${accessToken}`
+	const getToken = async () => {
+		const accessToken = await useGetAccessToken();
+		return accessToken;
 	}
 
 	// workspaceId 가져오기
@@ -47,23 +49,30 @@ export default function Page() {
 		
 	// 첫 마운트 시 workspaceId 가져오기
 	useEffect(() => {
-		getUserId();
-		getInfoOfWorkspace().then(workspaceId => {
-			client.current = initialClient(workspaceId);
+		const initializeClient = async () => {
+			const accessToken = await getToken();
+			const headers = {
+				'Authorization' : `${accessToken}`
+			}
+			const workspaceId = await getInfoOfWorkspace();
+			client.current = initialClient(workspaceId, headers);
 			client.current.activate();
-		})
+		};
+
+		getUserId();
+		initializeClient();
 
 		return () => {
-            if (client.current) {
-                client.current.deactivate();
-            }
-        };
+			if (client.current) {
+				client.current.deactivate();
+			}
+		};
 	}, []);
 
-	const subscribeToMessageTopic = (newClient: Client, workspaceId: string) => {
+	const subscribeToMessageTopic = (newClient: Client, headers: { Authorization: string; }, workspaceId: string) => {
 		newClient.subscribe(`/topic/message/${workspaceId}`, (message) => {
 			const messageObj = JSON.parse(message.body).body;
-			addMessageToList(
+			useAddMessageToList(
 				messageObj.sender.senderName,
 				messageObj.content,
 				messageObj.sender.senderId,
@@ -74,21 +83,22 @@ export default function Page() {
 		}, headers);
 	};
 	
-	const subscribeToHistoryTopic = (newClient: Client) => {
-		newClient.subscribe(`/user/topic/history`, (history) => {
+	const subscribeToHistoryTopic = (newClient: Client, headers: { Authorization: string; }) => {
+		newClient.subscribe(`/user/queue/history`, (history) => {
 			console.log('subscribe to history topic');
 			const messageObj = JSON.parse(history.body).body;
 			console.log(messageObj);
-			addMessageBeforeToList(messageObj.messages);
+			useAddMessageBeforeToList(messageObj.messages);
 			setMessageHistory({
 				start: messageObj.start,
 				end: messageObj.end,
 				lastMsgId: messageObj.lastMsgId
 			});
+			setIsGetHistory(false);
 		}, headers);
 	};
 	
-	const initialClient = (workspaceId : string) => {
+	const initialClient = (workspaceId : string, headers: { Authorization: string; }) => {
 		const newClient = new Client({
 			brokerURL: 'ws://localhost:8080/ws-chat',
 			reconnectDelay: 5000,
@@ -96,11 +106,12 @@ export default function Page() {
 			onConnect: (frame) => {
 				console.log('Connected: ' + frame);
 				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
-				subscribeToMessageTopic(newClient, workspaceId);
-				subscribeToHistoryTopic(newClient);
-			},
+				subscribeToMessageTopic(newClient, headers, workspaceId)
+				subscribeToHistoryTopic(newClient, headers);
+		},
 			connectHeaders: headers,
 			onStompError: (frame) => {
+				console.log(headers)
 				console.error(frame);
 			},
 		});
@@ -118,85 +129,51 @@ export default function Page() {
         }
 	};
 
-	const scrollToBottom = () => {
-		const chatContainer = document.getElementById('chatContainer');
-		if (chatContainer) {
-			chatContainer.scrollTop = chatContainer.scrollHeight;
-		}
-	};
-
-	const scrollFixPosition = () => {
+	const scrollPosition = (prevScrollHeight : number) => {
 		if (scrollBarRef.current) {
-			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight - prevScrollHeight;
-			console.log(scrollBarRef.current.scrollTop);
+			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight-prevScrollHeight;
+			console.log(`스크롤위치변경 : ${scrollBarRef.current.scrollTop}`)
 		}
 	};
 
 	const sendMessage = () => {
 		const messageContent = inputMessage;
 		if (messageContent && client.current) {
-			client.current.publish({
-				destination: `/app/message/${getWorkspaceId}`,
-				body: JSON.stringify({
-					content: messageContent,
-				}),
-			});
+			sendMessageApi(client, messageContent, getWorkspaceId);
 			setInputMessage('');
 		}
 	};
 
+	useEffect(() => {
+		!messageHistory.end && scrollPosition(prevScrollHeight);
+		// scrollPosition(prevScrollHeight);
+	}, [sendMessage])
+
 	const savePrevScrollHeight = useCallback(() => {
 		if (scrollBarRef.current) {
+			console.log(`이전 스크롤 height : ${scrollBarRef.current?.scrollHeight}`)
 			setPrevScrollHeight(scrollBarRef.current?.scrollHeight);
 		}
 		}, [messageHistory.lastMsgId]);
 	
 	const getHistoryMessage = (msgId : number) => {
-		if (client.current && messageHistory.end == false) {
-			client.current.publish({
-				destination: `/app/history`,
-				body: JSON.stringify({
-						lastMsgId : msgId
-				}),
-			});
+		if (client.current && !messageHistory.end) {
+			getHistoryMessageApi(client, msgId);
 			savePrevScrollHeight();
+			setIsGetHistory(true);
 		}
 	}
 
 	useEffect(()=>{
 		if (!messageHistory.end && inView) {
 			getHistoryMessage(messageHistory.lastMsgId);
-			scrollFixPosition();
 		}
-
-		console.log(inView);
-		console.log(prevScrollHeight);
-		console.log(scrollBarRef.current?.scrollTop);
-		console.log(scrollBarRef.current?.scrollHeight);
-		console.log(scrollBarRef.current?.clientHeight);
-
+		// console.log(inView);
+		// console.log(prevScrollHeight);
+		// console.log(scrollBarRef.current?.scrollTop);
+		// console.log(scrollBarRef.current?.scrollHeight);
+		// console.log(scrollBarRef.current?.clientHeight);
 	},[inView])
-
-	// useEffect(() => {
-	// 	if (!messageHistory.end && inView) {
-	// 		getHistoryMessage(messageHistory.lastMsgId);
-	// 		// if (scrollPosition == 0) {
-	// 		// 	console.log('here')
-	// 		// 	scrollToBottom();
-	// 		// } else {
-	// 		// 	scrollFixPosition();
-	// 		// }
-	// 		scrollFixPosition();
-	// 		console.log(scrollBarRef.current?.scrollTop)
-	// 		console.log(scrollBarRef.current?.scrollHeight);
-	// 		console.log(scrollBarRef.current?.clientHeight);
-	// 	}
-	// 	// return () => {
-	// 	// 	if (!messageHistory.end && inView) {
-	// 	// 		handleFetchMessageMore();
-	// 	// 	}
-	// 	// }
-	// }, [inView])
 
 
 	return (
@@ -208,7 +185,7 @@ export default function Page() {
 						팀원들과 자유롭게 이야기를 나눠봐요.
 					</div>
 
-					<div className="h-[58vh] flex flex-col">
+					<div className="h-[58vh] max-h-[700px] flex flex-col">
                         <div id = 'chatContainer' ref={scrollBarRef} className="h-full overflow-y-auto mb-2 mt-2">
 							<div ref={ref} />
                             {messages.map((message, index) =>
@@ -239,8 +216,6 @@ export default function Page() {
 					</div>
 				</div>
 				{/* <button onClick={() => getHistoryMessage(messageHistory.lastMsgId)}>과거기록</button> */}
-			</div>
-			<div className="fixed bottom-0 right-10 p-4">
 			</div>
 		</div>
 	);
