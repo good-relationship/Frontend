@@ -1,11 +1,14 @@
 import { useState } from "react";
 
 import { GetMessageContentDTO } from "@/models/chatting/response/getMessageContentDTO";
+import { GetMessageHistoryDTO } from "@/models/chatting/response/getMessageHistoryDTO";
 
-export const addMessage = () => {
+export const useAddMessage = () => {
     const [messages, setMessages] = useState<GetMessageContentDTO[]>([]);
+	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({start:true, end: false, lastMsgId : 0});
 
-    const addMessageToList = (
+
+    const useAddMessageToList = (
         senderName: string,
         content: string,
         senderId: number,
@@ -26,17 +29,24 @@ export const addMessage = () => {
                 content: content,
             },
         ]);
+        return messages;
     };
 
-    const addMessageBeforeToList = (newMessage: GetMessageContentDTO[] | null) => {
+    const useAddMessageBeforeToList = (newMessage: GetMessageContentDTO[] | null) => {
         if (newMessage !== null) {
             setMessages((prevMessages) => [
                 ...newMessage,
                 ...prevMessages,
             ]);
         }
+        return messages;
     };
+
+    const useMessageHistoryState = (historyState : GetMessageHistoryDTO) => {
+        setMessageHistory(historyState)
+        return messageHistory;
+    }
     
 
-    return {addMessageToList, addMessageBeforeToList, setMessages, messages}
+    return {useAddMessageToList, useAddMessageBeforeToList, useMessageHistoryState, messages, messageHistory}
 }
