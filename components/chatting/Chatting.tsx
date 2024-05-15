@@ -17,17 +17,17 @@ import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHisto
 
 export default function Page() {
 	const {messages, useAddMessageBeforeToList, useAddMessageToList} = useAddMessage();
-	
+
 	const client = useRef<Client | null>(null);
+	const scrollBarRef = useRef<HTMLDivElement>(null);
+
+	const [ref, inView] = useInView();
+
 	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({start:true, end: false, lastMsgId : 0});
 	const [inputMessage, setInputMessage] = useState('');
 	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
 	const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0);
-	const [isGetHistory, setIsGetHistory] = useState<boolean>(false);
-
-	const [ref, inView] = useInView();
-	const scrollBarRef = useRef<HTMLDivElement>(null);
 
 	// 유저 id 가져오기
 	const getUserId = async () => {
@@ -86,15 +86,12 @@ export default function Page() {
 	
 			subscribeToHistoryTopic(newClient, headers, (messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
 				console.log('subscribe to history topic');
-				console.log(message);
-				console.log(messageInfo);
 				useAddMessageBeforeToList(message);
 				setMessageHistory({
 					start: messageInfo.start,
 					end: messageInfo.end,
 					lastMsgId: messageInfo.lastMsgId
 				});
-				setIsGetHistory(false);
 			});
 		});
 		return newClient;
@@ -115,47 +112,43 @@ export default function Page() {
 	const scrollPosition = (prevScrollHeight : number) => {
 		if (scrollBarRef.current) {
 			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight-prevScrollHeight;
-			console.log(`스크롤위치변경 : ${scrollBarRef.current.scrollTop}`)
 		}
 	};
 
 	const sendMessage = () => {
 		const messageContent = inputMessage;
-		if (messageContent && client.current) {
+		if (messageContent && client.current && scrollBarRef.current) {
 			sendMessageApi(client, messageContent, getWorkspaceId);
 			setInputMessage('');
 		}
 	};
 
-	useEffect(() => {
-		!messageHistory.end && scrollPosition(prevScrollHeight);
-		// scrollPosition(prevScrollHeight);
-	}, [sendMessage])
+	useEffect(()=>{
+		scrollBarRef.current && scrollBarRef.current.scrollTo(0, scrollBarRef.current.scrollHeight)
+	},[messages])
 
 	const savePrevScrollHeight = useCallback(() => {
 		if (scrollBarRef.current) {
-			console.log(`이전 스크롤 height : ${scrollBarRef.current?.scrollHeight}`)
 			setPrevScrollHeight(scrollBarRef.current?.scrollHeight);
 		}
+		!messageHistory.end && scrollPosition(prevScrollHeight);
 		}, [messageHistory.lastMsgId]);
 	
 	const getHistoryMessage = (msgId : number) => {
 		if (client.current && !messageHistory.end) {
 			getHistoryMessageApi(client, msgId);
 			savePrevScrollHeight();
-			setIsGetHistory(true);
 		}
 	}
+
+	useEffect(() => {
+		scrollPosition(prevScrollHeight);
+	}, [messageHistory.lastMsgId])
 
 	useEffect(()=>{
 		if (!messageHistory.end && inView) {
 			getHistoryMessage(messageHistory.lastMsgId);
 		}
-		// console.log(inView);
-		// console.log(prevScrollHeight);
-		// console.log(scrollBarRef.current?.scrollTop);
-		// console.log(scrollBarRef.current?.scrollHeight);
-		// console.log(scrollBarRef.current?.clientHeight);
 	},[inView])
 
 
@@ -187,7 +180,7 @@ export default function Page() {
 							<AutoSizeTextarea
 								id="messageID"
 								onChange={handleText}
-								className="w-full border-black border-[2px]"
+								className="w-full border-black border-[2px] break-words"
 								placeholder='채팅을 입력해주세요.'
 								value={inputMessage}
 								onKeyDown={handleKeyDown}
@@ -198,7 +191,6 @@ export default function Page() {
 						</div>
 					</div>
 				</div>
-				{/* <button onClick={() => getHistoryMessage(messageHistory.lastMsgId)}>과거기록</button> */}
 			</div>
 		</div>
 	);
