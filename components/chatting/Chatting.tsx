@@ -4,14 +4,15 @@ import Image from 'next/image';
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import {useInView} from 'react-intersection-observer';
 
-import { getHistoryMessageApi, sendMessageApi} from '@/apis/chatting';
+import { getHistoryMessageApi, sendMessageApi, subscribeToHistoryTopic, subscribeToMessageTopic} from '@/apis/chatting';
 import { getWorkspaceInfo, getWorkspaceMembers } from "@/apis/workspace";
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
 import { useAddMessage } from '@/hooks/addMessage';
 import { useGetAccessToken } from '@/hooks/auth';
+import { useCreateWebSocketClient } from '@/hooks/webSocket';
+import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
-// import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
 
 export default function Page() {
@@ -55,7 +56,7 @@ export default function Page() {
 				'Authorization' : `${accessToken}`
 			}
 			const workspaceId = await getInfoOfWorkspace();
-			client.current = initialClient(workspaceId, headers);
+			client.current = initialClient(headers, workspaceId);
 			client.current.activate();
 		};
 
@@ -69,54 +70,36 @@ export default function Page() {
 		};
 	}, []);
 
-	const subscribeToMessageTopic = (newClient: Client, headers: { Authorization: string; }, workspaceId: string) => {
-		newClient.subscribe(`/topic/message/${workspaceId}`, (message) => {
-			const messageObj = JSON.parse(message.body).body;
-			useAddMessageToList(
-				messageObj.sender.senderName,
-				messageObj.content,
-				messageObj.sender.senderId,
-				messageObj.sender.senderImage,
-				messageObj.time,
-				messageObj.messageId,
-			);
-		}, headers);
-	};
-	
-	const subscribeToHistoryTopic = (newClient: Client, headers: { Authorization: string; }) => {
-		newClient.subscribe(`/user/queue/history`, (history) => {
-			console.log('subscribe to history topic');
-			const messageObj = JSON.parse(history.body).body;
-			console.log(messageObj);
-			useAddMessageBeforeToList(messageObj.messages);
-			setMessageHistory({
-				start: messageObj.start,
-				end: messageObj.end,
-				lastMsgId: messageObj.lastMsgId
+	const initialClient = (headers: { Authorization: string; }, workspaceId: string) => {
+		const newClient = useCreateWebSocketClient(headers, () => {
+			getHistoryMessage(0);
+			subscribeToMessageTopic(newClient, headers, workspaceId, (messageObj:GetMessageContentDTO) => {
+				useAddMessageToList(
+					messageObj.sender.senderName,
+					messageObj.content,
+					messageObj.sender.senderId,
+					messageObj.sender.senderImage,
+					messageObj.time,
+					messageObj.messageId
+				);
 			});
-			setIsGetHistory(false);
-		}, headers);
-	};
 	
-	const initialClient = (workspaceId : string, headers: { Authorization: string; }) => {
-		const newClient = new Client({
-			brokerURL: 'ws://localhost:8080/ws-chat',
-			reconnectDelay: 5000,
-			debug: (str) => console.log(str),
-			onConnect: (frame) => {
-				console.log('Connected: ' + frame);
-				getHistoryMessage(0); // 소켓 연결 초기화 이후에 과거 기록 10개 요청
-				subscribeToMessageTopic(newClient, headers, workspaceId)
-				subscribeToHistoryTopic(newClient, headers);
-		},
-			connectHeaders: headers,
-			onStompError: (frame) => {
-				console.log(headers)
-				console.error(frame);
-			},
+			subscribeToHistoryTopic(newClient, headers, (messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
+				console.log('subscribe to history topic');
+				console.log(message);
+				console.log(messageInfo);
+				useAddMessageBeforeToList(message);
+				setMessageHistory({
+					start: messageInfo.start,
+					end: messageInfo.end,
+					lastMsgId: messageInfo.lastMsgId
+				});
+				setIsGetHistory(false);
+			});
 		});
 		return newClient;
 	};
+
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage(e.target.value);
