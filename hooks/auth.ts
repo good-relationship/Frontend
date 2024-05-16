@@ -24,6 +24,7 @@ export const useLogout = () => {
 };
 
 const isTokenExpired = (token: string) => {
+	console.log('token', token);
 	const [, payloadEncoded] = token.split('.');
 	const payload = JSON.parse(Buffer.from(payloadEncoded, 'base64').toString());
 
@@ -39,12 +40,17 @@ const isTokenExpired = (token: string) => {
 
 export const useGetAccessToken = async () => {
 	const cookieStore = cookies();
-	let accessToken = cookieStore.get(ACCESS_TOKEN)?.value || '';
+	let accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+
+	if (!accessToken) {
+		// TODO: accessToken없다는 오류 처리
+		return '';
+	}
 
 	if (isTokenExpired(accessToken)) {
 		const refreshToken = await useGetRefreshToken();
 		accessToken = await refreshAccessToken(refreshToken);
-		cookieStore.set(ACCESS_TOKEN, accessToken);
+		cookieStore.set(ACCESS_TOKEN, accessToken || '');
 	}
 
 	return accessToken;
