@@ -24,7 +24,6 @@ export const useLogout = () => {
 };
 
 const isTokenExpired = (token: string) => {
-	console.log('token', token);
 	const [, payloadEncoded] = token.split('.');
 	const payload = JSON.parse(Buffer.from(payloadEncoded, 'base64').toString());
 
@@ -61,6 +60,6 @@ export const useGetRefreshToken = () => {
 	return cookieStore.get(REFRESH_TOKEN)?.value || '';
 };
 
-export const useIsLoggedIn = () => {
-	return !!useGetAccessToken();
+export const useIsLoggedIn = async () => {
+	return (await useGetAccessToken()) !== '';
 };
