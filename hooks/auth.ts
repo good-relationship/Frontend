@@ -61,5 +61,7 @@ export const useGetRefreshToken = () => {
 };
 
 export const useIsLoggedIn = async () => {
-	return (await useGetAccessToken()) !== '';
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	return !!accessToken;
 };
