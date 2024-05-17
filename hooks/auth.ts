@@ -46,10 +46,11 @@ export const useGetAccessToken = async () => {
 		return '';
 	}
 
+	// TODO: accessToken이 만료되었을 때 refreshAccessToken 호출 -> 아래 코드 사용 시 오류 발생
 	if (isTokenExpired(accessToken)) {
 		const refreshToken = await useGetRefreshToken();
 		accessToken = await refreshAccessToken(refreshToken);
-		cookieStore.set(ACCESS_TOKEN, accessToken || '');
+		// 	cookieStore.set(ACCESS_TOKEN, accessToken || '');
 	}
 
 	return accessToken;
