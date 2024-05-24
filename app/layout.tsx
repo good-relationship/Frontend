@@ -4,6 +4,7 @@ import { CookiesProvider } from 'next-client-cookies/server';
 
 import type { Metadata } from 'next';
 
+import FloatingInfo from '@/components/chatting/FloatingInfo';
 import Header from '@/components/header/Header';
 import { Toaster } from '@/components/ui/toaster';
 import RecoilRootProvider from '@/lib/recoil/RecoilRootProvider';
@@ -30,6 +31,10 @@ export default function RootLayout({
 						<Header />
 						<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
 							{children}
+						</div>
+						// 토큰이 있으면 FloatingButton 보여주기
+						<div className="fixed bottom-0 right-10 p-4">
+							<FloatingInfo />
 						</div>
 						<Toaster />
 					</RecoilRootProvider>
