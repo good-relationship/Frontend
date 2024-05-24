@@ -31,6 +31,7 @@ const MeetingPage = () => {
 					heartbeatIncoming: 4000,
 					heartbeatOutgoing: 4000,
 					onStompError: (frame) => {
+						// TODO: stomp 오류 처리
 						console.error('Broker reported error: ' + frame.headers['message']);
 						console.error('Additional details: ' + frame.body);
 					},
@@ -56,7 +57,6 @@ const MeetingPage = () => {
 		client.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
 			const body = JSON.parse(message.body);
 			setRoomList(body.meetingRoomList);
-			console.log(body.meetingRoomList);
 		});
 	};
 
@@ -88,8 +88,8 @@ const MeetingPage = () => {
 			destination: `/app/room/join/${roomId}`,
 		});
 
-		stompClient.subscribe(`/user/queue/join`, (message) => {
-			console.log(message.body);
+		stompClient.subscribe(`/user/queue/join`, () => {
+			//TODO: meeting 페이지로 연결
 		});
 	};
 
