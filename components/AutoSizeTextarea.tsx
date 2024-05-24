@@ -3,7 +3,7 @@ import TextareaAutosize, { TextareaAutosizeProps } from 'react-textarea-autosize
 
 import { cn } from '@/lib/utils';
 
-export interface TextareaProps extends TextareaAutosizeProps{}
+export interface TextareaProps extends TextareaAutosizeProps {}
 
 const AutoSizeTextarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 	({ className, placeholder, ...props }, ref) => {

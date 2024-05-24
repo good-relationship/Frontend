@@ -2,10 +2,15 @@
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
-import {useInView} from 'react-intersection-observer';
+import { useInView } from 'react-intersection-observer';
 
-import { getHistoryMessageApi, sendMessageApi, subscribeToHistoryTopic, subscribeToMessageTopic} from '@/apis/chatting';
-import { getWorkspaceInfo, getWorkspaceMembers } from "@/apis/workspace";
+import {
+	getHistoryMessageApi,
+	sendMessageApi,
+	subscribeToHistoryTopic,
+	subscribeToMessageTopic,
+} from '@/apis/chatting';
+import { getWorkspaceInfo, getWorkspaceMembers } from '@/apis/workspace';
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
 import { useAddMessage } from '@/hooks/addMessage';
@@ -14,16 +19,19 @@ import { useCreateWebSocketClient } from '@/hooks/webSocket';
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
-
 export default function Page() {
-	const {messages, useAddMessageBeforeToList, useAddMessageToList} = useAddMessage();
+	const { messages, useAddMessageBeforeToList, useAddMessageToList } = useAddMessage();
 
 	const client = useRef<Client | null>(null);
 	const scrollBarRef = useRef<HTMLDivElement>(null);
 
 	const [ref, inView] = useInView();
 
-	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({start:true, end: false, lastMsgId : 0});
+	const [messageHistory, setMessageHistory] = useState<GetMessageHistoryDTO>({
+		start: true,
+		end: false,
+		lastMsgId: 0,
+	});
 	const [inputMessage, setInputMessage] = useState('');
 	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
@@ -33,28 +41,28 @@ export default function Page() {
 	const getUserId = async () => {
 		const data = await getWorkspaceMembers();
 		setUserId(data[0].userId);
-	}
+	};
 
 	// token 가져오기
 	const getToken = async () => {
 		const accessToken = await useGetAccessToken();
 		return accessToken;
-	}
+	};
 
 	// workspaceId 가져오기
-	const getInfoOfWorkspace = async () => {	
+	const getInfoOfWorkspace = async () => {
 		const data = await getWorkspaceInfo();
 		setGetWorkspaceId(data.workspaceId);
 		return data.workspaceId;
-	}
-		
+	};
+
 	// 첫 마운트 시 workspaceId 가져오기
 	useEffect(() => {
 		const initializeClient = async () => {
 			const accessToken = await getToken();
 			const headers = {
-				'Authorization' : `${accessToken}`
-			}
+				Authorization: `${accessToken}`,
+			};
 			const workspaceId = await getInfoOfWorkspace();
 			client.current = initialClient(headers, workspaceId);
 			client.current.activate();
@@ -70,33 +78,36 @@ export default function Page() {
 		};
 	}, []);
 
-	const initialClient = (headers: { Authorization: string; }, workspaceId: string) => {
+	const initialClient = (headers: { Authorization: string }, workspaceId: string) => {
 		const newClient = useCreateWebSocketClient(headers, () => {
 			getHistoryMessage(0);
-			subscribeToMessageTopic(newClient, headers, workspaceId, (messageObj:GetMessageContentDTO) => {
+			subscribeToMessageTopic(newClient, headers, workspaceId, (messageObj: GetMessageContentDTO) => {
 				useAddMessageToList(
 					messageObj.sender.senderName,
 					messageObj.content,
 					messageObj.sender.senderId,
 					messageObj.sender.senderImage,
 					messageObj.time,
-					messageObj.messageId
+					messageObj.messageId,
 				);
 			});
-	
-			subscribeToHistoryTopic(newClient, headers, (messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
-				console.log('subscribe to history topic');
-				useAddMessageBeforeToList(message);
-				setMessageHistory({
-					start: messageInfo.start,
-					end: messageInfo.end,
-					lastMsgId: messageInfo.lastMsgId
-				});
-			});
+
+			subscribeToHistoryTopic(
+				newClient,
+				headers,
+				(messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
+					console.log('subscribe to history topic');
+					useAddMessageBeforeToList(message);
+					setMessageHistory({
+						start: messageInfo.start,
+						end: messageInfo.end,
+						lastMsgId: messageInfo.lastMsgId,
+					});
+				},
+			);
 		});
 		return newClient;
 	};
-
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setInputMessage(e.target.value);
@@ -106,12 +117,12 @@ export default function Page() {
 		if (e.key === 'Enter' && inputMessage.trim() != '' && !e.shiftKey && e.nativeEvent.isComposing == false) {
 			e.preventDefault();
 			sendMessage();
-        }
+		}
 	};
 
-	const scrollPosition = (prevScrollHeight : number) => {
+	const scrollPosition = (prevScrollHeight: number) => {
 		if (scrollBarRef.current) {
-			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight-prevScrollHeight;
+			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight - prevScrollHeight;
 		}
 	};
 
@@ -123,34 +134,33 @@ export default function Page() {
 		}
 	};
 
-	useEffect(()=>{
-		scrollBarRef.current && scrollBarRef.current.scrollTo(0, scrollBarRef.current.scrollHeight)
-	},[messages])
+	useEffect(() => {
+		scrollBarRef.current && scrollBarRef.current.scrollTo(0, scrollBarRef.current.scrollHeight);
+	}, [messages]);
 
 	const savePrevScrollHeight = useCallback(() => {
 		if (scrollBarRef.current) {
 			setPrevScrollHeight(scrollBarRef.current?.scrollHeight);
 		}
 		!messageHistory.end && scrollPosition(prevScrollHeight);
-		}, [messageHistory.lastMsgId]);
-	
-	const getHistoryMessage = (msgId : number) => {
+	}, [messageHistory.lastMsgId]);
+
+	const getHistoryMessage = (msgId: number) => {
 		if (client.current && !messageHistory.end) {
 			getHistoryMessageApi(client, msgId);
 			savePrevScrollHeight();
 		}
-	}
+	};
 
 	useEffect(() => {
 		scrollPosition(prevScrollHeight);
-	}, [messageHistory.lastMsgId])
+	}, [messageHistory.lastMsgId]);
 
-	useEffect(()=>{
+	useEffect(() => {
 		if (!messageHistory.end && inView) {
 			getHistoryMessage(messageHistory.lastMsgId);
 		}
-	},[inView])
-
+	}, [inView]);
 
 	return (
 		<div>
@@ -162,26 +172,25 @@ export default function Page() {
 					</div>
 
 					<div className="h-[58vh] max-h-[700px] flex flex-col">
-                        <div id = 'chatContainer' ref={scrollBarRef} className="h-full overflow-y-auto mb-2 mt-2">
+						<div id="chatContainer" ref={scrollBarRef} className="h-full overflow-y-auto mb-2 mt-2">
 							<div ref={ref} />
-                            {messages.map((message, index) =>
-                                    <ChatContainer
-                                        key={index}
-                                        text={message.content}
-                                        sender={message.sender.senderName}
-                                        date={message.time.slice(11, 16)}
-                                        senderImg={message.sender.senderImage}
-                                        type={message.sender.senderId == userId ? 'send' :'receive'}
-                                    />
-                                )
-                            }
-                        </div>
+							{messages.map((message, index) => (
+								<ChatContainer
+									key={index}
+									text={message.content}
+									sender={message.sender.senderName}
+									date={message.time.slice(11, 16)}
+									senderImg={message.sender.senderImage}
+									type={message.sender.senderId == userId ? 'send' : 'receive'}
+								/>
+							))}
+						</div>
 						<div className="flex flex-row gap-[5px] justify-center items-center py-4">
 							<AutoSizeTextarea
 								id="messageID"
 								onChange={handleText}
 								className="w-full border-black border-[2px] break-words"
-								placeholder='채팅을 입력해주세요.'
+								placeholder="채팅을 입력해주세요."
 								value={inputMessage}
 								onKeyDown={handleKeyDown}
 							/>
