@@ -4,14 +4,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 
 import { invitedToWorkspace } from '@/apis/workspace';
-import { useAuth } from '@/hooks/auth';
+import { useIsLoggedIn } from '@/hooks/auth';
 import { useGetAfterLoginPathByWorkspaceState } from '@/hooks/onboarding';
 
 const InvitePage = () => {
 	const searchParams = useSearchParams();
 	const inviteCode = searchParams.get('inviteCode') || '';
 	const router = useRouter();
-	const { useIsLoggedIn } = useAuth();
 
 	const inviteUserAndNavigate = async () => {
 		const { spaceState } = await invitedToWorkspace(inviteCode);
