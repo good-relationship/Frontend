@@ -12,10 +12,16 @@ const MeetingPage = () => {
 	const [stompClient, setStompClient] = useState<Stomp.Client | null>(null);
 	const [roomList, setRoomList] = useState<RoomList>();
 	useEffect(() => {
-		const subscribeMeetingList = async () => {
+		const initialize = async () => {
 			try {
 				const access = await useGetAccessToken();
 				const { workspaceId } = await getWorkspaceInfo();
+
+				const handleConnect = (client: Client) => {
+					subscribeMeetingList.bind(null, client, workspaceId)();
+					publishMeetingList.bind(null, client)();
+				};
+
 				const client = new Client({
 					brokerURL: 'ws://localhost:8080/ws-chat',
 					connectHeaders: {
@@ -28,16 +34,7 @@ const MeetingPage = () => {
 						console.error('Broker reported error: ' + frame.headers['message']);
 						console.error('Additional details: ' + frame.body);
 					},
-					onConnect: () => {
-						client.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
-							const body = JSON.parse(message.body);
-							setRoomList(body.meetingRoomList);
-							console.log(body.meetingRoomList);
-						});
-						client.publish({
-							destination: '/app/room/list',
-						});
-					},
+					onConnect: () => handleConnect(client),
 				});
 				setStompClient(client);
 				client.activate();
@@ -46,7 +43,7 @@ const MeetingPage = () => {
 			}
 		};
 
-		subscribeMeetingList();
+		initialize();
 
 		return () => {
 			if (stompClient && stompClient.connected) {
@@ -54,6 +51,20 @@ const MeetingPage = () => {
 			}
 		};
 	}, []);
+
+	const subscribeMeetingList = (client: Client, workspaceId: string) => {
+		client.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
+			const body = JSON.parse(message.body);
+			setRoomList(body.meetingRoomList);
+			console.log(body.meetingRoomList);
+		});
+	};
+
+	const publishMeetingList = (client: Client) => {
+		client.publish({
+			destination: '/app/room/list',
+		});
+	};
 
 	const createMeeting = () => {
 		if (!stompClient || !stompClient.connected) {
