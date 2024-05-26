@@ -24,11 +24,17 @@ const InvitePage = () => {
 	};
 
 	useEffect(() => {
-		if (useIsLoggedIn()) {
-			inviteUserAndNavigate();
-		} else {
-			navigateToLoginWithInviteCode();
-		}
+		const inviteUser = async () => {
+			if (await useIsLoggedIn()) {
+				inviteUserAndNavigate();
+			} else {
+				navigateToLoginWithInviteCode();
+			}
+		};
+
+		inviteUser();
+
+		return () => {};
 	}, []);
 
 	return <div>로딩중입니다</div>;
