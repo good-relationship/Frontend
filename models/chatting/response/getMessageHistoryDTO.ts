@@ -1,7 +1,7 @@
-import { IsEnd, IsStart, LastMsgId } from "../entity/chatting"
+import { IsEnd, IsStart, LastMsgId } from '../entity/chatting';
 
 export type GetMessageHistoryDTO = {
-    start: IsStart;
-    end : IsEnd;
-    lastMsgId : LastMsgId;
-}
+	start: IsStart;
+	end: IsEnd;
+	lastMsgId: LastMsgId;
+};
