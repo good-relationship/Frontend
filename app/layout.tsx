@@ -29,10 +29,9 @@ export default function RootLayout({
 					<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
 						{children}
 					</div>
-          // 토큰이 있으면 FloatingButton 보여주기
-						<div className="fixed bottom-0 right-10 p-4">
-							<FloatingInfo />
-						</div>
+					<div className="fixed bottom-0 right-10 p-4">
+						<FloatingInfo />
+					</div>
 					<Toaster />
 				</RecoilRootProvider>
 			</body>
