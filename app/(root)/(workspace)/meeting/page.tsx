@@ -1,6 +1,7 @@
 'use client';
 
 import { Client } from '@stomp/stompjs';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 import { getWorkspaceInfo } from '@/apis/workspace';
@@ -11,6 +12,7 @@ import { RoomList } from '@/models/meeting/entity/meeting';
 const MeetingPage = () => {
 	const [roomList, setRoomList] = useState<RoomList>();
 	const stompClient = useWebsocket();
+	const router = useRouter();
 
 	useEffect(() => {
 		const handleConnect = async () => {
@@ -60,9 +62,7 @@ const MeetingPage = () => {
 			destination: `/app/room/join/${roomId}`,
 		});
 
-		stompClient.subscribe(`/user/queue/join`, () => {
-			//TODO: meeting 페이지로 연결
-		});
+		router.push(`/meeting/${roomId}`);
 	};
 
 	const exitMeeting = () => {
