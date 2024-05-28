@@ -15,12 +15,6 @@ const MeetingPage = () => {
 		const initialize = async () => {
 			try {
 				const access = await useGetAccessToken();
-				const { workspaceId } = await getWorkspaceInfo();
-
-				const handleConnect = (client: Client) => {
-					subscribeMeetingList.bind(null, client, workspaceId)();
-					publishMeetingList.bind(null, client)();
-				};
 
 				const client = new Client({
 					brokerURL: 'ws://localhost:8080/ws-chat',
@@ -35,8 +29,8 @@ const MeetingPage = () => {
 						console.error('Broker reported error: ' + frame.headers['message']);
 						console.error('Additional details: ' + frame.body);
 					},
-					onConnect: () => handleConnect(client),
 				});
+
 				setStompClient(client);
 				client.activate();
 			} catch (e) {
@@ -52,6 +46,19 @@ const MeetingPage = () => {
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		const handleConnect = async () => {
+			if (!stompClient) {
+				return;
+			}
+			const { workspaceId } = await getWorkspaceInfo();
+			subscribeMeetingList.bind(null, stompClient, workspaceId)();
+			publishMeetingList.bind(null, stompClient)();
+		};
+
+		handleConnect();
+	}, [stompClient]);
 
 	const subscribeMeetingList = (client: Client, workspaceId: string) => {
 		client.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
