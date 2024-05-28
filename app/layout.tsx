@@ -6,6 +6,7 @@ import FloatingInfo from '@/components/chatting/FloatingInfo';
 import Header from '@/components/header/Header';
 import { Toaster } from '@/components/ui/toaster';
 import RecoilRootProvider from '@/lib/recoil/RecoilRootProvider';
+import { WebsocketProvider } from '@/lib/websocket/WebsocketProvider';
 import { pretendard } from '@/utils/fonts';
 
 export const metadata: Metadata = {
@@ -24,16 +25,18 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${pretendard.variable} font-pretendard w-full flex justify-center min-h-screen`}>
-				<RecoilRootProvider>
-					<Header />
-					<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
-						{children}
-					</div>
-					<div className="fixed bottom-0 right-10 p-4">
-						<FloatingInfo />
-					</div>
-					<Toaster />
-				</RecoilRootProvider>
+				<WebsocketProvider>
+					<RecoilRootProvider>
+						<Header />
+						<div className="w-full max-w-[1440px] flex-1 max-h-[calc(100vh-60px)] absolute top-[60px] h-full overflow-auto">
+							{children}
+						</div>
+						<div className="fixed bottom-0 right-10 p-4">
+							<FloatingInfo />
+						</div>
+						<Toaster />
+					</RecoilRootProvider>
+				</WebsocketProvider>
 			</body>
 		</html>
 	);

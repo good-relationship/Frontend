@@ -1,51 +1,16 @@
 'use client';
 
-import Stomp, { Client } from '@stomp/stompjs';
+import { Client } from '@stomp/stompjs';
 import { useEffect, useState } from 'react';
 
 import { getWorkspaceInfo } from '@/apis/workspace';
 import MeetingItem from '@/components/meeting/waitingRoom/MeetingItem';
-import { useGetAccessToken } from '@/hooks/auth';
+import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { RoomList } from '@/models/meeting/entity/meeting';
 
 const MeetingPage = () => {
-	const [stompClient, setStompClient] = useState<Stomp.Client | null>(null);
 	const [roomList, setRoomList] = useState<RoomList>();
-	useEffect(() => {
-		const initialize = async () => {
-			try {
-				const access = await useGetAccessToken();
-
-				const client = new Client({
-					brokerURL: 'ws://localhost:8080/ws-chat',
-					connectHeaders: {
-						Authorization: `${access}`,
-					},
-					reconnectDelay: 5000,
-					heartbeatIncoming: 4000,
-					heartbeatOutgoing: 4000,
-					onStompError: (frame) => {
-						// TODO: stomp 오류 처리
-						console.error('Broker reported error: ' + frame.headers['message']);
-						console.error('Additional details: ' + frame.body);
-					},
-				});
-
-				setStompClient(client);
-				client.activate();
-			} catch (e) {
-				console.error(e);
-			}
-		};
-
-		initialize();
-
-		return () => {
-			if (stompClient && stompClient.connected) {
-				stompClient.deactivate();
-			}
-		};
-	}, []);
+	const stompClient = useWebsocket();
 
 	useEffect(() => {
 		const handleConnect = async () => {
