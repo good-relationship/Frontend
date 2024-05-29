@@ -1,14 +1,18 @@
 import { API_URLS, URLS, UrlType } from '@/constants/routings';
 
 export const useGetUrl = () => {
-	const getWorkspaceDocumentFileUrl = (fileId: string) => `${URLS.WORKSPACE_DOCUMENT_FILE}/${fileId}`;
-	const getWorkspaceMeetingRoomUrl = (meetingId: string) => `${URLS.WORKSPACE_MEETING_ROOM}/${meetingId}`;
-	const getWorkspaceWhiteboardFileUrl = (fileId: string) => `${URLS.WORKSPACE_WHITEBOARD_FILE}/${fileId}`;
+	const getWorkspaceDocumentFileUrl = (fileId: string) =>
+		`${process.env.NEXT_PUBLIC_URL}${URLS.WORKSPACE_DOCUMENT_FILE}/${fileId}`;
+	const getWorkspaceMeetingRoomUrl = (meetingId: string) =>
+		`${process.env.NEXT_PUBLIC_URL}${URLS.WORKSPACE_MEETING_ROOM}/${meetingId}`;
+	const getWorkspaceWhiteboardFileUrl = (fileId: string) =>
+		`${process.env.NEXT_PUBLIC_URL}${URLS.WORKSPACE_WHITEBOARD_FILE}/${fileId}`;
 
-	const getSearchSchoolUrl = (schoolName: string) => `${API_URLS.SEARCH_SCHOOL}?name=${schoolName}`;
+	const getSearchSchoolUrl = (schoolName: string) =>
+		`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.SEARCH_SCHOOL}?name=${schoolName}`;
 	const getInvitedUrl = (inviteCode: string) =>
 		`${process.env.NEXT_PUBLIC_URL}${URLS.INVITED}?inviteCode=${inviteCode}`;
-	const getJoinWorkspaceUrl = () => `${process.env.NEXT_PUBLIC_URL}${API_URLS.JOIN_WORKSPACE}`;
+	const getJoinWorkspaceUrl = () => `${process.env.NEXT_PUBLIC_API_URL}${API_URLS.JOIN_WORKSPACE}`;
 
 	const workspaceUrls: UrlType[] = [
 		URLS.WORKSPACE,
