@@ -6,7 +6,7 @@ const nextConfig = {
 		return [
 			{
 				source: '/',
-				destination: '/meeting',
+				destination: '/workspace/meeting',
 				permanent: true,
 			},
 		];
