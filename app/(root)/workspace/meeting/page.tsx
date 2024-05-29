@@ -62,7 +62,7 @@ const MeetingPage = () => {
 			destination: `/app/room/join/${roomId}`,
 		});
 
-		router.push(`/meeting/${roomId}`);
+		router.push(`/workspace/meeting/${roomId}`);
 	};
 
 	const exitMeeting = () => {

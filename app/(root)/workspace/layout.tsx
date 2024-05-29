@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import Sidebar from '@/components/sidebar/Sidebar';
+import { WebsocketProvider } from '@/lib/websocket/WebsocketProvider';
 
 const WorkspaceLayout = ({
 	children,
@@ -9,8 +10,10 @@ const WorkspaceLayout = ({
 }>) => {
 	return (
 		<div className="flex h-full">
-			<Sidebar />
-			<section className="p-[72px]">{children}</section>
+			<WebsocketProvider>
+				<Sidebar />
+				<section className="p-[72px]">{children}</section>
+			</WebsocketProvider>
 		</div>
 	);
 };
