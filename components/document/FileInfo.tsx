@@ -1,20 +1,43 @@
-import Image from "next/image";
+'use client'
 
+import Image from "next/image";
+import { useState } from "react";
+
+import DocumentInput from "./DocumentInput";
 import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-const FileInfo = () => {
+import { cn } from "@/lib/utils";
+import { GetDocumentFileInfoDTO } from "@/models/document/getDocumentFileInfoDTO";
+
+const FileInfo = ({fileName} : GetDocumentFileInfoDTO) => {
+    const [isEdit, setIsEdit] = useState(false);
+    const [newFileName, setNewFileName] = useState(fileName);
+
+    const changeEdit = (editState: boolean) => {
+        setIsEdit(editState);
+    };
+
+    const handleChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
+        setNewFileName(e.target.value);
+    };
+
     return ( 
         <div className="flex h-10 items-center">
-            <div className="flex h-full items-center hover:bg-gray-100">
-                <p className="pl-[10px] pt-1 typo-Body4 w-60">Week1</p>
+            <div className="flex h-full items-center rounded-xl hover:bg-gray-100">
+                {
+                    isEdit ? 
+                    <DocumentInput className="w-60 typo-Body4" value={newFileName} isEdit={isEdit} onChange={handleChange} changeEdit={changeEdit} /> 
+                    :
+                    <p className={cn("pl-[10px] pt-1 typo-Body4 w-60", newFileName == "Untitled" ?"text-gray-300 italic":"")}>{newFileName}</p>
+                }
                 <div className="flex pt-1 pr-2">
                 <Popover>
                     <PopoverTrigger>
                         <Image src="/icons/folder_setting.svg" alt="folder setting" width={3} height={18} className="cursor-pointer" />
                     </PopoverTrigger>
-                    <PopoverContent>
+                    <PopoverContent className="w-[120px] py-0">
                         <PopoverClose asChild>
-                            <div>파일명 수정</div>
+                            <div className="w-full h-full p-3 hover:bg-gray-100 cursor-pointer rounded-xl" onClick={() => changeEdit(true)}>파일명 수정</div>
                         </PopoverClose>
                     </PopoverContent>
 		        </Popover>
