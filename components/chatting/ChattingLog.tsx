@@ -13,7 +13,7 @@ const ChattingLog = ({ text, date, type}: Props) => {
                     type == 'receive' ? 
                     (
                         <>
-                            <div className="relative w-[calc(100%-20px)] whitespace-normal right-[-20px] bg-white flex items-center h-full rounded-[8px] p-[10px]">
+                            <div className="relative w-[calc(100%-20px)] whitespace-normal bg-white flex items-center h-full rounded-[8px] p-[10px]">
                                 {text}
                             </div>
                             <div className="text-[8px] flex justify-start w-full mt-1">{date}</div> 

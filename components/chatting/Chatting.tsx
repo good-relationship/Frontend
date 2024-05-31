@@ -189,7 +189,7 @@ export default function Page() {
 
 					<div className="h-[58vh] max-h-[700px] flex flex-col">
 						<div ref={scrollBarRef} className='h-full flex overflow-y-auto'>
-							<div id = 'chatContainer' className={`h-full mb-2 mt-2 ${scrolled ?' w-[95%]' : 'w-[100%]'}`}>
+							<div id = 'chatContainer' className={`mb-2 mt-2 ${scrolled ?' w-[95%]' : 'w-[100%]'}`}>
 								<div ref={ref} />
 								{messages.map((message, index) =>
 										<ChatContainer
@@ -209,7 +209,7 @@ export default function Page() {
 							<AutoSizeTextarea
 								id="messageID"
 								onChange={handleText}
-								className="w-full border-black border-[2px] break-words"
+								className="w-full border-black border-[2px] break-words outline-none"
 								placeholder='채팅을 입력해주세요.'
 								value={inputMessage}
 								onKeyDown={handleKeyDown}
