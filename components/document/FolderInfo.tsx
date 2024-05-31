@@ -22,7 +22,7 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
   };
 
   return (
-    <div className="flex h-12 w-[280px] items-center">
+    <div className={cn("flex h-10 w-[300px] items-center px-2 hover:bg-Gray-100 hover:rounded-md my-2 cursor-pointer", isOpen?"bg-Gray-100 rounded-md" : "")}>
       <Image src={isOpen ? "/icons/folder_open.svg" : "/icons/folder_close.svg"} alt="open folder" width={28} height={28} />
 
       {isEdit ? (
@@ -32,11 +32,13 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
           {newFolderName}
         </div>
       )}
-      
-      <div className="flex justify-end pt-1 gap-4">
+
+      <div className="flex justify-end pt-1">
         <Popover>
           <PopoverTrigger>
-            <Image src="/icons/folder_setting.svg" alt="folder setting" width={3} height={18} className="cursor-pointer" />
+            <div className="w-6 h-6 rounded-md flex justify-center hover:bg-Gray-200">
+                <Image src="/icons/folder_setting.svg" alt="folder setting" width={3} height={18} className="cursor-pointer" />
+            </div>
           </PopoverTrigger>
           <PopoverContent className="py-0 w-[120px]">
             <PopoverClose asChild>
@@ -49,7 +51,9 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
             </PopoverClose>
           </PopoverContent>
         </Popover>
-        <Image src="/icons/add_file.svg" alt="add folder" width={16} height={16} className="cursor-pointer" />
+        <div className="w-6 h-6 rounded-md flex justify-center hover:bg-Gray-200">
+            <Image src="/icons/add_file.svg" alt="add folder" width={16} height={16} className="cursor-pointer" />
+        </div>
       </div>
     </div>
   );
