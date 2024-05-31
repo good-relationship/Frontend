@@ -11,7 +11,7 @@ const FileList = () => {
             <div className="overflow-y-auto">
                 {files.map((file)=>{
                     return (
-                        <FileInfo fileName = {file.fileName} />
+                        <FileInfo fileName = {file.fileName} fileId={file.fileId} />
                     )
                 })}
             </div>
