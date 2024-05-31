@@ -17,9 +17,9 @@ body {
 	overflow-y: overlay;
 }
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
 	width: 14px;
-} */
+}
 
 ::-webkit-scrollbar-thumb {
 	outline: none;
