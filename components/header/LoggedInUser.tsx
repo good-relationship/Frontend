@@ -3,12 +3,12 @@ import InviteButton from '@/components/header/InviteButton';
 import ProfileButton from '@/components/header/ProfileButton';
 
 const LoggedInUser = async () => {
-	const profileImageSrc = await getUserInfo().then((userInfo) => userInfo.userImage);
+	const { userImage } = await getUserInfo();
 
 	return (
 		<div className="flex gap-5">
 			<InviteButton />
-			{profileImageSrc && <ProfileButton profileImageSrc={profileImageSrc} />}
+			{userImage && <ProfileButton profileImageSrc={userImage} />}
 		</div>
 	);
 };
