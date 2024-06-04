@@ -39,12 +39,18 @@ const isTokenExpired = (token: string) => {
 
 export const useGetAccessToken = async () => {
 	const cookieStore = cookies();
-	let accessToken = cookieStore.get(ACCESS_TOKEN)?.value || '';
+	let accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
 
+	if (!accessToken) {
+		// TODO: accessToken없다는 오류 처리
+		return '';
+	}
+
+	// TODO: accessToken이 만료되었을 때 refreshAccessToken 호출 -> 아래 코드 사용 시 오류 발생
 	if (isTokenExpired(accessToken)) {
 		const refreshToken = await useGetRefreshToken();
 		accessToken = await refreshAccessToken(refreshToken);
-		cookieStore.set(ACCESS_TOKEN, accessToken);
+		// 	cookieStore.set(ACCESS_TOKEN, accessToken || '');
 	}
 
 	return accessToken;
@@ -55,6 +61,8 @@ export const useGetRefreshToken = () => {
 	return cookieStore.get(REFRESH_TOKEN)?.value || '';
 };
 
-export const useIsLoggedIn = () => {
-	return !!useGetAccessToken();
+export const useIsLoggedIn = async () => {
+	const cookieStore = cookies();
+	const accessToken = cookieStore.get(ACCESS_TOKEN)?.value;
+	return !!accessToken;
 };
