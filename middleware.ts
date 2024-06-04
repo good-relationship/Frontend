@@ -6,6 +6,7 @@ import { useGetUrl } from '@/hooks/url';
 
 export async function middleware(request: NextRequest) {
 	const { pathname } = request.nextUrl;
+
 	const { isOnboardingUrl, isWorkspaceUrl } = useGetUrl();
 	const isProtectedUrl = isWorkspaceUrl(pathname as UrlType) || isOnboardingUrl(pathname as UrlType);
 
@@ -20,4 +21,12 @@ export async function middleware(request: NextRequest) {
 			return NextResponse.redirect(absoluteURL.toString());
 		}
 	}
+
+	const headers = new Headers(request.headers);
+	headers.set('x-current-path', request.nextUrl.pathname);
+	return NextResponse.next({ headers });
 }
+
+export const config = {
+	matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+};

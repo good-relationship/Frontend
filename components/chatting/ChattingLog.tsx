@@ -3,10 +3,10 @@
 type Props = {
 	text: string;
 	date: string;
-    type : string;
+	type: string;
 };
 
-const ChattingLog = ({ text, date, type}: Props) => {
+const ChattingLog = ({ text, date, type }: Props) => {
 	return (
 			<div className="w-full h-full text-[12px] flex flex-col custom-shadow">
                 {

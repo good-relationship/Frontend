@@ -1,21 +1,24 @@
 'use client';
 
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 import { PopoverClose, PopoverContent } from '@/components/ui/popover';
+import { useLogout } from '@/hooks/auth';
 
 const LogoutButton = () => {
-	// TODO: 로그아웃 기능 구현
-	const logout = () => {
-		console.log('logout');
+	const router = useRouter();
+
+	const handleClickLogout = () => {
+		useLogout();
+		router.push('/login');
 	};
 
 	return (
 		<PopoverContent>
 			<PopoverClose asChild>
-				<Link href="/login" onClick={logout}>
+				<button className="text-sm text-gray-400" onClick={handleClickLogout}>
 					로그아웃
-				</Link>
+				</button>
 			</PopoverClose>
 		</PopoverContent>
 	);

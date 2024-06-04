@@ -1,8 +1,8 @@
 export type SenderInfo = {
-    senderName: string;
-    senderImage: string;
-    senderId: number;    
-}
+	senderName: string;
+	senderImage: string;
+	senderId: number;
+};
 
 export type DateTime = string;
 export type MessageId = string;

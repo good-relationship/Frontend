@@ -1,13 +1,15 @@
-'use client';
-
+import { headers } from 'next/headers';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 
 import UserInfo from '@/components/header/UserInfo';
+import { UrlType } from '@/constants/routings';
+import { useGetUrl } from '@/hooks/url';
 
 const Header = () => {
-	const pathname = usePathname();
-	const isPlainHeader = pathname.startsWith(`/onboarding/`);
+	const { isOnboardingUrl } = useGetUrl();
+	const headersList = headers();
+	const headerPathname = headersList.get('x-current-path') || '';
+	const isPlainHeader = isOnboardingUrl(headerPathname as UrlType);
 
 	return (
 		<header className="fixed top-0 h-[60px] w-full bg-black flex px-[60px] justify-between">
