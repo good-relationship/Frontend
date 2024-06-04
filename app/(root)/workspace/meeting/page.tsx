@@ -63,7 +63,7 @@ const MeetingPage = () => {
 		});
 
 		if (!response.ok) {
-			throw new Error('회의 나가기 오류');
+			throw new Error('회의 생성하기 오류');
 		}
 
 		const { roomId } = await response.json();
