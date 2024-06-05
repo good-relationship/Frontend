@@ -1,8 +1,8 @@
-import { ApiUrlType } from '@/constants/url';
+import { UrlType } from '@/constants/url';
 
 export const getUrl =
 	(baseUrl: string = '') =>
-	(path: ApiUrlType) =>
+	(path: UrlType) =>
 	(params: Record<string, string> = {}) => {
 		const url = new URL(path, baseUrl);
 		Object.keys(params).forEach((key) => url.searchParams.append(key, params[key]));
