@@ -1,15 +1,11 @@
 import { useGetAccessToken } from '@/hooks/auth';
 
-export const fetcher = async (
-	url: string,
-	auth = false,
-	options: RequestInit = {
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	},
-) => {
-	const headers = new Headers(options.headers);
+const defaultHeaders = new Headers({
+	'Content-Type': 'application/json',
+});
+
+export const fetcher = async (url: string, auth = false, options: RequestInit = {}) => {
+	const headers = defaultHeaders;
 
 	if (auth) {
 		const accessToken = await useGetAccessToken();
