@@ -1,14 +1,9 @@
-import { useGetUrl } from '@/hooks/url';
+import { API_URLS } from '@/constants/url';
+import { fetcher } from '@/utils/fetcher';
+import { getApiUrl } from '@/utils/url';
 
 export const searchSchoolName = async (schoolName: string) => {
-	const { getSearchSchoolUrl } = useGetUrl();
-	const response = await fetch(getSearchSchoolUrl(schoolName));
-	if (!response.ok) {
-		// TODO: 검색 에러 처리
-		throw new Error('검색 에러');
-	}
-
-	const data = await response.json();
-
-	return data;
+	const url = getApiUrl(API_URLS.SEARCH_SCHOOL)({ name: schoolName });
+	const fetch = await fetcher(url);
+	return fetch;
 };
