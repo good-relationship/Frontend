@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
 
 	if (!response.ok) {
 		// TODO: 로그인 에러처리
-		console.log(await response.text());
 		throw new Error('로그인 에러');
 	}
 
