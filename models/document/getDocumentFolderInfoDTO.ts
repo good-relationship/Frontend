@@ -1,4 +1,4 @@
 export type GetDocumentFolderInfoDTO = {
-    folderName: string;
-    isOpen?: boolean;
-}
+	folderName: string;
+	isOpen?: boolean;
+};

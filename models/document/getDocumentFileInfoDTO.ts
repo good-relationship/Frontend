@@ -1,4 +1,4 @@
 export type GetDocumentFileInfoDTO = {
-    fileId : string;
-    fileName: string;
-}
+	fileId: string;
+	fileName: string;
+};
