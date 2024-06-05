@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 
 import { joinWorkspace } from '@/apis/workspace';
 import SquareButton from '@/components/SquareButton';
+import { ROUTES } from '@/constants/url';
 import { MAX_WORKSPACE_MEMBER_COUNT } from '@/constants/workspaces';
 import { GetUserWorkspaceInfoResponseDTO } from '@/models/onboarding/response/getWorkspaceUserInfoResponseDTO';
 
@@ -23,7 +24,7 @@ const JoinWorkspaceButton = ({ userList, setIsMemberOverflowDialogOpen }: JoinWo
 		}
 
 		await joinWorkspace();
-		route.push('/');
+		route.push(ROUTES.WORKSPACE);
 	};
 
 	return (
