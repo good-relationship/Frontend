@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
 	const inviteCode = searchParams.get('state');
 	const code = searchParams.get('code');
 
-	const url = `${process.env.NEXT_PUBLIC_URL}/login/oauth2/kakao?code=${code}&inviteCode=${inviteCode}`;
+	const url = `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/kakao?code=${code}&inviteCode=${inviteCode}`;
 	const loginConfig = {
 		method: 'POST',
 		headers: {

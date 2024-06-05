@@ -20,7 +20,7 @@ const CompleteWorkspaceCreationTemplate = () => {
 	const buttonContent = `${workspaceName}(으)로 이동하기`;
 
 	const handleClickNavigate = () => {
-		route.push(`/document`);
+		route.push(`/workspace/meeting`);
 	};
 
 	return (

@@ -9,32 +9,32 @@ type SidebarRoutingType = {
 export const sidebarRoutings: SidebarRoutingType[] = [
 	{
 		label: '회의하기',
-		path: '/meeting',
+		path: '/workspace/meeting',
 		icon: 'webcam',
 	},
 	{
 		label: '기록하기',
-		path: '/document',
+		path: '/workspace/document',
 		icon: 'pencil',
 	},
 	{
 		label: '일정 관리',
-		path: '/schedule',
+		path: '/workspace/schedule',
 		icon: 'calendar',
 	},
 	{
 		label: '팀스페이스 설정',
-		path: '/setting',
+		path: '/workspace/setting',
 		icon: 'setting',
 	},
 ];
 
 export const URLS = Object.freeze({
 	WORKSPACE: '/',
-	WORKSPACE_MEETING: '/meeting',
-	WORKSPACE_DOCUMENT: '/document',
-	WORKSPACE_SCHEDULE: '/schedule',
-	WORKSPACE_SETTING: '/setting',
+	WORKSPACE_MEETING: '/workspace/meeting',
+	WORKSPACE_DOCUMENT: '/workspace/document',
+	WORKSPACE_SCHEDULE: '/workspace/schedule',
+	WORKSPACE_SETTING: '/workspace/setting',
 	WORKSPACE_DOCUMENT_FILE: '/document-file',
 	WORKSPACE_MEETING_ROOM: '/meeting-room',
 	WORKSPACE_WHITEBOARD_FILE: '/whiteboard-file',

@@ -13,7 +13,13 @@ const Header = () => {
 
 	return (
 		<header className="fixed top-0 h-[60px] w-full bg-black flex px-[60px] justify-between">
-			<Image src="/icons/kan_text_horizontal.svg" alt="조은사이 가로 로고" width={150} height={30} />
+			<Image
+				src="/icons/kan_text_horizontal.svg"
+				alt="조은사이 가로 로고"
+				width="0"
+				height="0"
+				className="w-[150px] h-auto"
+			/>
 			{!isPlainHeader && <UserInfo />}
 		</header>
 	);
