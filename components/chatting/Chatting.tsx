@@ -35,6 +35,7 @@ export default function Page() {
 	const [inputMessage, setInputMessage] = useState('');
 	const [userId, setUserId] = useState(0);
 	const [getWorkspaceId, setGetWorkspaceId] = useState('');
+	const [scrolled, setScrolled] = useState(false);
 	const [prevScrollHeight, setPrevScrollHeight] = useState<number>(0);
 
 	// 유저 id 가져오기
@@ -120,6 +121,30 @@ export default function Page() {
 		}
 	};
 
+	useEffect(() => {
+		const handleScroll = () => {
+			const chatContainer = scrollBarRef.current;
+			if (chatContainer) {
+				if (chatContainer.scrollHeight > chatContainer.clientHeight) {
+					// 스크롤이 발생한 경우
+					setScrolled(true);
+				} else {
+					// 스크롤이 발생하지 않은 경우
+					setScrolled(false);
+				}
+			}
+		};
+
+		const chatContainer = scrollBarRef.current;
+		if (chatContainer) {
+			chatContainer.addEventListener('scroll', handleScroll);
+
+			return () => {
+				chatContainer.removeEventListener('scroll', handleScroll);
+			};
+		}
+	}, [scrollBarRef.current]);
+
 	const scrollPosition = (prevScrollHeight: number) => {
 		if (scrollBarRef.current) {
 			scrollBarRef.current.scrollTop = scrollBarRef.current.scrollHeight - prevScrollHeight;
@@ -172,24 +197,27 @@ export default function Page() {
 					</div>
 
 					<div className="h-[58vh] max-h-[700px] flex flex-col">
-						<div id="chatContainer" ref={scrollBarRef} className="h-full overflow-y-auto mb-2 mt-2">
-							<div ref={ref} />
-							{messages.map((message, index) => (
-								<ChatContainer
-									key={index}
-									text={message.content}
-									sender={message.sender.senderName}
-									date={message.time.slice(11, 16)}
-									senderImg={message.sender.senderImage}
-									type={message.sender.senderId == userId ? 'send' : 'receive'}
-								/>
-							))}
+						<div ref={scrollBarRef} className="h-full flex overflow-y-auto">
+							<div id="chatContainer" className={`mb-2 mt-2 ${scrolled ? ' w-[95%]' : 'w-[100%]'}`}>
+								<div ref={ref} />
+								{messages.map((message, index) => (
+									<ChatContainer
+										key={index}
+										text={message.content}
+										sender={message.sender.senderName}
+										date={message.time.slice(11, 16)}
+										senderImg={message.sender.senderImage}
+										type={message.sender.senderId == userId ? 'send' : 'receive'}
+									/>
+								))}
+							</div>
+							<div className="h-full" />
 						</div>
 						<div className="flex flex-row gap-[5px] justify-center items-center py-4">
 							<AutoSizeTextarea
 								id="messageID"
 								onChange={handleText}
-								className="w-full border-black border-[2px] break-words"
+								className="w-full border-black border-[2px] break-words outline-none"
 								placeholder="채팅을 입력해주세요."
 								value={inputMessage}
 								onKeyDown={handleKeyDown}
