@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { getUserInfo } from '@/apis/user';
+import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
-import { useGetAccessToken } from '@/hooks/auth';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo } from '@/models/user/entity/user';
@@ -35,23 +34,6 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		};
 		init();
 	}, []);
-
-	const getRoomInfo = async () => {
-		const accessToken = await useGetAccessToken();
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/room/info`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		if (!response.ok) {
-			throw new Error('회의 정보 조회 오류');
-		}
-
-		return response.json();
-	};
 
 	const createPeerConnection = (userId: UserId) => {
 		const peerConnection = new RTCPeerConnection({
@@ -91,7 +73,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	};
 
 	const createPeerConnectionByMembers = async () => {
-		const { members } = await getRoomInfo();
+		const { members } = await getUserRoomInfo();
 		const { userId } = await getUserInfo();
 		if (members.length === 1) {
 			return;
