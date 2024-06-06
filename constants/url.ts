@@ -41,9 +41,17 @@ export const USER_API_URLS = Object.freeze({
 	GET_USER_ROOM_INFO: '/user/room/info',
 });
 
+export const MEET_ROOM_API_URLS = Object.freeze({
+	CREATE_MEET_ROOM: '/meet/room/create',
+	JOIN_MEET_ROOM: '/meet/room/join',
+	LEAVE_MEET_ROOM: '/meet/room/leave',
+	GET_MEET_ROOM_LIST: '/meet/room/list',
+});
+
 export const API_URLS = Object.freeze({
 	...WORKSPACE_API_URLS,
 	...USER_API_URLS,
+	...MEET_ROOM_API_URLS,
 });
 
 export type RoutesKeyType = keyof typeof ROUTES;
