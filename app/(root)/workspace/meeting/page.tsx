@@ -1,20 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { createMeeting, getMeetingRoomList } from '@/apis/meeting';
+import { getMeetingRoomList } from '@/apis/meeting';
 import { getWorkspaceInfo } from '@/apis/workspace';
+import CreateMeetingButton from '@/components/meeting/waitingRoom/CreateMeetingButton';
 import EmptyWaitingRoomTemplate from '@/components/meeting/waitingRoom/EmptyWaitingRoomTemplate';
 import ListWaitingRoomTemplate from '@/components/meeting/waitingRoom/ListWaitingRoomTemplate';
-import RoundedButton from '@/components/RoundedButton';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { RoomList } from '@/models/meeting/entity/meeting';
 
 const MeetingPage = () => {
 	const [roomList, setRoomList] = useState<RoomList>();
 	const stompClient = useWebsocket();
-	const router = useRouter();
 
 	useEffect(() => {
 		const handleConnect = async () => {
@@ -36,11 +34,6 @@ const MeetingPage = () => {
 		});
 	};
 
-	const handleCreateMeeting = async () => {
-		const { roomId } = await createMeeting({ roomName: '새 회의' });
-		router.push(`/workspace/meeting/${roomId}`);
-	};
-
 	const renderMeetingRoomList = () => {
 		if (!roomList || roomList.length === 0) {
 			return <EmptyWaitingRoomTemplate />;
@@ -58,9 +51,7 @@ const MeetingPage = () => {
 			<hr className="my-3 h-4" />
 			<div className="w-full flex justify-between">
 				<h6 className="typo-SubHeader1">진행중인 회의</h6>
-				<RoundedButton variant="Outline" size="Small" onClick={handleCreateMeeting}>
-					새 회의 생성
-				</RoundedButton>
+				<CreateMeetingButton />
 			</div>
 			{renderMeetingRoomList()}
 		</div>
