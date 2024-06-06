@@ -5,7 +5,7 @@ const nextConfig = {
 	redirects: async () => {
 		return [
 			{
-				source: '/',
+				source: '/workspace',
 				destination: '/workspace/meeting',
 				permanent: true,
 			},

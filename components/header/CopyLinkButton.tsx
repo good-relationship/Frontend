@@ -3,7 +3,8 @@
 import { getWorkspaceInviteCode } from '@/apis/workspace';
 import SquareButton from '@/components/SquareButton';
 import { useToast } from '@/components/ui/use-toast';
-import { useGetUrl } from '@/hooks/url';
+import { ROUTES } from '@/constants/url';
+import { getPublicUrl } from '@/utils/url';
 
 type CopyLinkButtonProps = {
 	closeDialog: () => void;
@@ -11,12 +12,11 @@ type CopyLinkButtonProps = {
 
 const CopyLinkButton = ({ closeDialog }: CopyLinkButtonProps) => {
 	const { toast } = useToast();
-	const { getInvitedUrl } = useGetUrl();
 
 	const copyLink = async () => {
 		const inviteCode = await getWorkspaceInviteCode();
-		const copyText = getInvitedUrl(inviteCode.inviteCode);
-		navigator.clipboard.writeText(copyText).then(() => {
+		const copyTextUrl = getPublicUrl(ROUTES.INVITED)(inviteCode);
+		navigator.clipboard.writeText(copyTextUrl).then(() => {
 			closeDialog();
 			toast({
 				title: '링크가 복사되었습니다!',
