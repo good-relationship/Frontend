@@ -7,7 +7,7 @@ import Video from '@/components/meeting/meetingRoom/Video';
 import { useGetAccessToken } from '@/hooks/auth';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
-import { UserInfo } from '@/models/user/entity/user';
+import { UserId, UserInfo } from '@/models/user/entity/user';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -53,6 +53,43 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		return response.json();
 	};
 
+	const createPeerConnection = (userId: UserId) => {
+		const peerConnection = new RTCPeerConnection({
+			iceServers: [
+				{
+					urls: 'stun:stun.l.google.com:19302',
+				},
+			],
+		});
+
+		peerConnection.onicecandidate = (event) => {
+			if (event.candidate) {
+				publishIce({
+					candidate: event.candidate.candidate,
+					userId: userId,
+					sdpMLineIndex: event.candidate.sdpMLineIndex,
+					sdpMid: event.candidate.sdpMid,
+				});
+			}
+		};
+		peerConnection.ontrack = (event) => {
+			setRemoteStream((prev) => [...prev, event.streams[0]]);
+		};
+
+		if (!localStreamRef.current) {
+			return;
+		}
+
+		localStreamRef.current.getTracks().forEach((track) => {
+			if (!localStreamRef.current) {
+				return;
+			}
+			peerConnection.addTrack(track, localStreamRef.current);
+		});
+
+		peerConnectionsRef.current[userId] = peerConnection;
+	};
+
 	const createPeerConnectionByMembers = async () => {
 		const { members } = await getRoomInfo();
 		const { userId } = await getUserInfo();
@@ -65,40 +102,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 				return;
 			}
 
-			const peerConnection = new RTCPeerConnection({
-				iceServers: [
-					{
-						urls: 'stun:stun.l.google.com:19302',
-					},
-				],
-			});
-
-			peerConnection.onicecandidate = (event) => {
-				if (event.candidate) {
-					publishIce({
-						candidate: event.candidate.candidate,
-						userId: member.userId,
-						sdpMLineIndex: event.candidate.sdpMLineIndex,
-						sdpMid: event.candidate.sdpMid,
-					});
-				}
-			};
-			peerConnection.ontrack = (event) => {
-				setRemoteStream((prev) => [...prev, event.streams[0]]);
-			};
-
-			if (!localStreamRef.current) {
-				return;
-			}
-
-			localStreamRef.current.getTracks().forEach((track) => {
-				if (!localStreamRef.current) {
-					return;
-				}
-				peerConnection.addTrack(track, localStreamRef.current);
-			});
-
-			peerConnectionsRef.current[member.userId] = peerConnection;
+			createPeerConnection(member.userId);
 			peerConnectionsRef.current[member.userId].createOffer().then((offer) => {
 				peerConnectionsRef.current[member.userId].setLocalDescription(offer);
 				publishOffer({
@@ -113,41 +117,10 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		stompClient.subscribe(`/user/queue/offer/${meetingId}`, function (message) {
 			const body = JSON.parse(message.body);
 			const userId = body.userId;
-			const peerConnection = new RTCPeerConnection({
-				iceServers: [
-					{
-						urls: 'stun:stun.l.google.com:19302',
-					},
-				],
-			});
-			peerConnection.onicecandidate = (event) => {
-				if (event.candidate) {
-					publishIce({
-						candidate: event.candidate.candidate,
-						userId: userId,
-						sdpMLineIndex: event.candidate.sdpMLineIndex,
-						sdpMid: event.candidate.sdpMid,
-					});
-				}
-			};
-			peerConnection.ontrack = (event) => {
-				setRemoteStream((prev) => [...prev, event.streams[0]]);
-			};
 
-			if (!localStreamRef.current) {
-				return;
-			}
+			createPeerConnection(userId);
+			peerConnectionsRef.current[userId].setRemoteDescription(body.sessionDescription);
 
-			localStreamRef.current.getTracks().forEach((track) => {
-				if (!localStreamRef.current) {
-					return;
-				}
-				peerConnection.addTrack(track, localStreamRef.current);
-			});
-
-			peerConnection.setRemoteDescription(body.sessionDescription);
-
-			peerConnectionsRef.current[userId] = peerConnection;
 			peerConnectionsRef.current[userId].createAnswer().then((answer) => {
 				peerConnectionsRef.current[userId].setLocalDescription(answer);
 				publishAnswer({
