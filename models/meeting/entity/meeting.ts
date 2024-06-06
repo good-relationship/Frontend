@@ -1,9 +1,13 @@
 import { UserId } from '@/models/user/entity/user';
 
+export type RoomId = string;
+export type RoomName = string;
+export type UserCount = number;
+
 export type Room = {
-	roomName: string;
-	roomId: string;
-	userCount: number;
+	roomId: RoomId;
+	roomName: RoomName;
+	userCount: UserCount;
 };
 
 export type RoomList = Room[];

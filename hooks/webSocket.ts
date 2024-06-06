@@ -2,7 +2,7 @@ import { Client } from '@stomp/stompjs';
 
 export const useCreateWebSocketClient = (headers: { Authorization: string }, onConnectCallback: () => void) => {
 	const newClient = new Client({
-		brokerURL: 'ws://localhost:8080/ws-chat',
+		brokerURL: `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`,
 		reconnectDelay: 5000,
 		debug: (str) => console.log(str),
 		onConnect: (frame) => {
