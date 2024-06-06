@@ -15,7 +15,7 @@ const CopyLinkButton = ({ closeDialog }: CopyLinkButtonProps) => {
 
 	const copyLink = async () => {
 		const inviteCode = await getWorkspaceInviteCode();
-		const copyTextUrl = getPublicUrl(ROUTES.INVITED)(inviteCode);
+		const copyTextUrl = getPublicUrl(ROUTES.INVITED)()(inviteCode);
 		navigator.clipboard.writeText(copyTextUrl).then(() => {
 			closeDialog();
 			toast({
