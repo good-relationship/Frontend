@@ -1,4 +1,4 @@
-import { UserId } from '@/models/user/entity/user';
+import { UserId, UserInfo } from '@/models/user/entity/user';
 
 export type RoomId = string;
 export type RoomName = string;
@@ -8,6 +8,7 @@ export type Room = {
 	roomId: RoomId;
 	roomName: RoomName;
 	userCount: UserCount;
+	userInfoList: UserInfo[];
 };
 
 export type RoomList = Room[];
