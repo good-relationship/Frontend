@@ -1,14 +1,21 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+
+import { joinMeeting } from '@/apis/meeting';
 import { Room } from '@/models/meeting/entity/meeting';
 
 type MeetingItemProps = {
 	room: Room;
-	joinMeeting: (roomId: string) => void;
 };
 
-const MeetingItem = ({ room, joinMeeting }: MeetingItemProps) => {
+const MeetingItem = ({ room }: MeetingItemProps) => {
+	const router = useRouter();
 	const { roomName, userCount, roomId } = room;
-	const handleJoinMeeting = () => {
-		joinMeeting(roomId);
+
+	const handleJoinMeeting = async () => {
+		await joinMeeting({ roomId });
+		router.push(`/workspace/meeting/${roomId}`);
 	};
 
 	return (
