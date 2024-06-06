@@ -3,9 +3,10 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { createMeeting, getMeetingRoomList, joinMeeting } from '@/apis/meeting';
+import { createMeeting, getMeetingRoomList } from '@/apis/meeting';
 import { getWorkspaceInfo } from '@/apis/workspace';
-import MeetingItem from '@/components/meeting/waitingRoom/MeetingItem';
+import EmptyWaitingRoomTemplate from '@/components/meeting/waitingRoom/EmptyWaitingRoomTemplate';
+import ListWaitingRoomTemplate from '@/components/meeting/waitingRoom/ListWaitingRoomTemplate';
 import RoundedButton from '@/components/RoundedButton';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { RoomList } from '@/models/meeting/entity/meeting';
@@ -40,9 +41,12 @@ const MeetingPage = () => {
 		router.push(`/workspace/meeting/${roomId}`);
 	};
 
-	const handleJoinMeeting = async (roomId: string) => {
-		await joinMeeting({ roomId });
-		router.push(`/workspace/meeting/${roomId}`);
+	const renderMeetingRoomList = () => {
+		if (!roomList || roomList.length === 0) {
+			return <EmptyWaitingRoomTemplate />;
+		}
+
+		return <ListWaitingRoomTemplate roomList={roomList} />;
 	};
 
 	return (
@@ -58,13 +62,7 @@ const MeetingPage = () => {
 					새 회의 생성
 				</RoundedButton>
 			</div>
-			{roomList && (
-				<div>
-					{roomList.map((room) => {
-						return <MeetingItem key={room.roomId} room={room} joinMeeting={handleJoinMeeting} />;
-					})}
-				</div>
-			)}
+			{renderMeetingRoomList()}
 		</div>
 	);
 };
