@@ -3,9 +3,9 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { createMeeting, getMeetingRoomList, joinMeeting } from '@/apis/meeting';
 import { getWorkspaceInfo } from '@/apis/workspace';
 import MeetingItem from '@/components/meeting/waitingRoom/MeetingItem';
-import { useGetAccessToken } from '@/hooks/auth';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { RoomList } from '@/models/meeting/entity/meeting';
 
@@ -34,84 +34,24 @@ const MeetingPage = () => {
 		});
 	};
 
-	const getMeetingRoomList = async () => {
-		const accessToken = await useGetAccessToken();
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meet/room/list`, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		if (!response.ok) {
-			throw new Error('회의 목록 조회 오류');
-		}
-	};
-
-	const createMeeting = async () => {
-		const accessToken = await useGetAccessToken();
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meet/room/create`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-			body: JSON.stringify({
-				roomName: '새 회의',
-			}),
-		});
-
-		if (!response.ok) {
-			throw new Error('회의 생성하기 오류');
-		}
-
-		const { roomId } = await response.json();
-
+	const handleCreateMeeting = async () => {
+		const { roomId } = await createMeeting({ roomName: '새 회의' });
 		router.push(`/workspace/meeting/${roomId}`);
 	};
 
-	const joinMeeting = async (roomId: string) => {
-		const accessToken = await useGetAccessToken();
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meet/room/join/${roomId}`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		if (!response.ok) {
-			throw new Error('회의 참여하기 오류');
-		}
-
+	const handleJoinMeeting = async (roomId: string) => {
+		await joinMeeting({ roomId });
 		router.push(`/workspace/meeting/${roomId}`);
-	};
-
-	const exitMeeting = async () => {
-		const accessToken = await useGetAccessToken();
-		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/meet/room/leave`, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${accessToken}`,
-			},
-		});
-
-		if (!response.ok) {
-			throw new Error('회의 나가기 오류');
-		}
 	};
 
 	return (
 		<div>
 			여기는 회의 페이지
-			<button onClick={createMeeting}>새 회의 생성</button>
-			<button onClick={exitMeeting}>회의 나가기</button>
+			<button onClick={handleCreateMeeting}>새 회의 생성</button>
 			{roomList && (
 				<div>
 					{roomList.map((room) => {
-						return <MeetingItem key={room.roomId} room={room} joinMeeting={joinMeeting} />;
+						return <MeetingItem key={room.roomId} room={room} joinMeeting={handleJoinMeeting} />;
 					})}
 				</div>
 			)}

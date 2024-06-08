@@ -1,23 +1,17 @@
 'use server';
 
-import { API_URLS } from '@/constants/routings';
-import { useGetAccessToken } from '@/hooks/auth';
+import { API_URLS } from '@/constants/url';
 import { GetUserInfoResponseDTO } from '@/models/user/response/getUserInfoResponseDTO';
+import { GetUserRoomInfoResponseDTO } from '@/models/user/response/getUserRoomInfoResponseDTO';
+import { fetcher } from '@/utils/fetcher';
+import { getApiUrl } from '@/utils/url';
 
 export const getUserInfo: () => Promise<GetUserInfoResponseDTO> = async () => {
-	const accessToken = await useGetAccessToken();
-	const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${API_URLS.GET_USER_INFO}`, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${accessToken}`,
-		},
-	});
+	const url = getApiUrl(API_URLS.GET_USER_INFO)()();
+	return await fetcher(url, true);
+};
 
-	if (!response.ok) {
-		// TODO: 사용자 정보 조회 에러 처리
-		throw new Error('사용자 정보 조회 에러');
-	}
-
-	return response.json();
+export const getUserRoomInfo: () => Promise<GetUserRoomInfoResponseDTO> = async () => {
+	const url = getApiUrl(API_URLS.GET_USER_ROOM_INFO)()();
+	return await fetcher(url, true);
 };

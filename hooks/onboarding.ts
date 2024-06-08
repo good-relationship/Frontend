@@ -1,6 +1,6 @@
 import { useSearchParams } from 'next/navigation';
 
-import { URLS } from '@/constants/routings';
+import { ROUTES } from '@/constants/url';
 import { WorkspaceState } from '@/models/onboarding/entity/onboarding';
 
 export const useGetOnboardingInfoFromSearchParams = () => {
@@ -18,10 +18,10 @@ export const useGetOnboardingInfoFromSearchParams = () => {
 };
 
 const afterLoginPathMatchingByWorkspaceState = {
-	HAS_WORKSPACE: URLS.WORKSPACE,
-	NO_SPACE: URLS.ONBOARDING_EMPTY,
-	INVITED: URLS.ONBOARDING_INVITED,
-	OVERFLOW: URLS.ONBOARDING_OVERFLOW,
+	HAS_WORKSPACE: ROUTES.WORKSPACE,
+	NO_SPACE: ROUTES.ONBOARDING_EMPTY,
+	INVITED: ROUTES.ONBOARDING_INVITED,
+	OVERFLOW: ROUTES.ONBOARDING_OVERFLOW,
 };
 
 export const useGetAfterLoginPathByWorkspaceState = (workspaceState: WorkspaceState) => {

@@ -2,11 +2,10 @@ import { headers } from 'next/headers';
 import Image from 'next/image';
 
 import UserInfo from '@/components/header/UserInfo';
-import { UrlType } from '@/constants/routings';
-import { useGetUrl } from '@/hooks/url';
+import { UrlType } from '@/constants/url';
+import { isOnboardingUrl } from '@/utils/url';
 
 const Header = () => {
-	const { isOnboardingUrl } = useGetUrl();
 	const headersList = headers();
 	const headerPathname = headersList.get('x-current-path') || '';
 	const isPlainHeader = isOnboardingUrl(headerPathname as UrlType);
