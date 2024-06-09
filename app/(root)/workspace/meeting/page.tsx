@@ -1,18 +1,18 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-import { createMeeting, getMeetingRoomList, joinMeeting } from '@/apis/meeting';
+import { getMeetingRoomList } from '@/apis/meeting';
 import { getWorkspaceInfo } from '@/apis/workspace';
-import MeetingItem from '@/components/meeting/waitingRoom/MeetingItem';
+import CreateMeetingButton from '@/components/meeting/waitingRoom/CreateMeetingButton';
+import EmptyWaitingRoomTemplate from '@/components/meeting/waitingRoom/EmptyWaitingRoomTemplate';
+import ListWaitingRoomTemplate from '@/components/meeting/waitingRoom/ListWaitingRoomTemplate';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { RoomList } from '@/models/meeting/entity/meeting';
 
 const MeetingPage = () => {
 	const [roomList, setRoomList] = useState<RoomList>();
 	const stompClient = useWebsocket();
-	const router = useRouter();
 
 	useEffect(() => {
 		const handleConnect = async () => {
@@ -34,27 +34,26 @@ const MeetingPage = () => {
 		});
 	};
 
-	const handleCreateMeeting = async () => {
-		const { roomId } = await createMeeting({ roomName: '새 회의' });
-		router.push(`/workspace/meeting/${roomId}`);
-	};
+	const renderMeetingRoomList = () => {
+		if (!roomList || roomList.length === 0) {
+			return <EmptyWaitingRoomTemplate />;
+		}
 
-	const handleJoinMeeting = async (roomId: string) => {
-		await joinMeeting({ roomId });
-		router.push(`/workspace/meeting/${roomId}`);
+		return <ListWaitingRoomTemplate roomList={roomList} />;
 	};
 
 	return (
-		<div>
-			여기는 회의 페이지
-			<button onClick={handleCreateMeeting}>새 회의 생성</button>
-			{roomList && (
-				<div>
-					{roomList.map((room) => {
-						return <MeetingItem key={room.roomId} room={room} joinMeeting={handleJoinMeeting} />;
-					})}
-				</div>
-			)}
+		<div className="w-full">
+			<div>
+				<h1 className="typo-Header6 text-Gray-400">서울과학기술대학교</h1>
+				<h3 className="typo-Header1">워크스페이스 이름</h3>
+			</div>
+			<hr className="my-3 h-4" />
+			<div className="w-full flex justify-between">
+				<h6 className="typo-SubHeader1">진행중인 회의</h6>
+				<CreateMeetingButton />
+			</div>
+			{renderMeetingRoomList()}
 		</div>
 	);
 };
