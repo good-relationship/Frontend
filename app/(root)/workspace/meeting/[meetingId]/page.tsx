@@ -160,7 +160,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	return (
 		<div>
 			회의실 번호 : {params.meetingId}
-			<video ref={localVideoRef} autoPlay muted />
+			<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl" />
 			{remoteStream.map((stream, index) => (
 				<Video key={index} stream={stream} />
 			))}

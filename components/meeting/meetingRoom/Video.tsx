@@ -7,7 +7,8 @@ const Video = ({ stream }: { stream: MediaStream }) => {
 			videoRef.current.srcObject = stream;
 		}
 	}, [stream]);
-	return <video ref={videoRef} autoPlay playsInline />;
+
+	return <video ref={videoRef} autoPlay playsInline className="aspect-video rounded-xl" />;
 };
 
 export default Video;
