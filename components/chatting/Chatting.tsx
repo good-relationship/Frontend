@@ -81,7 +81,6 @@ export default function Page() {
 
 	const initialClient = (headers: { Authorization: string }, workspaceId: string) => {
 		const newClient = useCreateWebSocketClient(headers, () => {
-			getHistoryMessage(0);
 			subscribeToMessageTopic(newClient, headers, workspaceId, (messageObj: GetMessageContentDTO) => {
 				useAddMessageToList(
 					messageObj.sender.senderName,
@@ -106,6 +105,7 @@ export default function Page() {
 					});
 				},
 			);
+			getHistoryMessage(0);
 		});
 		return newClient;
 	};
