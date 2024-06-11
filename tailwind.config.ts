@@ -47,6 +47,7 @@ const config = {
 		}),
 		tailwindAnimate,
 	],
+	safelist: ['grid-cols-1', 'grid-cols-2', 'grid-cols-3'],
 } satisfies Config;
 
 export default config;
