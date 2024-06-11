@@ -165,7 +165,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		<div className="flex flex-col justify-between h-full">
 			회의실 번호 : {params.meetingId}
 			<div className={cn('grid', gridColStyle)}>
-				<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl" />
+				<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl w-full object-cover" />
 				{remoteStream.map((stream, index) => (
 					<Video key={index} stream={stream} />
 				))}
