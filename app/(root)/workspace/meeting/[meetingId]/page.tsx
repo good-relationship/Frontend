@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
+import MeetingTitle from '@/components/meeting/meetingRoom/MeetingTitle';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
@@ -163,7 +164,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 	return (
 		<div className="flex flex-col justify-between h-full">
-			회의실 번호 : {params.meetingId}
+			<MeetingTitle />
 			<div className={cn('grid', gridColStyle)}>
 				<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl w-full object-cover" />
 				{remoteStream.map((stream, index) => (
