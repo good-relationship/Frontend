@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
+import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo } from '@/models/user/entity/user';
@@ -157,13 +158,19 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		});
 	};
 
+	const userCount = remoteStream.length + 1;
+	const gridColStyle = 'grid-cols-' + Math.min(Math.round(userCount / 2), 3);
+
 	return (
-		<div>
+		<div className="flex flex-col justify-between h-full">
 			회의실 번호 : {params.meetingId}
-			<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl" />
-			{remoteStream.map((stream, index) => (
-				<Video key={index} stream={stream} />
-			))}
+			<div className={cn('grid', gridColStyle)}>
+				<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl" />
+				{remoteStream.map((stream, index) => (
+					<Video key={index} stream={stream} />
+				))}
+			</div>
+			<section className="bg-Purple-100 w-full h-[76px]">버튼 영역</section>
 		</div>
 	);
 };
