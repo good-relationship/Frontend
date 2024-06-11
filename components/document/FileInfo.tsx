@@ -34,7 +34,7 @@ const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
 						changeEdit={changeEdit}
 					/>
 				) : (
-					<Link href={`/document/${fileId}`}>
+					<Link href={`/workspace/document/${fileId}`}>
 						<p
 							className={cn(
 								'pl-[10px] pt-1 typo-Body4 w-60',
