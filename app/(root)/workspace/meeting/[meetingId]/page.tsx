@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
-import MeetingTitle from '@/components/meeting/meetingRoom/MeetingTitle';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
@@ -159,19 +158,41 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		});
 	};
 
-	const userCount = remoteStream.length + 1;
-	const gridColStyle = 'grid-cols-' + Math.min(Math.round(userCount / 2), 3);
+	const desktopFlexBasisStyle = [
+		'md:basis-full',
+		'md:basis-1/2',
+		'md:basis-1/2',
+		'md:basis-1/2',
+		'md:basis-1/3',
+		'md:basis-1/3',
+		'md:basis-1/4',
+		'md:basis-1/4',
+	];
+	const mobileFlexBasisStyle = [
+		'basis-full',
+		'basis-full',
+		'basis-full',
+		'basis-1/2',
+		'basis-1/2',
+		'basis-1/2',
+		'basis-1/2',
+		'basis-1/2',
+	];
 
 	return (
-		<div className="flex flex-col justify-between h-full">
-			<MeetingTitle />
-			<div className={cn('grid', gridColStyle)}>
-				<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl w-full object-cover" />
-				{remoteStream.map((stream, index) => (
+		<div className="flex flex-wrap w-full justify-center flex-1">
+			<video ref={localVideoRef} autoPlay muted className="aspect-video rounded-xl w-full object-cover" />
+			{remoteStream.map((stream, index) => (
+				<div
+					className={cn(
+						'p-2 w-full',
+						desktopFlexBasisStyle[remoteStream.length],
+						mobileFlexBasisStyle[remoteStream.length],
+					)}
+				>
 					<Video key={index} stream={stream} />
-				))}
-			</div>
-			<section className="bg-Purple-100 w-full h-[76px]">버튼 영역</section>
+				</div>
+			))}
 		</div>
 	);
 };
