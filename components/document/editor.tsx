@@ -21,9 +21,9 @@ const Editor = ({ onChange, initialContent, editable }: EditorProps) => {
 	};
 
 	return (
-		<div>
+		<>
 			<BlockNoteView editor={editor} editable={editable} onChange={() => onEditorChange} />
-		</div>
+		</>
 	);
 };
 

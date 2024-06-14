@@ -2,19 +2,10 @@
 
 import Editor from './editor';
 
-const FileContent = () => {
-	const temp = [
-		{
-			type: 'paragraph',
-			content: 'Hello, world!',
-		},
-		{
-			type: 'image',
-			src: 'image.jpg',
-		},
-	];
+import { fileEditorContents } from '@/mocks/fileEditor';
 
-	const data = JSON.stringify(temp);
+const FileContent = () => {
+	const data = JSON.stringify(fileEditorContents);
 
 	return (
 		<div className="mt-8">
