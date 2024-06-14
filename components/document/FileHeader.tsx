@@ -4,7 +4,7 @@ import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/pop
 
 const FileHeader = () => {
 	return (
-		<div className="flex gap-3 items-center">
+		<div className="flex gap-5 items-center">
 			<Image src="/icons/documentFile.svg" width={36} height={36} alt="search icon" />
 			<p className="typo-Header4">기록 &gt; folder1 &gt; file2</p>
 

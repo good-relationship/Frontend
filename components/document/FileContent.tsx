@@ -2,12 +2,16 @@
 
 import Editor from './editor';
 
+import { fileEditorContents } from '@/mocks/fileEditor';
+
 const FileContent = () => {
+	const data = JSON.stringify(fileEditorContents);
+
 	return (
-		<>
-			<div className="mt-14 typo-Header5 text-gray-200">내용을 입력하세요.</div>
-			<Editor onChange={() => {}} />
-		</>
+		<div className="mt-8">
+			{/* onChange에는 변화하는 document 넣기 (update) */}
+			<Editor onChange={() => {}} initialContent={data} />
+		</div>
 	);
 };
 
