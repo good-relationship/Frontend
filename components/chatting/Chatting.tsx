@@ -1,7 +1,7 @@
 'use client';
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
-import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import {
@@ -19,7 +19,11 @@ import { useCreateWebSocketClient } from '@/hooks/webSocket';
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
-export default function Page() {
+export default function Chatting({
+	children,
+}: Readonly<{
+	children: ReactNode;
+}>) {
 	const { messages, useAddMessageBeforeToList, useAddMessageToList } = useAddMessage();
 
 	const client = useRef<Client | null>(null);
@@ -191,7 +195,13 @@ export default function Page() {
 		<div>
 			<div className="h-full">
 				<div className="h-full rounded-lg px-[26px]">
-					<div className="grid place-items-center typo-SubHeader3 pt-4">채팅</div>
+					<div className="flex flex-row justify-between items-center pt-4">
+						<div className="flex-1 text-center">
+							<div className="typo-SubHeader3">채팅</div>
+						</div>
+						<div>{children}</div>
+					</div>
+
 					<div className="h-10 grid place-items-center typo-Caption1">
 						팀원들과 자유롭게 이야기를 나눠봐요.
 					</div>

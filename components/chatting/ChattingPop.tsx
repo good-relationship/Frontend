@@ -1,11 +1,17 @@
+import Image from 'next/image';
+
 import Chatting from './Chatting';
 
-import { PopoverContent } from '@/components/ui/popover';
+import { PopoverClose, PopoverContent } from '@/components/ui/popover';
 
 const ChattingPop = () => {
 	return (
 		<PopoverContent align="end" className="w-[25vw] min-w-[370px] py-0 z-0 text-black">
-			<Chatting />
+			<Chatting>
+				<PopoverClose>
+					<Image src="/icons/close.svg" alt="close chatting" width={15} height={15} />
+				</PopoverClose>
+			</Chatting>
 		</PopoverContent>
 	);
 };
