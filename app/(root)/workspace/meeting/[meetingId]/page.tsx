@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
+import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
 import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
@@ -186,35 +187,14 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		});
 	};
 
-	const desktopFlexBasisStyle = [
-		'md:basis-full',
-		'md:basis-1/2',
-		'md:basis-1/2',
-		'md:basis-1/2',
-		'md:basis-1/3',
-		'md:basis-1/3',
-		'md:basis-1/4',
-		'md:basis-1/4',
-	];
-	const mobileFlexBasisStyle = [
-		'basis-full',
-		'basis-full',
-		'basis-full',
-		'basis-1/2',
-		'basis-1/2',
-		'basis-1/2',
-		'basis-1/2',
-		'basis-1/2',
-	];
-
 	return (
 		<div className="flex flex-wrap w-full justify-center flex-1">
 			{remoteStream.map((info, index) => (
 				<div
 					className={cn(
 						'p-2 w-full',
-						desktopFlexBasisStyle[remoteStream.length - 1],
-						mobileFlexBasisStyle[remoteStream.length - 1],
+						desktopVideoLayout[remoteStream.length - 1],
+						mobileVideoLayout[remoteStream.length - 1],
 					)}
 				>
 					<Video key={index} info={info} />
