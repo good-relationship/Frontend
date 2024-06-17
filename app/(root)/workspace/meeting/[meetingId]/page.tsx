@@ -8,13 +8,7 @@ import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
-
-export type VideoInfo = {
-	userId: string;
-	userName: string;
-	stream: MediaStream;
-	isOwner: boolean;
-};
+import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	const localVideoRef = useRef<HTMLVideoElement>(null);

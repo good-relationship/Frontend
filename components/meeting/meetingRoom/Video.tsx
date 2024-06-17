@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-import { VideoInfo } from '@/app/(root)/workspace/meeting/[meetingId]/page';
+import { VideoInfo } from '@/types/video';
 
 const Video = ({ info }: { info: VideoInfo }) => {
 	const { stream, userName } = info;
