@@ -45,6 +45,7 @@ const config = {
 			addComponents(typos);
 			addComponents(customDropShadow);
 		}),
+		require('tailwindcss-radix'),
 		tailwindAnimate,
 	],
 } satisfies Config;
