@@ -196,12 +196,12 @@ export default function Chatting({
 			<div className="h-full rounded-lg px-[26px] flex flex-col">
 				<div className="flex flex-row justify-between items-center pt-4">
 					<div className="flex-1 text-center">
-						<div className="typo-SubHeader3">채팅</div>
+						<p className="typo-SubHeader3">채팅</p>
 					</div>
 					<div>{children}</div>
 				</div>
 
-				<div className="h-10 grid place-items-center typo-Caption1">팀원들과 자유롭게 이야기를 나눠봐요.</div>
+				<p className="h-10 grid place-items-center typo-Caption1">팀원들과 자유롭게 이야기를 나눠봐요.</p>
 
 				<div className="flex-1 flex flex-col overflow-hidden">
 					<div ref={scrollBarRef} className="flex-1 flex overflow-y-auto">
