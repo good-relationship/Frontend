@@ -1,8 +1,10 @@
 'use client';
 import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
-import { KeyboardEvent, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
+
+import { PopoverClose } from '../ui/popover';
 
 import {
 	getHistoryMessageApi,
@@ -19,11 +21,7 @@ import { useCreateWebSocketClient } from '@/hooks/webSocket';
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
-export default function Chatting({
-	children,
-}: Readonly<{
-	children: ReactNode;
-}>) {
+export default function Chatting() {
 	const { messages, useAddMessageBeforeToList, useAddMessageToList } = useAddMessage();
 
 	const client = useRef<Client | null>(null);
@@ -198,7 +196,9 @@ export default function Chatting({
 					<div className="flex-1 text-center">
 						<p className="typo-SubHeader3">채팅</p>
 					</div>
-					<div>{children}</div>
+					<PopoverClose>
+						<Image src="/icons/close.svg" alt="close chatting" width={15} height={15} />
+					</PopoverClose>
 				</div>
 
 				<p className="h-10 grid place-items-center typo-Caption1">팀원들과 자유롭게 이야기를 나눠봐요.</p>
