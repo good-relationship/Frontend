@@ -10,9 +10,7 @@ const FloatingButton = () => {
 	return (
 		<Popover onOpenChange={(isOpen) => setIsPopoverOpen(isOpen)}>
 			<PopoverTrigger className={`md:block ${isPopoverOpen ? 'hidden' : ''}`}>
-				<div>
-					<img src="/icons/chatting.svg" alt="채팅아이콘" />
-				</div>
+				<img src="/icons/chatting.svg" alt="채팅아이콘" />
 			</PopoverTrigger>
 			<ChattingPop />
 		</Popover>
