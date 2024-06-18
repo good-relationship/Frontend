@@ -1,5 +1,6 @@
 'use client';
 
+import { leaveMeeting } from '@/apis/meeting';
 import IconButton from '@/components/meeting/meetingRoom/IconButton';
 import { IconId } from '@/types/icons';
 
@@ -27,11 +28,6 @@ const ButtonGroup = () => {
 			onClick: () => console.log('화면 공유 클릭'),
 		},
 		{
-			id: 'exit',
-			icon: 'exit',
-			onClick: () => console.log('나가기 클릭'),
-		},
-		{
 			id: 'document',
 			icon: 'pencil',
 			onClick: () => console.log('문서 클릭'),
@@ -40,6 +36,11 @@ const ButtonGroup = () => {
 			id: 'whiteboard',
 			icon: 'palette',
 			onClick: () => console.log('화이트보드 클릭'),
+		},
+		{
+			id: 'exit',
+			icon: 'exit',
+			onClick: leaveMeeting,
 		},
 	];
 
