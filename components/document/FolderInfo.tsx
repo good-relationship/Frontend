@@ -24,7 +24,7 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
 	return (
 		<div
 			className={cn(
-				'flex h-10 w-[300px] items-center px-2 hover:bg-Gray-100 hover:rounded-md my-2 cursor-pointer',
+				'flex h-10 w-[30vw] max-w-[300px] items-center px-2 hover:bg-Gray-100 hover:rounded-md my-2 cursor-pointer',
 				isOpen ? 'bg-Gray-100 rounded-md' : '',
 			)}
 		>

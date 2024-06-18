@@ -21,7 +21,7 @@ const SidebarLink = ({ label, path, icon, isActive }: SidebarLinkProps) => {
 			})}
 		>
 			<Icon id={icon} color={isActive ? colors['Purple-500'] : colors['Gray-400']} size={20} />
-			<span>{label}</span>
+			<span className="hidden lg:block">{label}</span>
 		</Link>
 	);
 };
