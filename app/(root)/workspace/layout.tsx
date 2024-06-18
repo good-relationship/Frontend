@@ -14,7 +14,7 @@ const WorkspaceLayout = ({
 			<WebsocketProvider>
 				<Sidebar />
 				<section className="p-[72px] w-full">{children}</section>
-				<div className="fixed bottom-0 right-10 p-4">
+				<div className="fixed bottom-0 right-[2vw] p-4">
 					<FloatingInfo />
 				</div>
 			</WebsocketProvider>
