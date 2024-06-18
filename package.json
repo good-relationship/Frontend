@@ -45,6 +45,7 @@
     "sockjs-client": "^1.6.1",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-radix": "^3.0.3",
     "zod": "^3.23.3"
   },
   "devDependencies": {
