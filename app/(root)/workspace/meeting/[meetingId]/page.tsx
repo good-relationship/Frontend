@@ -143,9 +143,10 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	const subscribeOffer = () => {
 		stompClient.subscribe(`/user/queue/offer/${meetingId}`, function (message) {
 			const body = JSON.parse(message.body);
-			const userId = body.userId;
+			const userId = body.userInfo.userId;
+			const userName = body.userInfo.userName;
 
-			createPeerConnection(userId);
+			createPeerConnection(userId, userName);
 			peerConnectionsRef.current[userId].setRemoteDescription(body.sessionDescription);
 
 			peerConnectionsRef.current[userId].createAnswer().then((answer) => {
@@ -161,7 +162,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	const subscribeAnswer = () => {
 		stompClient.subscribe(`/user/queue/answer/${meetingId}`, async function (message) {
 			const body = await JSON.parse(message.body);
-			await peerConnectionsRef.current[body.userId].setRemoteDescription(body.sessionDescription);
+			await peerConnectionsRef.current[body.userInfo.userId].setRemoteDescription(body.sessionDescription);
 		});
 	};
 
