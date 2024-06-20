@@ -1,3 +1,4 @@
+import { MenuIcon } from 'lucide-react';
 import { headers } from 'next/headers';
 import Image from 'next/image';
 
@@ -11,14 +12,17 @@ const Header = () => {
 	const isPlainHeader = isOnboardingUrl(headerPathname as UrlType);
 
 	return (
-		<header className="fixed top-0 h-[60px] w-full bg-black flex px-[60px] justify-between">
-			<Image
-				src="/icons/kan_text_horizontal.svg"
-				alt="조은사이 가로 로고"
-				width="0"
-				height="0"
-				className="w-[150px] h-auto"
-			/>
+		<header className="fixed top-0 h-[60px] w-full bg-black flex px-[30px] sm:px-[60px] justify-between">
+			<div className="gap-4 flex">
+				<MenuIcon color="white" className="block sm:hidden h-auto w-8" />
+				<Image
+					src="/icons/kan_text_horizontal.svg"
+					alt="조은사이 가로 로고"
+					width="0"
+					height="0"
+					className="w-[80px] sm:w-[150px] h-auto"
+				/>
+			</div>
 			{!isPlainHeader && <UserInfo />}
 		</header>
 	);
