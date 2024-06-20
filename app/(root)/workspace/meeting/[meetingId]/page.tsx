@@ -56,7 +56,22 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			subscribeIce();
 			await createPeerConnectionByMembers();
 		};
+
 		init();
+
+		return () => {
+			localStreamRef.current?.getTracks().forEach((track) => {
+				track.stop();
+			});
+
+			Object.values(peerConnectionsRef.current).forEach((peerConnection) => {
+				peerConnection.close();
+			});
+
+			stompClient.unsubscribe(`/user/queue/offer/${meetingId}`);
+			stompClient.unsubscribe(`/user/queue/answer/${meetingId}`);
+			stompClient.unsubscribe(`/user/queue/ice/${meetingId}`);
+		};
 	}, []);
 
 	const createPeerConnection = (userId: UserId, userName?: UserName) => {
