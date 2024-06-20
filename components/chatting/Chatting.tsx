@@ -1,5 +1,4 @@
 'use client';
-import { Client } from '@stomp/stompjs';
 import Image from 'next/image';
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -15,14 +14,14 @@ import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
 import { useAddMessage } from '@/hooks/addMessage';
 import { useGetAccessToken } from '@/hooks/auth';
-import { useCreateWebSocketClient } from '@/hooks/webSocket';
+import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
 export default function Page() {
 	const { messages, useAddMessageBeforeToList, useAddMessageToList } = useAddMessage();
 
-	const client = useRef<Client | null>(null);
+	const client = useWebsocket();
 	const scrollBarRef = useRef<HTMLDivElement>(null);
 
 	const [ref, inView] = useInView();
@@ -65,49 +64,45 @@ export default function Page() {
 				Authorization: `${accessToken}`,
 			};
 			const workspaceId = await getInfoOfWorkspace();
-			client.current = initialClient(headers, workspaceId);
-			client.current.activate();
+			initialClient(headers, workspaceId);
 		};
 
 		getUserId();
 		initializeClient();
 
 		return () => {
-			if (client.current) {
-				client.current.deactivate();
+			if (client) {
+				client.unsubscribe(`/topic/message/${getWorkspaceId}`);
+				client.unsubscribe(`/user/queue/history`);
 			}
 		};
 	}, []);
 
 	const initialClient = (headers: { Authorization: string }, workspaceId: string) => {
-		const newClient = useCreateWebSocketClient(headers, () => {
-			getHistoryMessage(0);
-			subscribeToMessageTopic(newClient, headers, workspaceId, (messageObj: GetMessageContentDTO) => {
-				useAddMessageToList(
-					messageObj.sender.senderName,
-					messageObj.content,
-					messageObj.sender.senderId,
-					messageObj.sender.senderImage,
-					messageObj.time,
-					messageObj.messageId,
-				);
-			});
-
-			subscribeToHistoryTopic(
-				newClient,
-				headers,
-				(messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
-					console.log('subscribe to history topic');
-					useAddMessageBeforeToList(message);
-					setMessageHistory({
-						start: messageInfo.start,
-						end: messageInfo.end,
-						lastMsgId: messageInfo.lastMsgId,
-					});
-				},
+		subscribeToMessageTopic(client, headers, workspaceId, (messageObj: GetMessageContentDTO) => {
+			useAddMessageToList(
+				messageObj.sender.senderName,
+				messageObj.content,
+				messageObj.sender.senderId,
+				messageObj.sender.senderImage,
+				messageObj.time,
+				messageObj.messageId,
 			);
 		});
-		return newClient;
+
+		subscribeToHistoryTopic(
+			client,
+			headers,
+			(messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
+				useAddMessageBeforeToList(message);
+				setMessageHistory({
+					start: messageInfo.start,
+					end: messageInfo.end,
+					lastMsgId: messageInfo.lastMsgId,
+				});
+			},
+		);
+		getHistoryMessage(0);
 	};
 
 	const handleText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -153,7 +148,7 @@ export default function Page() {
 
 	const sendMessage = () => {
 		const messageContent = inputMessage;
-		if (messageContent && client.current && scrollBarRef.current) {
+		if (messageContent && client && scrollBarRef.current) {
 			sendMessageApi(client, messageContent, getWorkspaceId);
 			setInputMessage('');
 		}
@@ -171,7 +166,7 @@ export default function Page() {
 	}, [messageHistory.lastMsgId]);
 
 	const getHistoryMessage = (msgId: number) => {
-		if (client.current && !messageHistory.end) {
+		if (client && !messageHistory.end) {
 			getHistoryMessageApi(client, msgId);
 			savePrevScrollHeight();
 		}
