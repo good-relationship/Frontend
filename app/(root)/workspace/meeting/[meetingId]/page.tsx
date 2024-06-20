@@ -4,22 +4,46 @@ import { useEffect, useRef, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
+import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
+import { cn } from '@/lib/utils';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
-import { UserId, UserInfo } from '@/models/user/entity/user';
+import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
+import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	const localVideoRef = useRef<HTMLVideoElement>(null);
 	const localStreamRef = useRef<MediaStream>();
 	const peerConnectionsRef = useRef<{ [userId: string]: RTCPeerConnection }>({});
-	const [remoteStream, setRemoteStream] = useState<MediaStream[]>([]);
+	const [remoteStream, setRemoteStream] = useState<VideoInfo[]>([]);
 	const stompClient = useWebsocket();
 	const { meetingId } = params;
 
+	const isUserExist = (userId: UserId) => {
+		return remoteStream.some((info) => info.userId === userId);
+	};
+
+	const addUniqueVideo = (video: VideoInfo) => {
+		setRemoteStream((prev) => {
+			if (prev.some((info) => info.userId === video.userId)) {
+				return prev;
+			}
+			return [...prev, video];
+		});
+	};
+
 	const setLocalStream = async () => {
 		const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+		const { userId, userName } = await getUserInfo();
 		localStreamRef.current = stream;
-		if (localVideoRef.current) {
+		addUniqueVideo({
+			userName: `${userName} (나)`,
+			userId: userId,
+			stream: stream,
+			isOwner: true,
+		});
+
+		if (localVideoRef.current && !isUserExist(userId)) {
 			localVideoRef.current.srcObject = stream;
 		}
 	};
@@ -35,7 +59,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		init();
 	}, []);
 
-	const createPeerConnection = (userId: UserId) => {
+	const createPeerConnection = (userId: UserId, userName?: UserName) => {
 		const peerConnection = new RTCPeerConnection({
 			iceServers: [
 				{
@@ -55,7 +79,12 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			}
 		};
 		peerConnection.ontrack = (event) => {
-			setRemoteStream((prev) => [...prev, event.streams[0]]);
+			addUniqueVideo({
+				userId: userId,
+				stream: event.streams[0],
+				isOwner: false,
+				userName: userName || '익명의 유저',
+			});
 		};
 
 		if (!localStreamRef.current) {
@@ -80,13 +109,14 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		}
 
 		members.forEach((member: UserInfo) => {
-			if (member.userId === userId) {
+			const { userId: memberId, userName: memberName } = member;
+			if (memberId === userId) {
 				return;
 			}
 
-			createPeerConnection(member.userId);
-			peerConnectionsRef.current[member.userId].createOffer().then((offer) => {
-				peerConnectionsRef.current[member.userId].setLocalDescription(offer);
+			createPeerConnection(memberId, memberName);
+			peerConnectionsRef.current[memberId].createOffer().then((offer) => {
+				peerConnectionsRef.current[memberId].setLocalDescription(offer);
 				publishOffer({
 					sessionDescription: offer,
 					userId: member.userId,
@@ -158,11 +188,17 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	};
 
 	return (
-		<div>
-			회의실 번호 : {params.meetingId}
-			<video ref={localVideoRef} autoPlay muted />
-			{remoteStream.map((stream, index) => (
-				<Video key={index} stream={stream} />
+		<div className="flex flex-wrap w-full justify-center flex-1">
+			{remoteStream.map((info, index) => (
+				<div
+					className={cn(
+						'p-2 w-full',
+						desktopVideoLayout[remoteStream.length - 1],
+						mobileVideoLayout[remoteStream.length - 1],
+					)}
+				>
+					<Video key={index} info={info} />
+				</div>
 			))}
 		</div>
 	);
