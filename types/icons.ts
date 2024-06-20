@@ -7,4 +7,7 @@ export type IconId =
 	| 'exit'
 	| 'microphone'
 	| 'screen'
-	| 'palette';
+	| 'palette'
+	| 'webcam-off'
+	| 'microphone-off'
+	| 'screen-off';
