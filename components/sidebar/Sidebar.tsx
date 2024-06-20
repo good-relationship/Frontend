@@ -9,7 +9,7 @@ import { sidebarRoutings } from '@/constants/routings';
 const Sidebar = () => {
 	const pathname = usePathname();
 	return (
-		<aside className="lg:min-w-[180px] lg:w-[296px] h-full py-[10px] px-4 custom-shadow bg-White">
+		<aside className="w-screen sm:w-[100px] lg:min-w-[180px] lg:w-[296px] h-full py-[10px] px-4 custom-shadow bg-White z-50">
 			<SidebarTitle />
 			{sidebarRoutings.map(({ label, path, icon }) => {
 				const isActive = pathname === path || pathname.startsWith(`${path}/`);

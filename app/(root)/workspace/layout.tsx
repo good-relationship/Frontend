@@ -13,7 +13,7 @@ const WorkspaceLayout = ({
 		<div className="flex h-full">
 			<WebsocketProvider>
 				<Sidebar />
-				<section className="py-[40px] px-[50px] w-full">{children}</section>
+				<section className="py-[40px] px-[50px] w-full hidden sm:block">{children}</section>
 				<div className="fixed bottom-0 right-[2vw] p-4">
 					<FloatingInfo />
 				</div>
