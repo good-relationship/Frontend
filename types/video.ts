@@ -1,6 +1,8 @@
+import { UserId, UserName } from '@/models/user/entity/user';
+
 export type VideoInfo = {
-	userId: string;
-	userName: string;
+	userId: UserId;
+	userName: UserName;
 	stream: MediaStream;
 	isOwner: boolean;
 };
