@@ -209,12 +209,12 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 	}, []);
 
 	return (
-		<div className="flex flex-wrap w-full justify-center flex-1">
+		<div className="flex flex-wrap justify-center flex-1">
 			{remoteStream.map((info) => (
 				<div
 					key={info.userId}
 					className={cn(
-						'p-2 w-full',
+						'p-2',
 						desktopVideoLayout[remoteStream.length - 1],
 						mobileVideoLayout[remoteStream.length - 1],
 					)}
