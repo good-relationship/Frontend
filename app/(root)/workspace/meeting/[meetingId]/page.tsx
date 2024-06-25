@@ -6,13 +6,14 @@ import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
 import { cn } from '@/lib/utils';
+import { useMeeting } from '@/lib/websocket/MeetingProvider';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const localStreamRef = useRef<MediaStream>();
+	const { localStreamRef } = useMeeting();
 	const peerConnectionsRef = useRef<{ [userId: UserId]: RTCPeerConnection }>({});
 	const [remoteStream, setRemoteStream] = useState<VideoInfo[]>([]);
 	const stompClient = useWebsocket();
