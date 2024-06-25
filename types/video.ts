@@ -6,3 +6,5 @@ export type VideoInfo = {
 	stream: MediaStream;
 	isOwner: boolean;
 };
+
+export type VideoInfoList = VideoInfo[];
