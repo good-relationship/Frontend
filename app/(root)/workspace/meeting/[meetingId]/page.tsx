@@ -12,16 +12,11 @@ import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const localVideoRef = useRef<HTMLVideoElement>(null);
 	const localStreamRef = useRef<MediaStream>();
 	const peerConnectionsRef = useRef<{ [userId: UserId]: RTCPeerConnection }>({});
 	const [remoteStream, setRemoteStream] = useState<VideoInfo[]>([]);
 	const stompClient = useWebsocket();
 	const { meetingId } = params;
-
-	const isUserExist = (userId: UserId) => {
-		return remoteStream.some((info) => info.userId === userId);
-	};
 
 	const addUniqueVideo = (video: VideoInfo) => {
 		setRemoteStream((prev) => {
@@ -39,9 +34,6 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			stream: stream,
 			isOwner: true,
 		});
-		if (localVideoRef.current && !isUserExist(userId)) {
-			localVideoRef.current.srcObject = stream;
-		}
 	};
 
 	const createPeerConnection = (userId: UserId, userName?: UserName) => {
