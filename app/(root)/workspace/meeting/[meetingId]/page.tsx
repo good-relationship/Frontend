@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
@@ -13,8 +13,7 @@ import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const { localStreamRef } = useMeeting();
-	const peerConnectionsRef = useRef<{ [userId: UserId]: RTCPeerConnection }>({});
+	const { localStreamRef, peerConnectionsRef } = useMeeting();
 	const [remoteStream, setRemoteStream] = useState<VideoInfo[]>([]);
 	const stompClient = useWebsocket();
 	const { meetingId } = params;
