@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
@@ -13,13 +13,12 @@ import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const { localStreamRef, peerConnectionsRef } = useMeeting();
-	const [remoteStream, setRemoteStream] = useState<VideoInfo[]>([]);
+	const { localStreamRef, peerConnectionsRef, videoInfoList, setVideoInfoList } = useMeeting();
 	const stompClient = useWebsocket();
 	const { meetingId } = params;
 
 	const addUniqueVideo = (video: VideoInfo) => {
-		setRemoteStream((prev) => {
+		setVideoInfoList((prev) => {
 			return prev.filter((info) => info.userId !== video.userId).concat(video);
 		});
 	};
@@ -151,7 +150,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			Object.keys(peerConnectionsRef.current).forEach((userId) => {
 				const convertedUserId = parseInt(userId);
 				if (!userIds.includes(convertedUserId)) {
-					setRemoteStream((prev) => prev.filter((info) => info.userId !== convertedUserId));
+					setVideoInfoList((prev) => prev.filter((info) => info.userId !== convertedUserId));
 					peerConnectionsRef.current[convertedUserId].close();
 					delete peerConnectionsRef.current[convertedUserId];
 				}
@@ -202,13 +201,13 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 	return (
 		<div className="flex flex-wrap justify-center flex-1">
-			{remoteStream.map((info) => (
+			{videoInfoList.map((info) => (
 				<div
 					key={info.userId}
 					className={cn(
 						'p-2',
-						desktopVideoLayout[remoteStream.length - 1],
-						mobileVideoLayout[remoteStream.length - 1],
+						desktopVideoLayout[videoInfoList.length - 1],
+						mobileVideoLayout[videoInfoList.length - 1],
 					)}
 				>
 					<Video info={info} />
