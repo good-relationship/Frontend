@@ -1,21 +1,12 @@
 'use client';
-import {
-	createContext,
-	Dispatch,
-	MutableRefObject,
-	ReactNode,
-	SetStateAction,
-	useContext,
-	useRef,
-	useState,
-} from 'react';
+import { createContext, Dispatch, MutableRefObject, ReactNode, SetStateAction, useRef, useState } from 'react';
 
 import { UserId } from '@/models/user/entity/user';
 import { VideoInfoList } from '@/types/video';
 
 type PeerConnections = { [userId: UserId]: RTCPeerConnection };
 
-const MeetingContext = createContext(
+export const MeetingContext = createContext(
 	{} as {
 		localStreamRef: MutableRefObject<MediaStream | undefined>;
 		peerConnectionsRef: MutableRefObject<PeerConnections>;
@@ -23,14 +14,6 @@ const MeetingContext = createContext(
 		setVideoInfoList: Dispatch<SetStateAction<VideoInfoList>>;
 	},
 );
-
-export const useMeeting = () => {
-	const context = useContext(MeetingContext);
-	if (context === undefined) {
-		throw new Error('useMeeting must be used within a MeetingProvider');
-	}
-	return context;
-};
 
 export const MeetingProvider = ({ children }: { children: ReactNode }) => {
 	const localStreamRef = useRef<MediaStream>();
