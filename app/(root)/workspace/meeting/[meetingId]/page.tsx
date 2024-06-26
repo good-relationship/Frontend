@@ -1,21 +1,32 @@
 'use client';
 
+import { IMessage } from '@stomp/stompjs';
 import { useEffect } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
-import { useLocalStream, usePeerConnections, useVideoInfoList } from '@/hooks/meeting';
+import { useLocalStream, useMeetingWebsocket, usePeerConnections, useVideoInfoList } from '@/hooks/meeting';
 import { cn } from '@/lib/utils';
-import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
-import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const { localStreamRef, setLocalStream, getLocalStream } = useLocalStream();
+	const { setLocalStream, getLocalStream, addStreamTracksToPeer } = useLocalStream();
 	const { peerConnectionsRef } = usePeerConnections();
 	const { videoInfoList, setVideoInfoList, addUniqueVideo } = useVideoInfoList();
-	const stompClient = useWebsocket();
+	const {
+		publishOffer,
+		publishAnswer,
+		publishIce,
+		subscribeOffer,
+		subscribeAnswer,
+		subscribeIce,
+		subscribeUserList,
+		unsubscribeOffer,
+		unsubscribeAnswer,
+		unsubscribeIce,
+		unsubscribeUserList,
+	} = useMeetingWebsocket();
 	const { meetingId } = params;
 
 	const setLocalStreamInfo = async () => {
@@ -30,6 +41,53 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		});
 	};
 
+	const handleSubscribeOffer = (message: IMessage) => {
+		const { userInfo, sessionDescription } = JSON.parse(message.body);
+		const { userId, userName } = userInfo;
+
+		createPeerConnection(userId, userName);
+		peerConnectionsRef.current[userId].setRemoteDescription(sessionDescription);
+
+		peerConnectionsRef.current[userId].createAnswer().then((answer) => {
+			peerConnectionsRef.current[userId].setLocalDescription(answer);
+			publishAnswer(
+				{
+					sessionDescription: answer,
+					userId,
+				},
+				meetingId,
+			);
+		});
+	};
+
+	const handleSubscribeAnswer = async (message: IMessage) => {
+		const { userInfo, sessionDescription } = await JSON.parse(message.body);
+		await peerConnectionsRef.current[userInfo.userId].setRemoteDescription(sessionDescription);
+	};
+
+	const handleSubscribeIc = (message: IMessage) => {
+		const { userId, candidate, sdpMid, sdpMLineIndex } = JSON.parse(message.body);
+		const iceCandidate = new RTCIceCandidate({
+			candidate,
+			sdpMid,
+			sdpMLineIndex,
+		});
+		peerConnectionsRef.current[userId].addIceCandidate(iceCandidate);
+	};
+
+	const handleSubscribeUserList = (message: IMessage) => {
+		const members = JSON.parse(message.body);
+		const userIds = members.map((info: UserInfo) => info.userId);
+		Object.keys(peerConnectionsRef.current).forEach((userId) => {
+			const convertedUserId = parseInt(userId);
+			if (!userIds.includes(convertedUserId)) {
+				setVideoInfoList((prev) => prev.filter((info) => info.userId !== convertedUserId));
+				peerConnectionsRef.current[convertedUserId].close();
+				delete peerConnectionsRef.current[convertedUserId];
+			}
+		});
+	};
+
 	const createPeerConnection = (userId: UserId, userName?: UserName) => {
 		const peerConnection = new RTCPeerConnection({
 			iceServers: [
@@ -41,12 +99,15 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 		peerConnection.onicecandidate = (event) => {
 			if (event.candidate) {
-				publishIce({
-					candidate: event.candidate.candidate,
-					userId: userId,
-					sdpMLineIndex: event.candidate.sdpMLineIndex,
-					sdpMid: event.candidate.sdpMid,
-				});
+				publishIce(
+					{
+						candidate: event.candidate.candidate,
+						userId: userId,
+						sdpMLineIndex: event.candidate.sdpMLineIndex,
+						sdpMid: event.candidate.sdpMid,
+					},
+					meetingId,
+				);
 			}
 		};
 
@@ -59,16 +120,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			});
 		};
 
-		if (!localStreamRef.current) {
-			return;
-		}
-
-		localStreamRef.current.getTracks().forEach((track) => {
-			if (!localStreamRef.current) {
-				return;
-			}
-			peerConnection.addTrack(track, localStreamRef.current);
-		});
+		addStreamTracksToPeer(peerConnection);
 
 		peerConnectionsRef.current[userId] = peerConnection;
 	};
@@ -89,104 +141,34 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 			createPeerConnection(memberId, memberName);
 			peerConnectionsRef.current[memberId].createOffer().then((offer) => {
 				peerConnectionsRef.current[memberId].setLocalDescription(offer);
-				publishOffer({
-					sessionDescription: offer,
-					userId: member.userId,
-				});
+				publishOffer(
+					{
+						sessionDescription: offer,
+						userId: member.userId,
+					},
+					meetingId,
+				);
 			});
-		});
-	};
-
-	const subscribeOffer = () => {
-		stompClient.subscribe(`/user/queue/offer/${meetingId}`, function (message) {
-			const { userInfo, sessionDescription } = JSON.parse(message.body);
-			const { userId, userName } = userInfo;
-
-			createPeerConnection(userId, userName);
-			peerConnectionsRef.current[userId].setRemoteDescription(sessionDescription);
-
-			peerConnectionsRef.current[userId].createAnswer().then((answer) => {
-				peerConnectionsRef.current[userId].setLocalDescription(answer);
-				publishAnswer({
-					sessionDescription: answer,
-					userId,
-				});
-			});
-		});
-	};
-
-	const subscribeAnswer = () => {
-		stompClient.subscribe(`/user/queue/answer/${meetingId}`, async function (message) {
-			const { userInfo, sessionDescription } = await JSON.parse(message.body);
-			await peerConnectionsRef.current[userInfo.userId].setRemoteDescription(sessionDescription);
-		});
-	};
-
-	const subscribeIce = () => {
-		stompClient.subscribe(`/user/queue/ice/${meetingId}`, function (message) {
-			const { userId, candidate, sdpMid, sdpMLineIndex } = JSON.parse(message.body);
-			const iceCandidate = new RTCIceCandidate({
-				candidate,
-				sdpMid,
-				sdpMLineIndex,
-			});
-			peerConnectionsRef.current[userId].addIceCandidate(iceCandidate);
-		});
-	};
-
-	const subscribeUserList = () => {
-		stompClient.subscribe(`/topic/meetingRoom/${meetingId}/users`, (message) => {
-			const members = JSON.parse(message.body);
-			const userIds = members.map((info: UserInfo) => info.userId);
-			Object.keys(peerConnectionsRef.current).forEach((userId) => {
-				const convertedUserId = parseInt(userId);
-				if (!userIds.includes(convertedUserId)) {
-					setVideoInfoList((prev) => prev.filter((info) => info.userId !== convertedUserId));
-					peerConnectionsRef.current[convertedUserId].close();
-					delete peerConnectionsRef.current[convertedUserId];
-				}
-			});
-		});
-	};
-
-	const publishOffer = (sdpDto: SdpDto) => {
-		stompClient.publish({
-			destination: `/app/offer/${meetingId}`,
-			body: JSON.stringify(sdpDto),
-		});
-	};
-
-	const publishAnswer = (answer: SdpDto) => {
-		stompClient.publish({
-			destination: `/app/answer/${meetingId}`,
-			body: JSON.stringify(answer),
-		});
-	};
-
-	const publishIce = (iceDto: IceDto) => {
-		stompClient.publish({
-			destination: `/app/ice/${meetingId}`,
-			body: JSON.stringify(iceDto),
 		});
 	};
 
 	useEffect(() => {
 		const init = async () => {
 			await setLocalStreamInfo();
-			subscribeOffer();
-			subscribeAnswer();
-			subscribeIce();
-			subscribeUserList();
+			subscribeOffer(meetingId, handleSubscribeOffer);
+			subscribeAnswer(meetingId, handleSubscribeAnswer);
+			subscribeIce(meetingId, handleSubscribeIc);
+			subscribeUserList(meetingId, handleSubscribeUserList);
 			await createPeerConnectionByMembers();
 		};
 
 		init();
 
 		return () => {
-			stompClient.unsubscribe(`/user/queue/offer/${meetingId}`);
-			stompClient.unsubscribe(`/user/queue/answer/${meetingId}`);
-			stompClient.unsubscribe(`/user/queue/ice/${meetingId}`);
-			stompClient.unsubscribe(`/topic/meetingRoom/${meetingId}/users`);
+			unsubscribeOffer(meetingId);
+			unsubscribeAnswer(meetingId);
+			unsubscribeIce(meetingId);
+			unsubscribeUserList(meetingId);
 		};
 	}, []);
 
