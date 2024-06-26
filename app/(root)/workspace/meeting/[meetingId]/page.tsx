@@ -6,7 +6,10 @@ import { useEffect } from 'react';
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
-import { useLocalStream, useMeetingWebsocket, usePeerConnections, useVideoInfoList } from '@/hooks/meeting';
+import { useLocalStream } from '@/hooks/localStream';
+import { useMeetingWebsocket } from '@/hooks/meetingWebsocket';
+import { usePeerConnections } from '@/hooks/peerConnection';
+import { useVideoInfoList } from '@/hooks/videoInfoList';
 import { cn } from '@/lib/utils';
 import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 
