@@ -16,16 +16,13 @@ const MeetingPage = () => {
 
 	useEffect(() => {
 		const handleConnect = async () => {
-			if (!stompClient) {
-				return;
-			}
 			const { workspaceId } = await getWorkspaceInfo();
 			subscribeMeetingList(workspaceId);
 			getMeetingRoomList();
 		};
 
 		handleConnect();
-	}, [stompClient]);
+	}, []);
 
 	const subscribeMeetingList = (workspaceId: string) => {
 		stompClient.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
