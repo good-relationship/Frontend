@@ -12,6 +12,11 @@ export const useWebsocket = () => {
 	if (context === undefined) {
 		throw new Error('useWebsocket must be used within a WebsocketProvider');
 	}
+
+	if (!context.connected || !context.active) {
+		context.activate();
+	}
+
 	return context;
 };
 
