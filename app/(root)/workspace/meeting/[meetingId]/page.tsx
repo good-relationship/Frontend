@@ -5,28 +5,23 @@ import { useEffect } from 'react';
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
 import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
+import { useLocalStream, usePeerConnections, useVideoInfoList } from '@/hooks/meeting';
 import { cn } from '@/lib/utils';
-import { useMeeting } from '@/lib/websocket/MeetingProvider';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
 import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
 import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
-import { VideoInfo } from '@/types/video';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const { localStreamRef, peerConnectionsRef, videoInfoList, setVideoInfoList } = useMeeting();
+	const { localStreamRef, setLocalStream, getLocalStream } = useLocalStream();
+	const { peerConnectionsRef } = usePeerConnections();
+	const { videoInfoList, setVideoInfoList, addUniqueVideo } = useVideoInfoList();
 	const stompClient = useWebsocket();
 	const { meetingId } = params;
 
-	const addUniqueVideo = (video: VideoInfo) => {
-		setVideoInfoList((prev) => {
-			return prev.filter((info) => info.userId !== video.userId).concat(video);
-		});
-	};
-
-	const setLocalStream = async () => {
-		const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+	const setLocalStreamInfo = async () => {
 		const { userId, userName } = await getUserInfo();
-		localStreamRef.current = stream;
+		const stream = await getLocalStream();
+		setLocalStream(stream);
 		addUniqueVideo({
 			userName: `${userName} (나)`,
 			userId: userId,
@@ -54,6 +49,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 				});
 			}
 		};
+
 		peerConnection.ontrack = (event) => {
 			addUniqueVideo({
 				userId: userId,
@@ -103,18 +99,17 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 	const subscribeOffer = () => {
 		stompClient.subscribe(`/user/queue/offer/${meetingId}`, function (message) {
-			const body = JSON.parse(message.body);
-			const userId = body.userInfo.userId;
-			const userName = body.userInfo.userName;
+			const { userInfo, sessionDescription } = JSON.parse(message.body);
+			const { userId, userName } = userInfo;
 
 			createPeerConnection(userId, userName);
-			peerConnectionsRef.current[userId].setRemoteDescription(body.sessionDescription);
+			peerConnectionsRef.current[userId].setRemoteDescription(sessionDescription);
 
 			peerConnectionsRef.current[userId].createAnswer().then((answer) => {
 				peerConnectionsRef.current[userId].setLocalDescription(answer);
 				publishAnswer({
 					sessionDescription: answer,
-					userId: userId,
+					userId,
 				});
 			});
 		});
@@ -122,22 +117,18 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 	const subscribeAnswer = () => {
 		stompClient.subscribe(`/user/queue/answer/${meetingId}`, async function (message) {
-			const body = await JSON.parse(message.body);
-			await peerConnectionsRef.current[body.userInfo.userId].setRemoteDescription(body.sessionDescription);
+			const { userInfo, sessionDescription } = await JSON.parse(message.body);
+			await peerConnectionsRef.current[userInfo.userId].setRemoteDescription(sessionDescription);
 		});
 	};
 
 	const subscribeIce = () => {
 		stompClient.subscribe(`/user/queue/ice/${meetingId}`, function (message) {
-			const body = JSON.parse(message.body);
-			const userId = body.userId;
-			const candidate = body.candidate;
-			const sdpMid = body.sdpMid;
-			const sdpMLineIndex = body.sdpMLineIndex;
+			const { userId, candidate, sdpMid, sdpMLineIndex } = JSON.parse(message.body);
 			const iceCandidate = new RTCIceCandidate({
-				candidate: candidate,
-				sdpMid: sdpMid,
-				sdpMLineIndex: sdpMLineIndex,
+				candidate,
+				sdpMid,
+				sdpMLineIndex,
 			});
 			peerConnectionsRef.current[userId].addIceCandidate(iceCandidate);
 		});
@@ -181,7 +172,7 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 	useEffect(() => {
 		const init = async () => {
-			await setLocalStream();
+			await setLocalStreamInfo();
 			subscribeOffer();
 			subscribeAnswer();
 			subscribeIce();
