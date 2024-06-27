@@ -98,7 +98,6 @@ export default function Chatting() {
 				newClient,
 				headers,
 				(messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
-					console.log('subscribe to history topic');
 					useAddMessageBeforeToList(message);
 					setMessageHistory({
 						start: messageInfo.start,
