@@ -8,7 +8,6 @@ const DocumentHeader = () => {
 
 	const addFolder = () => {
 		[...folders, { folderName: 'Untitled', isOpen: false }];
-		console.log('Add!');
 	};
 
 	return (
