@@ -2,16 +2,29 @@ import FileInfo from './FileInfo';
 
 import { mockGetDocumentFileInfoData } from '@/mocks/documentFile';
 
-const FileList = () => {
+interface fileDocument {
+	folderId?: string;
+}
+
+const FileList = ({ folderId }: fileDocument) => {
 	const files = mockGetDocumentFileInfoData;
 
 	return (
-		<div className="h-full max-h-[70vh] flex">
-			<div className="border-l-4 border-l-gray-300 mr-[5vw]" />
-			<div className="overflow-y-auto overflow-x-hidden">
-				{files.map((file) => {
-					return <FileInfo fileName={file.fileName} fileId={file.fileId} />;
-				})}
+		<div className={`${folderId ? 'block' : 'hidden'} sm:block w-full`}>
+			<div className="h-[60vh] flex overflow-y-auto">
+				<div className="sm:border-l-4 border-l-gray-300 mr-[5vw] h-full" />
+				<div className="overflow-y-auto overflow-x-hidden w-full sm:max-w-[320px]">
+					{files
+						.filter((file) => file.folderId === folderId)
+						.map((file) => (
+							<FileInfo
+								key={file.fileId}
+								folderId={file.folderId}
+								fileName={file.fileName}
+								fileId={file.fileId}
+							/>
+						))}
+				</div>
 			</div>
 		</div>
 	);

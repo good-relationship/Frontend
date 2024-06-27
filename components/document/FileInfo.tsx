@@ -10,7 +10,7 @@ import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/pop
 import { cn } from '@/lib/utils';
 import { GetDocumentFileInfoDTO } from '@/models/document/getDocumentFileInfoDTO';
 
-const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
+const FileInfo = ({ folderId, fileName, fileId }: GetDocumentFileInfoDTO) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [newFileName, setNewFileName] = useState(fileName);
 
@@ -23,7 +23,7 @@ const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
 	};
 
 	return (
-		<div className="flex w-[30vw] max-w-[300px] h-10 items-center">
+		<div className="flex w-full sm:w-[30vw] sm:max-w-[300px] h-10 items-center">
 			<div className="flex justify-between h-full w-full items-center rounded-xl hover:bg-gray-100">
 				{isEdit ? (
 					<DocumentInput
@@ -34,7 +34,7 @@ const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
 						changeEdit={changeEdit}
 					/>
 				) : (
-					<Link href={`/workspace/document/${fileId}`}>
+					<Link href={`/workspace/document/${folderId}/${fileId}`}>
 						<p
 							className={cn(
 								'pl-[10px] pt-1 typo-Body4 flex-1',

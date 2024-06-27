@@ -2,13 +2,17 @@ import FolderInfo from './FolderInfo';
 
 import { mockGetDocumenFoldertInfoData } from '@/mocks/documentFolder';
 
-const FolderList = () => {
+interface folderInfoData {
+	folderId?: string;
+}
+
+const FolderList = ({ folderId }: folderInfoData) => {
 	const folders = mockGetDocumenFoldertInfoData;
 
 	return (
-		<div className="h-full max-h-[480px]">
+		<div className={`${folderId ? 'hidden' : 'block'} sm:block h-full max-h-[480px]`}>
 			{folders.map((folder) => {
-				return <FolderInfo folderName={folder.folderName} isOpen={folder.isOpen} />;
+				return <FolderInfo folderId={folder.folderId} folderName={folder.folderName} isOpen={folder.isOpen} />;
 			})}
 		</div>
 	);

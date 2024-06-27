@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 import DocumentInput from './DocumentInput';
@@ -9,7 +10,7 @@ import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/pop
 import { cn } from '@/lib/utils';
 import { GetDocumentFolderInfoDTO } from '@/models/document/getDocumentFolderInfoDTO';
 
-const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
+const FolderInfo = ({ folderId, folderName, isOpen }: GetDocumentFolderInfoDTO) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [newFolderName, setNewFolderName] = useState(folderName);
 
@@ -24,7 +25,7 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
 	return (
 		<div
 			className={cn(
-				'flex h-10 w-[30vw] max-w-[300px] items-center px-2 hover:bg-Gray-100 hover:rounded-md my-2 cursor-pointer',
+				'flex h-10 sm:w-[30vw] max-w-[300px] items-center px-2 hover:bg-Gray-100 hover:rounded-md my-2 cursor-pointer',
 				isOpen ? 'bg-Gray-100 rounded-md' : '',
 			)}
 		>
@@ -44,14 +45,15 @@ const FolderInfo = ({ folderName, isOpen }: GetDocumentFolderInfoDTO) => {
 					changeEdit={changeEdit}
 				/>
 			) : (
-				<div
+				<Link
+					href={`/workspace/document/${folderId}`}
 					className={cn(
 						'pl-[10px] pt-1 typo-Body3 w-52',
 						newFolderName == 'Untitled' ? 'text-gray-300 italic' : '',
 					)}
 				>
 					{newFolderName}
-				</div>
+				</Link>
 			)}
 
 			<div className="flex justify-end pt-1">
