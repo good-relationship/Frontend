@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { getMeetingRoomList } from '@/apis/meeting';
 import { getWorkspaceInfo } from '@/apis/workspace';
@@ -13,11 +13,15 @@ const MeetingRoomList = () => {
 	const [roomList, setRoomList] = useState<RoomList>();
 	const stompClient = useWebsocket();
 
-	const handleConnect = async () => {
-		const { workspaceId } = await getWorkspaceInfo();
-		subscribeMeetingList(workspaceId);
-		getMeetingRoomList();
-	};
+	useEffect(() => {
+		const handleConnect = async () => {
+			const { workspaceId } = await getWorkspaceInfo();
+			subscribeMeetingList(workspaceId);
+			getMeetingRoomList();
+		};
+
+		handleConnect();
+	}, []);
 
 	const subscribeMeetingList = (workspaceId: string) => {
 		stompClient.subscribe(`/topic/${workspaceId}/meetingRoomList`, function (message) {
@@ -25,8 +29,6 @@ const MeetingRoomList = () => {
 			setRoomList(body.meetingRoomList);
 		});
 	};
-
-	handleConnect();
 
 	const renderMeetingRoomList = () => {
 		if (!roomList || roomList.length === 0) {
