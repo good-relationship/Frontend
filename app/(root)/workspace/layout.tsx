@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 
 import FloatingInfo from '@/components/chatting/FloatingInfo';
+import WithAccessToken from '@/components/hoc/WithAccessToken';
 import Sidebar from '@/components/sidebar/Sidebar';
 import { WebsocketProvider } from '@/lib/websocket/WebsocketProvider';
-import WithAccessToken from '@/lib/websocket/WithAccessToken';
 
 const WorkspaceLayout = ({
 	children,
