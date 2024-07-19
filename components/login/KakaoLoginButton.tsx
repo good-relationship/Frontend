@@ -1,14 +1,15 @@
-'use clinet';
+'use client';
 
 import Image from 'next/image';
 
 import RoundedButton from '@/components/RoundedButton';
+import { INVITED_CODE } from '@/constants/searchparams';
+import { useGetSearchParams } from '@/hooks/searchParams';
 
-type KakaoLoginButtonProps = {
-	inviteCode: string;
-};
+const KakaoLoginButton = () => {
+	const { getSearchParams } = useGetSearchParams();
+	const inviteCode = getSearchParams(INVITED_CODE);
 
-const KakaoLoginButton = ({ inviteCode }: KakaoLoginButtonProps) => {
 	const handleKakaoLogin = () => {
 		const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_LOGIN_REDIRECT_URI}&response_type=code&state=${inviteCode}`;
 		window.location.href = kakaoLoginUrl;

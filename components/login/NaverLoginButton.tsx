@@ -1,12 +1,15 @@
+'use client';
+
 import Image from 'next/image';
 
 import RoundedButton from '@/components/RoundedButton';
+import { INVITED_CODE } from '@/constants/searchparams';
+import { useGetSearchParams } from '@/hooks/searchParams';
 
-type NaverLoginButtonProps = {
-	inviteCode: string;
-};
+const NaverLoginButton = () => {
+	const { getSearchParams } = useGetSearchParams();
+	const inviteCode = getSearchParams(INVITED_CODE);
 
-const NaverLoginButton = ({ inviteCode }: NaverLoginButtonProps) => {
 	const handleNaverLogin = () => {
 		const naverLoginUrl = `https://nid.naver.com/oauth2.0/authorize?client_id=${process.env.NEXT_PUBLIC_NAVER_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_NAVER_LOGIN_REDIRECT_URI}&response_type=code&state=${inviteCode}`;
 		window.location.href = naverLoginUrl;
