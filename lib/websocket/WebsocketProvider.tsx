@@ -22,7 +22,7 @@ const initializeWebsocket = (accessToken: string) => {
 	const stompClient = new Client({
 		brokerURL: `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}`,
 		connectHeaders: {
-			Authorization: `${accessToken}`,
+			Authorization: `Bearer ${accessToken}`,
 		},
 		reconnectDelay: 5000,
 		heartbeatIncoming: 4000,
@@ -42,10 +42,6 @@ export const WebsocketProvider = ({ children, accessToken }: { children: ReactNo
 	const stompClient = useRef<Client>(initializeWebsocket(accessToken));
 
 	useEffect(() => {
-		if (!stompClient.current || !stompClient.current.connected) {
-			stompClient.current = initializeWebsocket(accessToken);
-		}
-
 		return () => {
 			if (stompClient.current && stompClient.current.connected) {
 				stompClient.current.deactivate();
