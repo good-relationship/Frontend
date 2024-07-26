@@ -1,9 +1,9 @@
 'use client';
 
 import { Client } from '@stomp/stompjs';
-import { createContext, ReactNode, useContext, useEffect } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useRef } from 'react';
 
-const WebsocketContext = createContext<Client | undefined>(undefined);
+const WebsocketContext = createContext<Client>({} as Client);
 
 export const useWebsocket = () => {
 	const context = useContext(WebsocketContext);
@@ -35,15 +35,15 @@ const initializeWebsocket = (accessToken: string) => {
 };
 
 export const WebsocketProvider = ({ children, accessToken }: { children: ReactNode; accessToken: string }) => {
-	const stompClient = initializeWebsocket(accessToken);
+	const stompClient = useRef<Client>(initializeWebsocket(accessToken));
 
 	useEffect(() => {
 		return () => {
-			if (stompClient && stompClient.connected) {
-				stompClient.deactivate();
+			if (stompClient.current && stompClient.current.connected) {
+				stompClient.current.deactivate();
 			}
 		};
 	}, []);
 
-	return <WebsocketContext.Provider value={stompClient}>{children}</WebsocketContext.Provider>;
+	return <WebsocketContext.Provider value={stompClient.current}>{children}</WebsocketContext.Provider>;
 };
