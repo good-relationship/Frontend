@@ -20,13 +20,14 @@ const initializeWebsocket = (accessToken: string) => {
 		connectHeaders: {
 			Authorization: `Bearer ${accessToken}`,
 		},
-		reconnectDelay: 5000,
-		heartbeatIncoming: 4000,
-		heartbeatOutgoing: 4000,
+		reconnectDelay: 0,
 		onStompError: (frame) => {
 			// TODO: stomp 오류 처리
 			console.error('Broker reported error: ' + frame.headers['message']);
 			console.error('Additional details: ' + frame.body);
+		},
+		debug: (str) => {
+			console.log(str);
 		},
 	});
 
