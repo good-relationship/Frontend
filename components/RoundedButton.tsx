@@ -14,6 +14,7 @@ export interface RoundedButtonProps
 const buttonVariants = cva('rounded-[100px] h-fit w-fit', {
 	variants: {
 		size: {
+			Xsmall: 'w-8 h-8 rounded-full h-auto',
 			Small: 'gap-[10px] min-w-[100px] h-10 !typo-Body3 h-9',
 			Medium: 'gap-2 min-w-[268px] !typo-Body1 h-10',
 			Large: 'gap-[10px] !typo-SubHeader2 w-[600px] h-[56px]',

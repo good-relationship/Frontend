@@ -5,18 +5,19 @@ import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/pop
 const FileHeader = () => {
 	return (
 		<div className="flex gap-5 items-center">
-			<Image src="/icons/documentFile.svg" width={36} height={36} alt="search icon" />
-			<p className="typo-Header4">기록 &gt; folder1 &gt; file2</p>
+			<div className="relative w-9 h-9 min-w-5 min-h-5">
+				<Image src="/icons/documentFile.svg" fill alt="search icon" />
+			</div>
+			<p className="typo-SubHeader3 sm:typo-Header4">기록 &gt; folder1 &gt; file2</p>
 
 			<div className="flex pt-1 pr-2">
 				<Popover>
 					<PopoverTrigger>
-						<div className="w-10 h-10 rounded-md flex justify-center hover:bg-Gray-100">
+						<div className="relative sm:w-8 sm:h-8 min-w-5 min-h-5 rounded-md flex justify-center hover:bg-Gray-100">
 							<Image
 								src="/icons/folder_setting.svg"
 								alt="document file setting"
-								width={6}
-								height={36}
+								fill
 								className="cursor-pointer"
 							/>
 						</div>

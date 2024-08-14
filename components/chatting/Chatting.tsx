@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 
+import { PopoverClose } from '../ui/popover';
+
 import {
 	getHistoryMessageApi,
 	sendMessageApi,
@@ -19,7 +21,7 @@ import { useCreateWebSocketClient } from '@/hooks/webSocket';
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
 
-export default function Page() {
+export default function Chatting() {
 	const { messages, useAddMessageBeforeToList, useAddMessageToList } = useAddMessage();
 
 	const client = useRef<Client | null>(null);
@@ -96,7 +98,6 @@ export default function Page() {
 				newClient,
 				headers,
 				(messageInfo: GetMessageHistoryDTO, message: GetMessageContentDTO[]) => {
-					console.log('subscribe to history topic');
 					useAddMessageBeforeToList(message);
 					setMessageHistory({
 						start: messageInfo.start,
@@ -188,44 +189,48 @@ export default function Page() {
 	}, [inView]);
 
 	return (
-		<div>
-			<div className="h-full">
-				<div className="h-full rounded-lg px-[26px]">
-					<div className="grid place-items-center typo-SubHeader3 pt-4">채팅</div>
-					<div className="h-10 grid place-items-center typo-Caption1">
-						팀원들과 자유롭게 이야기를 나눠봐요.
+		<div className="h-full">
+			<div className="h-full rounded-lg px-[26px] flex flex-col">
+				<div className="flex flex-row justify-between items-center pt-4">
+					<div className="flex-1 text-center">
+						<p className="typo-SubHeader3">채팅</p>
 					</div>
+					<PopoverClose>
+						<Image src="/icons/close.svg" alt="close chatting" width={15} height={15} />
+					</PopoverClose>
+				</div>
 
-					<div className="h-[58vh] max-h-[700px] flex flex-col">
-						<div ref={scrollBarRef} className="h-full flex overflow-y-auto">
-							<div id="chatContainer" className={`mb-2 mt-2 ${scrolled ? ' w-[95%]' : 'w-[100%]'}`}>
-								<div ref={ref} />
-								{messages.map((message, index) => (
-									<ChatContainer
-										key={index}
-										text={message.content}
-										sender={message.sender.senderName}
-										date={message.time.slice(11, 16)}
-										senderImg={message.sender.senderImage}
-										type={message.sender.senderId == userId ? 'send' : 'receive'}
-									/>
-								))}
-							</div>
-							<div className="h-full" />
+				<p className="h-10 grid place-items-center typo-Caption1">팀원들과 자유롭게 이야기를 나눠봐요.</p>
+
+				<div className="flex-1 flex flex-col overflow-hidden">
+					<div ref={scrollBarRef} className="flex-1 flex overflow-y-auto">
+						<div id="chatContainer" className={`mb-2 mt-2 ${scrolled ? ' w-[95%]' : 'w-[100%]'}`}>
+							<div ref={ref} />
+							{messages.map((message, index) => (
+								<ChatContainer
+									key={index}
+									text={message.content}
+									sender={message.sender.senderName}
+									date={message.time.slice(11, 16)}
+									senderImg={message.sender.senderImage}
+									type={message.sender.senderId == userId ? 'send' : 'receive'}
+								/>
+							))}
 						</div>
-						<div className="flex flex-row gap-[5px] justify-center items-center py-4">
-							<AutoSizeTextarea
-								id="messageID"
-								onChange={handleText}
-								className="w-full border-black border-[2px] break-words outline-none"
-								placeholder="채팅을 입력해주세요."
-								value={inputMessage}
-								onKeyDown={handleKeyDown}
-							/>
-							<button type="button" onClick={() => sendMessage()}>
-								<Image src="/icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
-							</button>
-						</div>
+						<div className="h-full" />
+					</div>
+					<div className="flex flex-row gap-[5px] justify-center items-center my-4">
+						<AutoSizeTextarea
+							id="messageID"
+							onChange={handleText}
+							className="w-full border-black border-[2px] break-words outline-none"
+							placeholder="채팅을 입력해주세요."
+							value={inputMessage}
+							onKeyDown={handleKeyDown}
+						/>
+						<button type="button" onClick={() => sendMessage()}>
+							<Image src="/icons/chattingBtn.svg" alt="전송버튼" width={40} height={40} />
+						</button>
 					</div>
 				</div>
 			</div>
