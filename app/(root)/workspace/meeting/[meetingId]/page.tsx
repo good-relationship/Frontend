@@ -1,41 +1,97 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { IMessage } from '@stomp/stompjs';
+import { useEffect } from 'react';
 
 import { getUserInfo, getUserRoomInfo } from '@/apis/user';
 import Video from '@/components/meeting/meetingRoom/Video';
-import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
-import { IceDto, SdpDto } from '@/models/meeting/entity/meeting';
-import { UserId, UserInfo } from '@/models/user/entity/user';
+import { desktopVideoLayout, mobileVideoLayout } from '@/constants/styles';
+import { useLocalStream } from '@/hooks/localStream';
+import { useMeetingWebsocket } from '@/hooks/meetingWebsocket';
+import { usePeerConnections } from '@/hooks/peerConnection';
+import { useVideoInfoList } from '@/hooks/videoInfoList';
+import { cn } from '@/lib/utils';
+import { UserId, UserInfo, UserName } from '@/models/user/entity/user';
 
 const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
-	const localVideoRef = useRef<HTMLVideoElement>(null);
-	const localStreamRef = useRef<MediaStream>();
-	const peerConnectionsRef = useRef<{ [userId: string]: RTCPeerConnection }>({});
-	const [remoteStream, setRemoteStream] = useState<MediaStream[]>([]);
-	const stompClient = useWebsocket();
+	const { setLocalStream, getLocalStream, addStreamTracksToPeer } = useLocalStream();
+	const { peerConnectionsRef } = usePeerConnections();
+	const { videoInfoList, setVideoInfoList, addUniqueVideo } = useVideoInfoList();
+	const {
+		publishOffer,
+		publishAnswer,
+		publishIce,
+		subscribeOffer,
+		subscribeAnswer,
+		subscribeIce,
+		subscribeUserList,
+		unsubscribeOffer,
+		unsubscribeAnswer,
+		unsubscribeIce,
+		unsubscribeUserList,
+	} = useMeetingWebsocket();
 	const { meetingId } = params;
 
-	const setLocalStream = async () => {
-		const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-		localStreamRef.current = stream;
-		if (localVideoRef.current) {
-			localVideoRef.current.srcObject = stream;
-		}
+	const setLocalStreamInfo = async () => {
+		const { userId, userName } = await getUserInfo();
+		const stream = await getLocalStream();
+		setLocalStream(stream);
+		addUniqueVideo({
+			userName: `${userName} (나)`,
+			userId: userId,
+			stream: stream,
+			isOwner: true,
+		});
 	};
 
-	useEffect(() => {
-		const init = async () => {
-			await setLocalStream();
-			subscribeOffer();
-			subscribeAnswer();
-			subscribeIce();
-			await createPeerConnectionByMembers();
-		};
-		init();
-	}, []);
+	const handleSubscribeOffer = (message: IMessage) => {
+		const { userInfo, sessionDescription } = JSON.parse(message.body);
+		const { userId, userName } = userInfo;
 
-	const createPeerConnection = (userId: UserId) => {
+		createPeerConnection(userId, userName);
+		peerConnectionsRef.current[userId].setRemoteDescription(sessionDescription);
+
+		peerConnectionsRef.current[userId].createAnswer().then((answer) => {
+			peerConnectionsRef.current[userId].setLocalDescription(answer);
+			publishAnswer(
+				{
+					sessionDescription: answer,
+					userId,
+				},
+				meetingId,
+			);
+		});
+	};
+
+	const handleSubscribeAnswer = async (message: IMessage) => {
+		const { userInfo, sessionDescription } = await JSON.parse(message.body);
+		await peerConnectionsRef.current[userInfo.userId].setRemoteDescription(sessionDescription);
+	};
+
+	const handleSubscribeIc = (message: IMessage) => {
+		const { userId, candidate, sdpMid, sdpMLineIndex } = JSON.parse(message.body);
+		const iceCandidate = new RTCIceCandidate({
+			candidate,
+			sdpMid,
+			sdpMLineIndex,
+		});
+		peerConnectionsRef.current[userId].addIceCandidate(iceCandidate);
+	};
+
+	const handleSubscribeUserList = (message: IMessage) => {
+		const members = JSON.parse(message.body);
+		const userIds = members.map((info: UserInfo) => info.userId);
+		Object.keys(peerConnectionsRef.current).forEach((userId) => {
+			const convertedUserId = parseInt(userId);
+			if (!userIds.includes(convertedUserId)) {
+				setVideoInfoList((prev) => prev.filter((info) => info.userId !== convertedUserId));
+				peerConnectionsRef.current[convertedUserId].close();
+				delete peerConnectionsRef.current[convertedUserId];
+			}
+		});
+	};
+
+	const createPeerConnection = (userId: UserId, userName?: UserName) => {
 		const peerConnection = new RTCPeerConnection({
 			iceServers: [
 				{
@@ -46,28 +102,28 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 
 		peerConnection.onicecandidate = (event) => {
 			if (event.candidate) {
-				publishIce({
-					candidate: event.candidate.candidate,
-					userId: userId,
-					sdpMLineIndex: event.candidate.sdpMLineIndex,
-					sdpMid: event.candidate.sdpMid,
-				});
+				publishIce(
+					{
+						candidate: event.candidate.candidate,
+						userId: userId,
+						sdpMLineIndex: event.candidate.sdpMLineIndex,
+						sdpMid: event.candidate.sdpMid,
+					},
+					meetingId,
+				);
 			}
 		};
+
 		peerConnection.ontrack = (event) => {
-			setRemoteStream((prev) => [...prev, event.streams[0]]);
+			addUniqueVideo({
+				userId: userId,
+				stream: event.streams[0],
+				isOwner: false,
+				userName: userName || '익명의 유저',
+			});
 		};
 
-		if (!localStreamRef.current) {
-			return;
-		}
-
-		localStreamRef.current.getTracks().forEach((track) => {
-			if (!localStreamRef.current) {
-				return;
-			}
-			peerConnection.addTrack(track, localStreamRef.current);
-		});
+		addStreamTracksToPeer(peerConnection);
 
 		peerConnectionsRef.current[userId] = peerConnection;
 	};
@@ -80,89 +136,58 @@ const MeetingRoomPage = ({ params }: { params: { meetingId: string } }) => {
 		}
 
 		members.forEach((member: UserInfo) => {
-			if (member.userId === userId) {
+			const { userId: memberId, userName: memberName } = member;
+			if (memberId === userId) {
 				return;
 			}
 
-			createPeerConnection(member.userId);
-			peerConnectionsRef.current[member.userId].createOffer().then((offer) => {
-				peerConnectionsRef.current[member.userId].setLocalDescription(offer);
-				publishOffer({
-					sessionDescription: offer,
-					userId: member.userId,
-				});
+			createPeerConnection(memberId, memberName);
+			peerConnectionsRef.current[memberId].createOffer().then((offer) => {
+				peerConnectionsRef.current[memberId].setLocalDescription(offer);
+				publishOffer(
+					{
+						sessionDescription: offer,
+						userId: member.userId,
+					},
+					meetingId,
+				);
 			});
 		});
 	};
 
-	const subscribeOffer = () => {
-		stompClient.subscribe(`/user/queue/offer/${meetingId}`, function (message) {
-			const body = JSON.parse(message.body);
-			const userId = body.userId;
+	useEffect(() => {
+		const init = async () => {
+			await setLocalStreamInfo();
+			subscribeOffer(meetingId, handleSubscribeOffer);
+			subscribeAnswer(meetingId, handleSubscribeAnswer);
+			subscribeIce(meetingId, handleSubscribeIc);
+			subscribeUserList(meetingId, handleSubscribeUserList);
+			await createPeerConnectionByMembers();
+		};
 
-			createPeerConnection(userId);
-			peerConnectionsRef.current[userId].setRemoteDescription(body.sessionDescription);
+		init();
 
-			peerConnectionsRef.current[userId].createAnswer().then((answer) => {
-				peerConnectionsRef.current[userId].setLocalDescription(answer);
-				publishAnswer({
-					sessionDescription: answer,
-					userId: userId,
-				});
-			});
-		});
-	};
-
-	const subscribeAnswer = () => {
-		stompClient.subscribe(`/user/queue/answer/${meetingId}`, async function (message) {
-			const body = await JSON.parse(message.body);
-			await peerConnectionsRef.current[body.userId].setRemoteDescription(body.sessionDescription);
-		});
-	};
-
-	const subscribeIce = () => {
-		stompClient.subscribe(`/user/queue/ice/${meetingId}`, function (message) {
-			const body = JSON.parse(message.body);
-			const userId = body.userId;
-			const candidate = body.candidate;
-			const sdpMid = body.sdpMid;
-			const sdpMLineIndex = body.sdpMLineIndex;
-			const iceCandidate = new RTCIceCandidate({
-				candidate: candidate,
-				sdpMid: sdpMid,
-				sdpMLineIndex: sdpMLineIndex,
-			});
-			peerConnectionsRef.current[userId].addIceCandidate(iceCandidate);
-		});
-	};
-
-	const publishOffer = (sdpDto: SdpDto) => {
-		stompClient.publish({
-			destination: `/app/offer/${meetingId}`,
-			body: JSON.stringify(sdpDto),
-		});
-	};
-
-	const publishAnswer = (answer: SdpDto) => {
-		stompClient.publish({
-			destination: `/app/answer/${meetingId}`,
-			body: JSON.stringify(answer),
-		});
-	};
-
-	const publishIce = (iceDto: IceDto) => {
-		stompClient.publish({
-			destination: `/app/ice/${meetingId}`,
-			body: JSON.stringify(iceDto),
-		});
-	};
+		return () => {
+			unsubscribeOffer(meetingId);
+			unsubscribeAnswer(meetingId);
+			unsubscribeIce(meetingId);
+			unsubscribeUserList(meetingId);
+		};
+	}, []);
 
 	return (
-		<div>
-			회의실 번호 : {params.meetingId}
-			<video ref={localVideoRef} autoPlay muted />
-			{remoteStream.map((stream, index) => (
-				<Video key={index} stream={stream} />
+		<div className="flex flex-wrap justify-center flex-1">
+			{videoInfoList.map((info) => (
+				<div
+					key={info.userId}
+					className={cn(
+						'p-2',
+						desktopVideoLayout[videoInfoList.length - 1],
+						mobileVideoLayout[videoInfoList.length - 1],
+					)}
+				>
+					<Video info={info} />
+				</div>
 			))}
 		</div>
 	);

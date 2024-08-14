@@ -48,6 +48,7 @@ const config = {
 		require('tailwindcss-radix'),
 		tailwindAnimate,
 	],
+	safelist: ['md:basis-full', 'md:basis-1/2', 'md:basis-1/3', 'md:basis-1/4', 'basis-full', 'basis-1/2'],
 } satisfies Config;
 
 export default config;

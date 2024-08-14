@@ -1,5 +1,4 @@
 import { Client } from '@stomp/stompjs';
-import { MutableRefObject } from 'react';
 
 import { GetMessageContentDTO } from '@/models/chatting/response/getMessageContentDTO';
 import { GetMessageHistoryDTO } from '@/models/chatting/response/getMessageHistoryDTO';
@@ -37,12 +36,8 @@ export const subscribeToHistoryTopic = (
 	);
 };
 
-export const sendMessageApi = (
-	client: MutableRefObject<Client | null>,
-	messageContent: string,
-	getWorkspaceId: string,
-) => {
-	client.current?.publish({
+export const sendMessageApi = (client: Client, messageContent: string, getWorkspaceId: string) => {
+	client.publish({
 		destination: `/app/message/${getWorkspaceId}`,
 		body: JSON.stringify({
 			content: messageContent,
@@ -50,8 +45,8 @@ export const sendMessageApi = (
 	});
 };
 
-export const getHistoryMessageApi = (client: MutableRefObject<Client | null>, msgId: number) => {
-	client.current?.publish({
+export const getHistoryMessageApi = (client: Client, msgId: number) => {
+	client.publish({
 		destination: `/app/history`,
 		body: JSON.stringify({
 			lastMsgId: msgId,
