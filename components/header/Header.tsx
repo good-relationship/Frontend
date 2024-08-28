@@ -9,8 +9,7 @@ import { cn } from '@/lib/utils';
 import { isOnboardingUrl, isWorkspaceUrl } from '@/utils/url';
 
 const Header = () => {
-	const headerList = headers();
-	const headerPathname = headerList.get('x-pathname') || '';
+	const headerPathname = headers().get('x-pathname') || '';
 	const isOnboarding = isOnboardingUrl(headerPathname as UrlType);
 	const isWorkspace = isWorkspaceUrl(headerPathname as UrlType);
 
