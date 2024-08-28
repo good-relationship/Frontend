@@ -10,7 +10,7 @@ import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/pop
 import { cn } from '@/lib/utils';
 import { GetDocumentFileInfoDTO } from '@/models/document/getDocumentFileInfoDTO';
 
-const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
+const FileInfo = ({ folderId, fileName, fileId }: GetDocumentFileInfoDTO) => {
 	const [isEdit, setIsEdit] = useState(false);
 	const [newFileName, setNewFileName] = useState(fileName);
 
@@ -23,21 +23,21 @@ const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
 	};
 
 	return (
-		<div className="flex h-10 items-center">
-			<div className="flex h-full items-center rounded-xl hover:bg-gray-100">
+		<div className="flex w-full sm:w-[30vw] sm:max-w-[300px] h-10 items-center">
+			<div className="flex justify-between h-full w-full items-center rounded-xl hover:bg-gray-100">
 				{isEdit ? (
 					<DocumentInput
-						className="w-60 typo-Body4"
+						className="typo-Body4 flex-1"
 						value={newFileName}
 						isEdit={isEdit}
 						onChange={handleChange}
 						changeEdit={changeEdit}
 					/>
 				) : (
-					<Link href={`/workspace/document/${fileId}`}>
+					<Link href={`/workspace/document/${folderId}/${fileId}`}>
 						<p
 							className={cn(
-								'pl-[10px] pt-1 typo-Body4 w-60',
+								'pl-[10px] pt-1 typo-Body4 flex-1',
 								newFileName == 'Untitled' ? 'text-gray-300 italic' : '',
 							)}
 						>
@@ -71,7 +71,7 @@ const FileInfo = ({ fileName, fileId }: GetDocumentFileInfoDTO) => {
 					</Popover>
 				</div>
 			</div>
-			<div className="w-14" />
+			<div className="w-[2vw]" />
 		</div>
 	);
 };

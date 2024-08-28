@@ -6,7 +6,7 @@ const DocumentPage = () => {
 	return (
 		<div className="h-full flex flex-col">
 			<DocumentHeader />
-			<div className="flex flex-1 mt-[51px] gap-[80px]">
+			<div className="flex flex-1 mt-[40px] gap-[5vw]">
 				<FolderList />
 				<FileList />
 			</div>
