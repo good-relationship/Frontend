@@ -15,8 +15,8 @@ const SidebarButton = () => {
 
 	if (sidebarOpen.isOpen) {
 		return (
-			<button onClick={controlSidebar}>
-				<Icon id="close" color={colors['White']} size={24} />
+			<button onClick={controlSidebar} className="block sm:hidden">
+				<Icon id="close" color={colors['White']} size={20} />
 			</button>
 		);
 	}
