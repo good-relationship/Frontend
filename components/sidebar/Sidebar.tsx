@@ -14,7 +14,7 @@ const Sidebar = () => {
 
 	return (
 		<aside
-			className={`${isSidebarOpen.isOpen ? 'block' : 'hidden'} sm:block w-screen sm:w-[100px] lg:min-w-[180px] lg:w-[296px] h-full py-[10px] px-4 custom-shadow bg-White z-50`}
+			className={`${isSidebarOpen.isOpen ? 'block' : 'hidden'} fixed left-0 top-[60px] sm:block w-screen lg:w-[300px] h-[calc(100vh-60px)] py-[10px] px-4 custom-shadow bg-White z-50`}
 		>
 			<SidebarTitle />
 			{sidebarRoutings.map(({ label, path, icon }) => {
