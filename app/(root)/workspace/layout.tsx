@@ -12,7 +12,7 @@ const WorkspaceLayout = ({
 	return (
 		<WebsocketProviderWithAccessToken>
 			<div className="flex h-full">
-				<section className="py-[40px] px-[50px] fixed top-[60px] right-0 w-full sm:w-[calc(100vw-300px)]">
+				<section className="py-[40px] px-[50px] fixed top-[60px] right-0 w-full sm:w-[calc(100vw-300px)] h-[calc(100vh-60px)] overflow-auto">
 					{children}
 				</section>
 				<div className="fixed bottom-0 right-[2vw] p-4">
