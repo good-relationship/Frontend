@@ -70,4 +70,8 @@
         </clipPath>
         </defs>
     </symbol>
+    <symbol viewBox="0 0 20 20" id="close">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M1.28399 0L20 18.716L18.716 20L0 1.28399L1.28399 0Z"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M20 1.28399L1.28399 20L1.2111e-06 18.716L18.716 -6.59474e-08L20 1.28399Z"/>
+    </symbol>
 </svg>
