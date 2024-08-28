@@ -22,5 +22,5 @@ export const useLocalStream = () => {
 		});
 	};
 
-	return { localStreamRef: localStreamRef, setLocalStream, getLocalStream, addStreamTracksToPeer };
+	return { localStreamRef, setLocalStream, getLocalStream, addStreamTracksToPeer };
 };
