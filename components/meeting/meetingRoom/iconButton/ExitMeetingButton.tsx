@@ -7,8 +7,8 @@ import IconButton from '@/components/meeting/meetingRoom/IconButton';
 
 const ExitMeetingButton = () => {
 	const router = useRouter();
-
 	const icon = 'exit';
+
 	const handleButtonClick = () => {
 		leaveMeeting();
 		router.push('/workspace/meeting');
