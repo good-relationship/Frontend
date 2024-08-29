@@ -14,7 +14,7 @@ const ExitMeetingButton = () => {
 		router.push('/workspace/meeting');
 	};
 
-	return <IconButton icon={icon} onClick={handleButtonClick} />;
+	return <IconButton icon={icon} onClick={handleButtonClick} message="회의 종료하기" />;
 };
 
 export default ExitMeetingButton;

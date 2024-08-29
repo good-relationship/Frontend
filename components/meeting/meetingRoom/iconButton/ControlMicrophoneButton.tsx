@@ -11,7 +11,9 @@ const ControlMicrophoneButton = () => {
 		setIsMicrophoneOn((prev) => !prev);
 	};
 
-	return <IconButton icon={icon} onClick={handleButtonClick} />;
+	return (
+		<IconButton icon={icon} onClick={handleButtonClick} message={isMicrophoneOn ? '마이크 끄기' : '마이크 켜기'} />
+	);
 };
 
 export default ControlMicrophoneButton;

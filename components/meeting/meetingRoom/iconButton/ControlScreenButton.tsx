@@ -54,7 +54,9 @@ const ContronScreenButton = () => {
 		});
 	};
 
-	return <IconButton icon={icon} onClick={handleButtonClick} />;
+	return (
+		<IconButton icon={icon} onClick={handleButtonClick} message={isScreenOn ? '화면 중지하기' : '화면 공유하기'} />
+	);
 };
 
 export default ContronScreenButton;
