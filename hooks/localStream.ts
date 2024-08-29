@@ -30,5 +30,20 @@ export const useLocalStream = () => {
 		localStreamRef.current.getVideoTracks()[0].enabled = !localStreamRef.current.getVideoTracks()[0].enabled;
 	};
 
-	return { localStreamRef, setLocalStream, getLocalStream, addStreamTracksToPeer, toggleMuteCamera };
+	const toggleMuteMicrophone = () => {
+		if (!localStreamRef.current) {
+			return;
+		}
+
+		localStreamRef.current.getAudioTracks()[0].enabled = !localStreamRef.current.getAudioTracks()[0].enabled;
+	};
+
+	return {
+		localStreamRef,
+		setLocalStream,
+		getLocalStream,
+		addStreamTracksToPeer,
+		toggleMuteCamera,
+		toggleMuteMicrophone,
+	};
 };

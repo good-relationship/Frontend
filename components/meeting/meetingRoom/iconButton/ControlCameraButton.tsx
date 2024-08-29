@@ -7,8 +7,9 @@ import { useLocalStream } from '@/hooks/localStream';
 
 const ControlCameraButton = () => {
 	const [isCameraOn, setIsCameraOn] = useState(true);
-	const icon = isCameraOn ? 'webcam' : 'webcam-off';
 	const { toggleMuteCamera } = useLocalStream();
+
+	const icon = isCameraOn ? 'webcam' : 'webcam-off';
 
 	const handleButtonClick = () => {
 		setIsCameraOn((prev) => !prev);
