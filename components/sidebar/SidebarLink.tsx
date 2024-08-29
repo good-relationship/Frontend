@@ -29,7 +29,7 @@ const SidebarLink = ({ label, path, icon, isActive }: SidebarLinkProps) => {
 			onClick={controlSidebar}
 		>
 			<Icon id={icon} color={isActive ? colors['Purple-500'] : colors['Gray-400']} size={20} />
-			<span className="block sm:hidden lg:block">{label}</span>
+			<span>{label}</span>
 		</Link>
 	);
 };

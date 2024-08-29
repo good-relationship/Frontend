@@ -14,6 +14,8 @@ import {
 import { getWorkspaceInfo, getWorkspaceMembers } from '@/apis/workspace';
 import { AutoSizeTextarea } from '@/components/AutoSizeTextarea';
 import ChatContainer from '@/components/chatting/ChatContainer';
+import Icon from '@/components/Icon';
+import { colors } from '@/constants/colors';
 import { useAddMessage } from '@/hooks/addMessage';
 import { useGetAccessToken } from '@/hooks/auth';
 import { useWebsocket } from '@/lib/websocket/WebsocketProvider';
@@ -192,7 +194,7 @@ export default function Chatting() {
 						<p className="typo-SubHeader3">채팅</p>
 					</div>
 					<PopoverClose>
-						<Image src="/icons/close.svg" alt="close chatting" width={15} height={15} />
+						<Icon id="close" width={15} height={15} color={colors['Gray-500']} />
 					</PopoverClose>
 				</div>
 

@@ -20,4 +20,13 @@ export async function middleware(request: NextRequest) {
 			return NextResponse.redirect(absoluteURL.toString());
 		}
 	}
+
+	const headers = new Headers(request.headers);
+	headers.set('x-pathname', pathname);
+
+	return NextResponse.next({
+		request: {
+			headers: headers,
+		},
+	});
 }
