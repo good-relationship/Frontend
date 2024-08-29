@@ -22,5 +22,13 @@ export const useLocalStream = () => {
 		});
 	};
 
-	return { localStreamRef, setLocalStream, getLocalStream, addStreamTracksToPeer };
+	const toggleMuteCamera = () => {
+		if (!localStreamRef.current) {
+			return;
+		}
+
+		localStreamRef.current.getVideoTracks()[0].enabled = !localStreamRef.current.getVideoTracks()[0].enabled;
+	};
+
+	return { localStreamRef, setLocalStream, getLocalStream, addStreamTracksToPeer, toggleMuteCamera };
 };
