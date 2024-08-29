@@ -11,7 +11,7 @@ const ControlCameraButton = () => {
 		setIsCameraOn((prev) => !prev);
 	};
 
-	return <IconButton icon={icon} onClick={handleButtonClick} message={isCameraOn ? '카메라 끄기' : '카메라 끄기'} />;
+	return <IconButton icon={icon} onClick={handleButtonClick} message={isCameraOn ? '카메라 끄기' : '카메라 켜기'} />;
 };
 
 export default ControlCameraButton;
