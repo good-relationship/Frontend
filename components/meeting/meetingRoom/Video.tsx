@@ -12,7 +12,7 @@ const Video = ({ info }: { info: VideoInfo }) => {
 	}, [stream]);
 
 	return (
-		<div className="w-full h-full relative">
+		<div className="w-full h-full relative group">
 			<video
 				ref={videoRef}
 				autoPlay
@@ -24,7 +24,7 @@ const Video = ({ info }: { info: VideoInfo }) => {
 					e.currentTarget.requestFullscreen();
 				}}
 			/>
-			<span className="absolute bottom-1 right-1 bg-Gray-400 text-Gray-100 px-2 rounded-xl opacity-75">
+			<span className="absolute bottom-1 group-hover:bottom-10 transition-all duration-300 right-1 bg-Gray-400 text-Gray-100 px-2 rounded-xl opacity-75">
 				{userName}
 			</span>
 		</div>
