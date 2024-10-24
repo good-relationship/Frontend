@@ -11,4 +11,5 @@ export type IconId =
 	| 'webcam-off'
 	| 'microphone-off'
 	| 'screen-off'
-	| 'close';
+	| 'close'
+	| 'setting';
