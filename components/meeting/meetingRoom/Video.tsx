@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useRef } from 'react';
 
 import { VideoInfo } from '@/types/video';
@@ -5,6 +7,7 @@ import { VideoInfo } from '@/types/video';
 const Video = ({ info }: { info: VideoInfo }) => {
 	const { stream, userName } = info;
 	const videoRef = useRef<HTMLVideoElement>(null);
+
 	useEffect(() => {
 		if (videoRef.current) {
 			videoRef.current.srcObject = stream;
