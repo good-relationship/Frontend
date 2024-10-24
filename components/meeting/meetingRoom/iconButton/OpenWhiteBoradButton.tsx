@@ -8,7 +8,7 @@ const OpenWhiteBoardButton = () => {
 		console.log('화이트보드 클릭');
 	};
 
-	return <IconButton icon={icon} onClick={handleButtonClick} />;
+	return <IconButton icon={icon} onClick={handleButtonClick} message="화이트보드 열기" />;
 };
 
 export default OpenWhiteBoardButton;

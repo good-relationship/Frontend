@@ -7,10 +7,18 @@ import SidebarLink from '@/components/sidebar/SidebarLink';
 import SidebarTitle from '@/components/sidebar/SidebarTitle';
 import { sidebarRoutings } from '@/constants/routings';
 import { getMenuButtonState } from '@/stores/atoms/getMenuButton';
+import { isWorkspaceUrl } from '@/utils/url';
 
 const Sidebar = () => {
 	const [isSidebarOpen] = useRecoilState(getMenuButtonState);
 	const pathname = usePathname();
+
+	const isActive = (path: string) => pathname === path || pathname.startsWith(`${path}/`);
+	const isSidebarUrl = isWorkspaceUrl(pathname);
+
+	if (!isSidebarUrl) {
+		return null;
+	}
 
 	return (
 		<aside
@@ -18,8 +26,7 @@ const Sidebar = () => {
 		>
 			<SidebarTitle />
 			{sidebarRoutings.map(({ label, path, icon }) => {
-				const isActive = pathname === path || pathname.startsWith(`${path}/`);
-				return <SidebarLink key={label} label={label} path={path} icon={icon} isActive={isActive} />;
+				return <SidebarLink key={label} label={label} path={path} icon={icon} isActive={isActive(path)} />;
 			})}
 		</aside>
 	);
