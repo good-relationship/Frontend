@@ -181,12 +181,12 @@ const VideoList = ({ meetingId }: VideoListProps) => {
 		};
 	}, []);
 	return (
-		<div className="flex flex-wrap justify-center">
+		<div className="flex flex-wrap justify-center h-[calc(100vh-228px)]">
 			{videoInfoList.map((info) => (
 				<div
 					key={info.userId}
 					className={cn(
-						'p-2',
+						'p-2 w-full h-full',
 						desktopVideoLayout[videoInfoList.length - 1],
 						mobileVideoLayout[videoInfoList.length - 1],
 					)}
