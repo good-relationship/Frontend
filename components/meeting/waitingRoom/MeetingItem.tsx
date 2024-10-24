@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-import { joinMeeting } from '@/apis/meeting';
 import Chip from '@/components/Chip';
 import { Room } from '@/models/meeting/entity/meeting';
 
@@ -16,8 +15,7 @@ const MeetingItem = ({ room }: MeetingItemProps) => {
 	const { roomName, roomId, userInfoList } = room;
 
 	const handleJoinMeeting = async () => {
-		await joinMeeting({ roomId });
-		router.push(`/workspace/meeting/${roomId}`);
+		router.push(`/workspace/meeting/${roomId}/pre`);
 	};
 
 	return (
