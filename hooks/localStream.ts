@@ -3,12 +3,14 @@ import { useMeeting } from '@/hooks/meeting';
 export const useLocalStream = () => {
 	const { localStreamRef } = useMeeting();
 
-	const getLocalStream = async () => {
-		return await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+	const getLocalStream = async (constraints?: MediaStreamConstraints) => {
+		return await navigator.mediaDevices.getUserMedia(constraints || { video: true, audio: true });
 	};
+
 	const setLocalStream = (stream: MediaStream) => {
 		localStreamRef.current = stream;
 	};
+
 	const addStreamTracksToPeer = (peerConnection: RTCPeerConnection) => {
 		if (!localStreamRef.current) {
 			return;
@@ -38,6 +40,10 @@ export const useLocalStream = () => {
 		localStreamRef.current.getAudioTracks()[0].enabled = !localStreamRef.current.getAudioTracks()[0].enabled;
 	};
 
+	const getDevices = async () => {
+		return await navigator.mediaDevices.enumerateDevices();
+	};
+
 	return {
 		localStreamRef,
 		setLocalStream,
@@ -45,5 +51,6 @@ export const useLocalStream = () => {
 		addStreamTracksToPeer,
 		toggleMuteCamera,
 		toggleMuteMicrophone,
+		getDevices,
 	};
 };
