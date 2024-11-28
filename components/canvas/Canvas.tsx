@@ -6,6 +6,7 @@ import { useMutation } from '@liveblocks/react/suspense';
 import { PointerEvent, useCallback, useState, WheelEvent } from 'react';
 
 import Path from '@/components/canvas/Path';
+import PathList from '@/components/canvas/PathList';
 import { getPathFromPoints, getPoint } from '@/components/canvas/point.util';
 import { Point } from '@/types/whiteboard';
 
@@ -47,7 +48,6 @@ const Canvas = () => {
 
 	const onPointerLeave = useMutation(({ setMyPresence }) => {
 		setMyPresence({ cursor: null });
-		console.log('leave');
 	}, []);
 
 	const onWheel = useCallback((e: WheelEvent) => {
@@ -56,7 +56,6 @@ const Canvas = () => {
 
 	const onPointerDown = useCallback(
 		(e: PointerEvent) => {
-			console.log('down');
 			const point = getPoint(e, camera);
 			startDrawing(point, e.pressure);
 		},
@@ -67,7 +66,6 @@ const Canvas = () => {
 		({ setMyPresence }, e: PointerEvent) => {
 			e.preventDefault();
 			const point = getPoint(e, camera);
-			console.log('move');
 			draw(point, e.pressure);
 			setMyPresence({ cursor: point });
 		},
@@ -93,6 +91,7 @@ const Canvas = () => {
 						transform: `translate(${camera.x}px, ${camera.y}px)`,
 					}}
 				>
+					<PathList />
 					{pencilDraft && (
 						<Path
 							type="path"
