@@ -1,14 +1,11 @@
 'use client';
 
-import { useSelf } from '@liveblocks/react';
-
+import Draft from '@/components/canvas/Draft';
 import Multiplayer from '@/components/canvas/multiplay/Multiplayer';
-import Path from '@/components/canvas/Path';
 import PathList from '@/components/canvas/PathList';
 import { useCanvas } from '@/components/canvas/useCanvas';
 
 const Canvas = () => {
-	const pencilDraft = useSelf((me) => me.presence.pencilDraft);
 	const { onPointerDown, onPointerMove, onPointerUp, onPointerLeave, onWheel, camera } = useCanvas();
 
 	return (
@@ -27,17 +24,7 @@ const Canvas = () => {
 					}}
 				>
 					<PathList />
-					{pencilDraft && (
-						<Path
-							type="path"
-							points={pencilDraft}
-							x={camera.x}
-							y={camera.y}
-							width={0}
-							height={0}
-							fill="#000000"
-						/>
-					)}
+					<Draft camera={camera} />
 					<Multiplayer />
 				</g>
 			</svg>
