@@ -22,6 +22,7 @@ const Canvas = () => {
 
 	const draw = useMutation(({ self, setMyPresence }, point: Point, pressure: number) => {
 		const { pencilDraft } = self.presence;
+
 		setMyPresence({
 			cursor: point,
 			pencilDraft: pencilDraft ? [...pencilDraft, [point.x, point.y, pressure]] : [[point.x, point.y, pressure]],
@@ -65,8 +66,8 @@ const Canvas = () => {
 	const onPointerMove = useMutation(
 		({ setMyPresence }, e: PointerEvent) => {
 			e.preventDefault();
-			console.log('move');
 			const point = getPoint(e, camera);
+			console.log('move');
 			draw(point, e.pressure);
 			setMyPresence({ cursor: point });
 		},
@@ -78,9 +79,9 @@ const Canvas = () => {
 	}, [changeDraftIntoLayer]);
 
 	return (
-		<div>
+		<div className="touch-none">
 			<svg
-				className="w-[80vw] h-[80vh] bg-gray-100"
+				className="w-[50vw] h-[50vh] bg-gray-100"
 				onPointerDown={onPointerDown}
 				onPointerMove={onPointerMove}
 				onPointerUp={onPointerUp}
@@ -92,7 +93,17 @@ const Canvas = () => {
 						transform: `translate(${camera.x}px, ${camera.y}px)`,
 					}}
 				>
-					{pencilDraft && <Path pencilDraft={pencilDraft} camera={camera} />}
+					{pencilDraft && (
+						<Path
+							type="path"
+							points={pencilDraft}
+							x={camera.x}
+							y={camera.y}
+							width={0}
+							height={0}
+							fill="#000000"
+						/>
+					)}
 				</g>
 			</svg>
 		</div>
