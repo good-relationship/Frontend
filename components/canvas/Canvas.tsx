@@ -3,24 +3,28 @@
 import { LiveObject } from '@liveblocks/client';
 import { useSelf } from '@liveblocks/react';
 import { useMutation } from '@liveblocks/react/suspense';
-import { PointerEvent } from 'react';
+import { PointerEvent, useCallback, useState, WheelEvent } from 'react';
+
+import Path from '@/components/canvas/Path';
+import { getPathFromPoints, getPoint } from '@/components/canvas/point.util';
+import { Point } from '@/types/whiteboard';
 
 const Canvas = () => {
 	const pencilDraft = useSelf((me) => me.presence.pencilDraft);
+	const [camera, setCamera] = useState<Point>({ x: 0, y: 0 });
 
-	const startDrawing = useMutation(({ setMyPresence }, e: PointerEvent) => {
+	const startDrawing = useMutation(({ setMyPresence }, point: Point, pressure: number) => {
 		setMyPresence({
-			pencilDraft: [[e.clientX, e.clientY, e.pressure]],
+			pencilDraft: [[point.x, point.y, pressure]],
+			penColor: '#000000',
 		});
 	}, []);
 
-	const draw = useMutation(({ self, setMyPresence }, e: PointerEvent) => {
+	const draw = useMutation(({ self, setMyPresence }, point: Point, pressure: number) => {
 		const { pencilDraft } = self.presence;
 		setMyPresence({
-			cursor: { x: e.clientX, y: e.clientY },
-			pencilDraft: pencilDraft
-				? [...pencilDraft, [e.clientX, e.clientY, e.pressure]]
-				: [[e.clientX, e.clientY, e.pressure]],
+			cursor: point,
+			pencilDraft: pencilDraft ? [...pencilDraft, [point.x, point.y, pressure]] : [[point.x, point.y, pressure]],
 		});
 	}, []);
 
@@ -34,55 +38,44 @@ const Canvas = () => {
 			return;
 		}
 
-		liveLayers.set(
-			id,
-			new LiveObject({
-				type: 'path',
-				points: pencilDraft,
-			}),
-		);
+		liveLayers.set(id, new LiveObject(getPathFromPoints(pencilDraft)));
 		const layerOrderList = storage.get('layerOrderList');
 		layerOrderList.push(id);
 		setMyPresence({ pencilDraft: null });
 	}, []);
 
-	const resetCursor = useMutation(({ setMyPresence }) => {
+	const onPointerLeave = useMutation(({ setMyPresence }) => {
 		setMyPresence({ cursor: null });
+		console.log('leave');
 	}, []);
 
-	const onPointerDown = (e: PointerEvent) => {
-		startDrawing(e);
-	};
+	const onWheel = useCallback((e: WheelEvent) => {
+		setCamera((prev) => ({ x: prev.x - e.deltaX, y: prev.y - e.deltaY }));
+	}, []);
 
-	const onPointerMove = (e: PointerEvent) => {
-		draw(e);
-	};
+	const onPointerDown = useCallback(
+		(e: PointerEvent) => {
+			console.log('down');
+			const point = getPoint(e, camera);
+			startDrawing(point, e.pressure);
+		},
+		[camera, startDrawing],
+	);
 
-	const onPointerLeave = () => {
-		resetCursor();
-	};
+	const onPointerMove = useMutation(
+		({ setMyPresence }, e: PointerEvent) => {
+			e.preventDefault();
+			console.log('move');
+			const point = getPoint(e, camera);
+			draw(point, e.pressure);
+			setMyPresence({ cursor: point });
+		},
+		[camera, draw],
+	);
 
-	const onPointerUp = () => {
+	const onPointerUp = useMutation(() => {
 		changeDraftIntoLayer();
-	};
-
-	const getPath = (points: number[][]) => {
-		if (!points) {
-			return '';
-		}
-
-		let path = '';
-		for (let i = 0; i < points.length; i++) {
-			if (i === 0) {
-				path += `M${points[i][0]} ${points[i][1]}`;
-			} else {
-				path += `L${points[i][0]} ${points[i][1]}`;
-			}
-		}
-
-		console.log('path', path);
-		return path;
-	};
+	}, [changeDraftIntoLayer]);
 
 	return (
 		<div>
@@ -92,8 +85,16 @@ const Canvas = () => {
 				onPointerMove={onPointerMove}
 				onPointerUp={onPointerUp}
 				onPointerLeave={onPointerLeave}
-			/>
-			<g>{pencilDraft && <path d={getPath(pencilDraft || [])} fill="#000000" x={0} y={0} strokeWidth={1} />}</g>
+				onWheel={onWheel}
+			>
+				<g
+					style={{
+						transform: `translate(${camera.x}px, ${camera.y}px)`,
+					}}
+				>
+					{pencilDraft && <Path pencilDraft={pencilDraft} camera={camera} />}
+				</g>
+			</svg>
 		</div>
 	);
 };
