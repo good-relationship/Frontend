@@ -18,10 +18,10 @@ const Palette = ({ onClick, color, selectedColor }: PaletteProps) => {
 	return (
 		<button
 			onClick={handleClick}
-			className={
-				(cn('w-7 h-7 flex justify-center items-center rounded-full'),
-				isSelectedColor ? 'bg-Gray-300' : 'bg-transparent')
-			}
+			className={cn(
+				isSelectedColor ? 'bg-Gray-300' : 'bg-transparent',
+				'w-10 h-10 flex justify-center items-center rounded-full',
+			)}
 		>
 			<div className="w-5 h-5 rounded-full" style={{ backgroundColor: color }} />
 		</button>
