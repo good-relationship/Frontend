@@ -6,12 +6,12 @@ export type Point = {
 export type Points = Point[];
 
 export type Path = {
-	type: 'path';
+	type?: 'path';
 	points: [x: number, y: number, pressure: number][];
 	x: number;
 	y: number;
-	width: number;
-	height: number;
+	width?: number;
+	height?: number;
 	fill: string;
 };
 
