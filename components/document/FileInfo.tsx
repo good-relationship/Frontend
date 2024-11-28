@@ -2,17 +2,34 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import DocumentInput from './DocumentInput';
 import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from '../ui/popover';
 
+import { updateFileName } from '@/apis/document';
+import { useDocumentLists } from '@/hooks/documentInfo';
 import { cn } from '@/lib/utils';
-import { GetDocumentFileInfoDTO } from '@/models/document/getDocumentFileInfoDTO';
+import { SelectFileInfoDTO } from '@/models/document/request/createFileInfo';
 
-const FileInfo = ({ folderId, fileName, fileId }: GetDocumentFileInfoDTO) => {
+const FileInfo = ({ fileId, fileName }: SelectFileInfoDTO) => {
+	const { fetchDocumentLists } = useDocumentLists();
+
 	const [isEdit, setIsEdit] = useState(false);
 	const [newFileName, setNewFileName] = useState(fileName);
+
+	const updateFileInfo = useCallback(async () => {
+		if (newFileName !== fileName) {
+			await updateFileName(fileId, newFileName);
+			fetchDocumentLists();
+		}
+	}, [newFileName]);
+
+	useEffect(() => {
+		if (!isEdit) {
+			updateFileInfo();
+		}
+	}, [isEdit]);
 
 	const changeEdit = (editState: boolean) => {
 		setIsEdit(editState);
@@ -34,7 +51,7 @@ const FileInfo = ({ folderId, fileName, fileId }: GetDocumentFileInfoDTO) => {
 						changeEdit={changeEdit}
 					/>
 				) : (
-					<Link href={`/workspace/document/${folderId}/${fileId}`}>
+					<Link href={`/workspace/document/${fileId}`}>
 						<p
 							className={cn(
 								'pl-[10px] pt-1 typo-Body4 flex-1',

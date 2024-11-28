@@ -1,18 +1,20 @@
-'use client';
+import FileContentClient from './FileContentClient';
 
-import Editor from './editor';
+import { getWorkspaceInfo } from '@/apis/workspace';
 
-import { fileEditorContents } from '@/mocks/fileEditor';
+interface FileContentProps {
+	fileId: number;
+}
 
-const FileContent = () => {
-	const data = JSON.stringify(fileEditorContents);
+const FileContent = async ({ fileId }: FileContentProps) => {
+	const { workspaceId } = await getWorkspaceInfo();
+	const liveBlockApi = process.env.NEXT_PUBLIC_LIVEBLOCKS_KEY;
 
-	return (
-		<div className="mt-8">
-			{/* onChange에는 변화하는 document 넣기 (update) */}
-			<Editor onChange={() => {}} initialContent={data} />
-		</div>
-	);
+	if (!liveBlockApi) {
+		throw new Error('LIVEBLOCKS_KEY is not set');
+	}
+
+	return <FileContentClient fileId={fileId} workspaceId={workspaceId} liveBlockApi={liveBlockApi} />;
 };
 
 export default FileContent;

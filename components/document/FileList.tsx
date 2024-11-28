@@ -1,29 +1,40 @@
+import { useRecoilValue } from 'recoil';
+
 import FileInfo from './FileInfo';
 
-import { mockGetDocumentFileInfoData } from '@/mocks/documentFile';
+import { getFolders } from '@/stores/atoms/getFolders';
 
 interface fileDocument {
-	folderId?: string;
+	folderId?: number;
 }
 
 const FileList = ({ folderId }: fileDocument) => {
-	const files = mockGetDocumentFileInfoData;
+	const folders = useRecoilValue(getFolders);
 
 	return (
-		<div className={`${folderId ? 'block' : 'hidden'} sm:block w-full`}>
+		<div className={`${folderId ? 'block' : 'hidden'} sm:block w-full sm:border-l-4 border-l-gray-300 pl-[5vw]`}>
 			<div className="h-[60vh] flex overflow-y-auto">
-				<div className="sm:border-l-4 border-l-gray-300 mr-[5vw] h-full" />
 				<div className="overflow-y-auto overflow-x-hidden w-full sm:max-w-[320px]">
-					{files
-						.filter((file) => file.folderId === folderId)
-						.map((file) => (
-							<FileInfo
-								key={file.fileId}
-								folderId={file.folderId}
-								fileName={file.fileName}
-								fileId={file.fileId}
-							/>
-						))}
+					{folders.folderInfo.some((folder) => folder.folderId === folderId) ? (
+						folders.folderInfo
+							.filter((folder) => folder.folderId === folderId)
+							.map((folder) =>
+								folder.files.length > 0 ? (
+									folder.files.map((file) => (
+										<FileInfo
+											key={file.fileId}
+											// folderId={folder.folderId}
+											fileName={file.fileName}
+											fileId={file.fileId}
+										/>
+									))
+								) : (
+									<p>해당 폴더는 비어있습니다.</p>
+								),
+							)
+					) : (
+						<p>해당 폴더는 비어있습니다.</p>
+					)}
 				</div>
 			</div>
 		</div>

@@ -18,8 +18,14 @@ export const fetcher = async (url: string, auth = false, options: RequestInit = 
 	});
 
 	if (!response.ok) {
-		throw new Error('fetch error');
+		throw new Error(`Fetch error: ${response.status} ${response.statusText}`);
 	}
 
-	return response.json();
+	const contentType = response.headers.get('Content-Type') || '';
+	if (contentType.includes('application/json')) {
+		return response.json();
+	}
+
+	// JSON이 아닐 경우 원본 응답 반환
+	return response;
 };

@@ -1,13 +1,15 @@
 'use client';
 import Image from 'next/image';
 
-import { mockGetDocumenFoldertInfoData } from '@/mocks/documentFolder';
+import { createNewFolder } from '@/apis/document';
+import { useDocumentLists } from '@/hooks/documentInfo';
 
 const DocumentHeader = () => {
-	const folders = mockGetDocumenFoldertInfoData;
+	const { fetchDocumentLists } = useDocumentLists();
 
-	const addFolder = () => {
-		[...folders, { folderName: 'Untitled', isOpen: false }];
+	const addFolder = async () => {
+		await createNewFolder({ folderName: 'Untitled' });
+		fetchDocumentLists();
 	};
 
 	return (

@@ -9,4 +9,4 @@ export type MessageId = string;
 export type Content = string;
 export type IsEnd = boolean;
 export type IsStart = boolean;
-export type LastMsgId = number;
+export type LastMsgId = number | null;
