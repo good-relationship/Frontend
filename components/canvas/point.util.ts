@@ -1,8 +1,9 @@
 import { PointerEvent } from 'react';
 
+import { PaletteColor } from '@/components/canvas/palettes/palette.type';
 import { Path, Point } from '@/types/whiteboard';
 
-export const getPathFromPoints = (points: number[][]): Path => {
+export const getPathFromPoints = (points: number[][], fill: PaletteColor): Path => {
 	let left = Number.POSITIVE_INFINITY;
 	let right = Number.NEGATIVE_INFINITY;
 	let top = Number.POSITIVE_INFINITY;
@@ -21,7 +22,7 @@ export const getPathFromPoints = (points: number[][]): Path => {
 		y: top,
 		width: right - left,
 		height: bottom - top,
-		fill: '#000000',
+		fill: fill,
 		points: points.map(([x, y, pressure]) => [x - left, y - top, pressure]),
 	};
 };

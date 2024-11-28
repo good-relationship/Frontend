@@ -11,7 +11,6 @@ export const useCanvas = () => {
 	const startDrawing = useMutation(({ setMyPresence }, point: Point, pressure: number) => {
 		setMyPresence({
 			pencilDraft: [[point.x, point.y, pressure]],
-			penColor: '#000000',
 		});
 	}, []);
 
@@ -26,7 +25,7 @@ export const useCanvas = () => {
 
 	const changeDraftIntoLayer = useMutation(({ storage, self, setMyPresence }) => {
 		const liveLayers = storage.get('layers');
-		const { pencilDraft } = self.presence;
+		const { pencilDraft, penColor } = self.presence;
 		const id = Date.now().toString();
 
 		if (pencilDraft == null) {
@@ -34,7 +33,7 @@ export const useCanvas = () => {
 			return;
 		}
 
-		liveLayers.set(id, new LiveObject(getPathFromPoints(pencilDraft)));
+		liveLayers.set(id, new LiveObject(getPathFromPoints(pencilDraft, penColor)));
 		const layerOrderList = storage.get('layerOrderList');
 		layerOrderList.push(id);
 		setMyPresence({ pencilDraft: null });
