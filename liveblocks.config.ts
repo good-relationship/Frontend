@@ -10,8 +10,8 @@ declare global {
 			penColor: string;
 		};
 		Storage: {
-			layers: LiveMap<string, LiveObject<Layer>>;
-			layerOrderList: LiveList<string>;
+			layers: LiveMap<string, LiveObject<Layer>> | null;
+			layerOrderList: LiveList<string> | null;
 		};
 	}
 }

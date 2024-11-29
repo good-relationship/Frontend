@@ -8,7 +8,7 @@ type PathFromStorageProps = {
 };
 
 const PathFromStorage = ({ id }: PathFromStorageProps) => {
-	const path = useStorage((root) => root.layers.get(id));
+	const path = useStorage((root) => root.layers?.get(id));
 
 	if (!path) {
 		return null;

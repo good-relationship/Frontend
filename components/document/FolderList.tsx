@@ -30,8 +30,8 @@ const FolderList = () => {
 	return (
 		<div className="flex gap-[5vw] w-full">
 			<div className={`sm:block h-full max-h-[480px] overflow-y-auto overflow-x-hidden min-w-[350px]`}>
-				{folders.folderInfo.map((folder) => {
-					return <FolderInfo folderId={folder.folderId} onFolderSelect={handleFolderState} />;
+				{folders.folderInfo.map(({ folderId }) => {
+					return <FolderInfo key={folderId} folderId={folderId} onFolderSelect={handleFolderState} />;
 				})}
 			</div>
 			<FileList folderId={folders.openFolderID} />

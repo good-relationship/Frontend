@@ -33,9 +33,9 @@ export const useCanvas = () => {
 			return;
 		}
 
-		liveLayers.set(id, new LiveObject(getPathFromPoints(pencilDraft, penColor)));
+		liveLayers?.set(id, new LiveObject(getPathFromPoints(pencilDraft, penColor)));
 		const layerOrderList = storage.get('layerOrderList');
-		layerOrderList.push(id);
+		layerOrderList?.push(id);
 		setMyPresence({ pencilDraft: null });
 	}, []);
 
