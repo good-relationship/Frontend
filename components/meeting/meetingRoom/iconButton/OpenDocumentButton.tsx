@@ -1,14 +1,18 @@
 'use client';
 
+import Link from 'next/link';
+
 import IconButton from '@/components/meeting/meetingRoom/IconButton';
 
 const OpenDocumentButton = () => {
 	const icon = 'pencil';
-	const handleButtonClick = () => {
-		console.log('문서 클릭');
-	};
+	const link = `${process.env.NEXT_PUBLIC_URL}/workspace/document`;
 
-	return <IconButton icon={icon} onClick={handleButtonClick} message="기록하기" />;
+	return (
+		<Link href={link} target="_blank">
+			<IconButton icon={icon} message="기록하기" />;
+		</Link>
+	);
 };
 
 export default OpenDocumentButton;
