@@ -77,9 +77,9 @@ const Canvas = () => {
 	}, [changeDraftIntoLayer]);
 
 	return (
-		<div className="touch-none">
+		<div className="touch-none h-full">
 			<svg
-				className="w-[50vw] h-[50vh] bg-gray-100"
+				className="w-full h-full bg-gray-100"
 				onPointerDown={onPointerDown}
 				onPointerMove={onPointerMove}
 				onPointerUp={onPointerUp}
