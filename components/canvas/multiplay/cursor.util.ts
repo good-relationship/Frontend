@@ -2,7 +2,7 @@ import { Id } from '@/components/canvas/multiplay/cursor.type';
 import { colors } from '@/constants/colors';
 
 export const getCursorColor = (id: Id) => {
-	const palletes = [colors['Purple-500'], colors['Purple-800'], colors['Red'], colors['Naver'], colors['Kakao']];
+	const palettes = [colors['Purple-500'], colors['Purple-800'], colors['Red'], colors['Naver'], colors['Kakao']];
 
-	return palletes[id % palletes.length];
+	return palettes[id % palettes.length];
 };
