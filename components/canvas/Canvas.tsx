@@ -2,6 +2,7 @@
 
 import { useSelf } from '@liveblocks/react';
 
+import Multiplayer from '@/components/canvas/multiplay/Multiplayer';
 import Path from '@/components/canvas/Path';
 import PathList from '@/components/canvas/PathList';
 import { useCanvas } from '@/components/canvas/useCanvas';
@@ -37,6 +38,7 @@ const Canvas = () => {
 							fill="#000000"
 						/>
 					)}
+					<Multiplayer />
 				</g>
 			</svg>
 		</div>
