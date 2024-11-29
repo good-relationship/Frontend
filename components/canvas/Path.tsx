@@ -3,24 +3,20 @@ import React from 'react';
 
 import { strokeConfig } from '@/components/canvas/canvas.config';
 import { getSvgPathFromStroke } from '@/components/canvas/point.util';
+import { Path as PathProps } from '@/types/whiteboard';
 
-type PathProps = {
-	pencilDraft: number[][];
-	camera: { x: number; y: number };
-};
-
-const Path = ({ pencilDraft, camera }: PathProps) => {
+const Path = ({ points, x, y }: PathProps) => {
 	const getPath = (points: number[][]) => getSvgPathFromStroke(getStroke(points, strokeConfig));
 
 	return (
 		<path
-			d={getPath(pencilDraft)}
+			d={getPath(points)}
 			fill="#000000"
 			x={0}
 			y={0}
 			strokeWidth={1}
 			style={{
-				transform: `translate(${camera.x}px, ${camera.y}px)`,
+				transform: `translate(${x}px, ${y}px)`,
 			}}
 		/>
 	);
