@@ -1,14 +1,18 @@
-'use client';
+import Link from 'next/link';
 
+import { getUserRoomInfo } from '@/apis/user';
 import IconButton from '@/components/meeting/meetingRoom/IconButton';
 
-const OpenWhiteBoardButton = () => {
+const OpenWhiteBoardButton = async () => {
 	const icon = 'palette';
-	const handleButtonClick = () => {
-		console.log('화이트보드 클릭');
-	};
+	const roomId = (await getUserRoomInfo()).roomId;
+	const link = `${process.env.NEXT_PUBLIC_URL}/whiteboard-file/${roomId}`;
 
-	return <IconButton icon={icon} onClick={handleButtonClick} message="화이트보드 열기" />;
+	return (
+		<Link href={link} target="_blank">
+			<IconButton icon={icon} message="화이트보드 열기" />
+		</Link>
+	);
 };
 
 export default OpenWhiteBoardButton;
