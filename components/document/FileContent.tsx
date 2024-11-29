@@ -8,7 +8,7 @@ interface FileContentProps {
 
 const FileContent = async ({ fileId }: FileContentProps) => {
 	const { workspaceId } = await getWorkspaceInfo();
-	const liveBlockApi = process.env.NEXT_PUBLIC_LIVEBLOCKS_KEY;
+	const liveBlockApi = process.env.NEXT_PUBLIC_LIVEBLOCKS_API;
 
 	if (!liveBlockApi) {
 		throw new Error('LIVEBLOCKS_KEY is not set');
