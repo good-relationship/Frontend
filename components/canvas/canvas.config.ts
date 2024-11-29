@@ -6,3 +6,15 @@ export const strokeConfig: StrokeOptions = {
 	smoothing: 0.5,
 	streamline: 0.5,
 };
+
+export const initialLiveBlocksData = {
+	initialPresence: {
+		cursor: null,
+		pencilDraft: null,
+		penColor: '',
+	},
+	initialStorage: {
+		layers: null,
+		layerOrderList: null,
+	},
+};
