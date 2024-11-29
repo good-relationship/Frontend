@@ -7,6 +7,7 @@ declare global {
 		Presence: {
 			cursor: Point | null;
 			pencilDraft: [x: number, y: number, pressure: number][] | null;
+			penColor: string;
 		};
 		Storage: {
 			layers: LiveMap<string, LiveObject<Layer>>;

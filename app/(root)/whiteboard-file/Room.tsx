@@ -4,6 +4,7 @@ import { LiveList, LiveMap, LiveObject } from '@liveblocks/client';
 import { ClientSideSuspense, LiveblocksProvider, RoomProvider } from '@liveblocks/react/suspense';
 import { ReactNode } from 'react';
 
+import { colors } from '@/constants/colors';
 import { Layer } from '@/types/whiteboard';
 
 export function Room({ children, roomId }: { children: ReactNode; roomId: string }) {
@@ -18,6 +19,7 @@ export function Room({ children, roomId }: { children: ReactNode; roomId: string
 				initialPresence={{
 					cursor: null,
 					pencilDraft: null,
+					penColor: colors['Purple-500'],
 				}}
 			>
 				<ClientSideSuspense fallback={<div>Loading…</div>}>{children}</ClientSideSuspense>

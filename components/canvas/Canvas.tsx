@@ -2,6 +2,7 @@
 
 import Draft from '@/components/canvas/Draft';
 import Multiplayer from '@/components/canvas/multiplay/Multiplayer';
+import Palettes from '@/components/canvas/palettes/Palettes';
 import PathList from '@/components/canvas/PathList';
 import { useCanvas } from '@/components/canvas/useCanvas';
 
@@ -28,6 +29,9 @@ const Canvas = () => {
 					<Multiplayer />
 				</g>
 			</svg>
+			<div className="fixed bottom-4 left-1/2 -translate-x-1/2">
+				<Palettes />
+			</div>
 		</div>
 	);
 };
