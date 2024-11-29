@@ -17,7 +17,7 @@ const Palettes = () => {
 	);
 
 	return (
-		<div className="flex gap-3">
+		<div className="flex gap-3 bg-white px-10 py-5 shadow-md rounded-md">
 			{palettes.map((color) => {
 				return <Palette key={color} color={color} onClick={onClick} selectedColor={selectedColor} />;
 			})}
